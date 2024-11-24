@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Admin</title>
+    <link rel="stylesheet" href="homeStyle.css">
+</head>
+<body>
+    <!-- Navbar di bagian atas -->
+    <nav class="navbar">
+        <a href="admin.php" class="navbar-brand">Polinema</a>
+        <ul class="navbar-menu">
+            <li><a href="admin.php">Home</a></li>
+            <li><a href="#">Profil</a></li>
+            <li><a href="#">Laporan</a></li>
+            <li><a href="#">Bantuan</a></li>
+        </ul>
+    </nav>
+
+    <!-- Sidebar di bagian kiri -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="admin.php">Dashboard</a></li>
+            <li><a href="ManajemenPengguna.html">Manajemen Pengguna</a></li>
+            <li><a href="Laporan.html">Laporan</a></li>
+            <li><a href="Pengaturan.html">Pengaturan</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- Konten utama -->
+    <main class="main-content">
+        <section class="hero">
+            <h1>Selamat Datang, Admin!</h1>
+            <p>Di Portal Akademik Polinema</p>
+            <a href="#" class="hero-button">Explore Now</a>
+        </section>
+        <section class="content">
+            <div class="content-box">
+                <h2>Manajemen Pengguna</h2>
+                <p>Kelola data pengguna seperti dosen, mahasiswa, dan staf di sini.</p>
+                <a href="ManajemenPengguna.html" class="content-link">Lihat Pengguna</a>
+            </div>
+            <div class="content-box">
+                <h2>Laporan</h2>
+                <p>Periksa dan analisis laporan kegiatan akademik.</p>
+                <a href="Laporan.html" class="content-link">Lihat Laporan</a>
+            </div>
+            <div class="content-box">
+                <h2>Pengaturan</h2>
+                <p>Kelola pengaturan sistem dan aplikasi.</p>
+                <a href="Pengaturan.html" class="content-link">Akses Pengaturan</a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
