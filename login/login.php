@@ -23,25 +23,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['username'] = $row['username'];
             $_SESSION['role'] = $row['role'];
 
-            // Arahkan pengguna berdasarkan role
-            if ($row['role'] == 1001) {
-                header("Location: admin.php");
-            } elseif ($row['role'] == 1002) {
-                header("Location: ../dosen/dosen.php");
-            } elseif ($row['role'] == 1003) {
-                header("Location: staff.php");
-            } elseif ($row['role'] == 1004) {
-                header("Location: mahasiswa.php");
-            }
-            exit; // Menghentikan eksekusi script setelah redirect
+            // Mengirim respons JSON dengan redirect URL sesuai role
+            $response = array(
+                'status' => 'success',
+                'role' => $row['role']
+            );
         } else {
             // Jika password salah
-            $error = "Password salah!";
+            $response = array('status' => 'error', 'message' => 'Password salah!');
         }
     } else {
         // Jika username tidak ditemukan
-        $error = "Username tidak ditemukan!";
+        $response = array('status' => 'error', 'message' => 'Username tidak ditemukan!');
     }
+
+    // Mengirim respons JSON
+    echo json_encode($response);
+    exit;
 }
 ?>
 
@@ -52,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Halaman Login</title>
     <link rel="stylesheet" href="loginStyle.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Menambahkan jQuery -->
 </head>
 <body>
     <!-- Navbar -->
@@ -66,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-container">
         <h2>Login</h2>
         <!-- Form Login -->
-        <form action="" method="post">
+        <form id="loginForm">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
@@ -75,14 +74,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <?php
-            // Tampilkan pesan error jika ada
-            if (isset($error)) {
-                echo "<p style='color: red;'>$error</p>";
-            }
-            ?>
+            <div id="errorMessage" style="color: red;"></div> <!-- Menampilkan error di sini -->
             <button type="submit">Login</button>
         </form>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#loginForm').submit(function(event) {
+                event.preventDefault(); // Mencegah form submit default
+
+                var username = $('#username').val();
+                var password = $('#password').val();
+
+                $.ajax({
+                    url: '', // Mengirim ke halaman yang sama
+                    type: 'POST',
+                    data: {
+                        username: username,
+                        password: password
+                    },
+                    dataType: 'json', // Mengambil respons dalam format JSON
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            // Redirect berdasarkan role
+                            if (response.role == 1001) {
+                                window.location.href = 'admin.php';
+                            } else if (response.role == 1002) {
+                                window.location.href = '../dosen/dosen.php';
+                            } else if (response.role == 1003) {
+                                window.location.href = 'staff.php';
+                            } else if (response.role == 1004) {
+                                window.location.href = 'mahasiswa.php';
+                            }
+                        } else {
+                            // Menampilkan pesan error
+                            $('#errorMessage').text(response.message);
+                        }
+                    },
+                    error: function() {
+                        $('#errorMessage').text('Terjadi kesalahan, coba lagi!');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
