@@ -156,8 +156,8 @@ if ($stmt === false) {
             <div class="sidebar">
                 <ul class="nav flex-column">
                     <li><a href="dosen.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
-                    <li><a href="dataMahasiswa.php"><i class="bi bi-people me-2"></i>Data Mahasiswa</a></li>
-                    <li><a href="Pelanggaran.html"><i class="bi bi-exclamation-circle me-2"></i>Laporkan Pelanggaran</a></li>
+                    <li><a href="dataMhs.php"><i class="bi bi-people me-2"></i>Data Mahasiswa</a></li>
+                    <li><a href="laporanPelanggaran.php"><i class="bi bi-exclamation-circle me-2"></i>Laporkan Pelanggaran</a></li>
                     <li><a href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                 </ul>
             </div>

@@ -1,42 +1,25 @@
 <?php
-// Memanggil koneksi database
-require_once '../connection.php';
+session_start();
 
-// Query untuk mengambil data mahasiswa
-$sql = "
-    SELECT m.nama, m.nim, k.nama_kelas, m.status_akademik
-    FROM mahasiswa AS m
-    INNER JOIN kelas AS k ON m.kelas = k.id_kelas
-";
-$stmt = sqlsrv_query($conn, $sql);
-
-if ($stmt === false) {
-    die(print_r(sqlsrv_errors(), true));
-}
+// Cek apakah session sudah ada dan apakah role adalah dosen
+// if (!isset($_SESSION['username']) || $_SESSION['role'] !== 1002) {
+//     header("Location: ../login/login.php");
+// }
+//
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Mahasiswa</title>
-    <!-- Link Bootstrap CSS -->
+    <title>Home Dosen</title>
+    <!-- Link ke Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Warna dongker untuk tema */
         .bg-dongker {
             background-color: #001f54 !important;
-        }
-
-        .text-dongker {
-            color: #001f54 !important;
-        }
-
-        .table-dongker thead {
-            background-color: #001f54;
-            color: white;
         }
 
         /* Sidebar styling */
@@ -121,7 +104,7 @@ if ($stmt === false) {
 </head>
 
 <body class="bg-light">
-    <!-- Navbar -->
+    <!-- Navbar di bagian atas -->
     <nav class="navbar navbar-expand-lg bg-dongker navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="dosen.php">
@@ -146,10 +129,9 @@ if ($stmt === false) {
         <i class="bi bi-list"></i>
     </div>
 
-    <!-- Layout dengan Bootstrap Grid -->
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
+            <!-- Sidebar di bagian kiri -->
             <div class="sidebar-trigger"></div> <!-- Hover trigger -->
             <div class="sidebar">
                 <ul class="nav flex-column">
@@ -160,45 +142,37 @@ if ($stmt === false) {
                 </ul>
             </div>
 
-            <!-- Konten Utama -->
             <main class="col-md-10 ms-sm-auto px-md-4">
                 <div class="pt-4">
                     <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h1 class="h2 mb-0 fw-bold">Data Mahasiswa</h1>
+                        <div class="card-header text-center">
+                            <h1 class="display-5 fw-bold mt-3">Selamat Datang, Dosen!</h1>
+                            <p class="lead">Di Portal Akademik Polinema</p>
+                            <a href="#" class="btn bg-dongker text-white">Explore Now</a>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped table-hover table-dongker">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Nama</th>
-                                            <th>NIM</th>
-                                            <th>Kelas</th>
-                                            <th>Status Akademik</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $no = 1;
-                                        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-                                            echo "<tr>";
-                                            echo "<td>" . $no++ . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['nama']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['nim']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['nama_kelas']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['status_akademik']) . "</td>";
-                                            echo "</tr>";
-                                        }
-
-                                        if ($no === 1) {
-                                            echo "<tr><td colspan='5' class='text-center'>Tidak ada data mahasiswa</td></tr>";
-                                        }
-                                        ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <section class="row justify-content-center mt-4">
+                                <!-- Card for Data Mahasiswa -->
+                                <div class="col-lg-4 col-md-6 mb-4">
+                                    <div class="card shadow">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title fw-bold">Data Mahasiswa</h5>
+                                            <p class="card-text">Kelola informasi dan perkembangan mahasiswa di sini.</p>
+                                            <a href="dataMhs.php" class="btn bg-dongker text-white">Lihat Data</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card for Pelanggaran -->
+                                <div class="col-lg-4 col-md-6 mb-4">
+                                    <div class="card shadow">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title fw-bold">Laporkan Pelanggaran</h5>
+                                            <p class="card-text">Laporkan pelanggaran yang terjadi.</p>
+                                            <a href="laporanPelanggaran.php" class="btn bg-dongker text-white">Laporkan Pelanggaran</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                     </div>
                 </div>
