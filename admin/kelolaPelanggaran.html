@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Pengguna</title>
+    <link rel="stylesheet" href="kelolaPelanggaran.css">
+</head>
+<body>
+    <!-- Navbar di bagian atas -->
+    <nav class="navbar">
+        <a href="admin.php" class="navbar-brand">Polinema</a>
+        <ul class="navbar-menu">
+            <li><a href="admin.php">Home</a></li>
+            <li><a href="#">Profil</a></li>
+            <li><a href="#">Laporan</a></li>
+            <li><a href="#">Bantuan</a></li>
+        </ul>
+    </nav>
+
+    <!-- Sidebar di bagian kiri -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="admin.html">Dashboard</a></li>
+            <li><a href="manajemenPelanggaran.html">Manajemen Pengguna</a></li>
+            <li><a href="Laporan.html">Laporan</a></li>
+            <li><a href="Pengaturan.html">Pengaturan</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- Konten utama -->
+    <main class="main-content">
+        <section class="content">
+            <h1>Kelola Pelanggaran Mahasiswa</h1>
+            <td><p>Data mahasiswa yang terdaftar di sistem.</p></td>
+            <!-- Tombol Tambah Pengguna -->
+            <div class="button-container">
+                <button class="hero-button" onclick="tambahPelanggaran()">Tambah Pelanggaran</button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Mahasiswa</th>
+                        <th>NIM</th>
+                        <th>Pelanggaran</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data tabel -->
+                </tbody>
+            </table>            
+    </body>
+</html>

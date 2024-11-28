@@ -1,0 +1,173 @@
+/* Reset styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Styling untuk body */
+body {
+    display: flex;
+    font-family: Arial, sans-serif;
+    background-image: url('images/backgroundLogin1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #FFFFFF;
+    padding-top: 60px;
+}
+
+/* Overlay untuk background */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(32, 30, 67, 0.8);
+    z-index: -1;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 60px;
+    background-color: rgba(20, 75, 112, 0.8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    color: #EEEEEE;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling untuk Brand Navbar */
+.navbar-brand {
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #EEEEEE;
+}
+
+/* Styling untuk menu Navbar */
+.navbar-menu {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+}
+
+.navbar-menu li {
+    display: inline;
+}
+
+.navbar-menu a {
+    color: #EEEEEE;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.navbar-menu a:hover {
+    color: #E1E5F2; /* Warna hover menu */
+}
+
+
+/* Sidebar */
+.sidebar {
+    width: 140px;
+    background-color: rgba(20, 75, 112, 0.9);
+    position: fixed;
+    top: 50px; /* Offset di bawah navbar */
+    bottom: 0;
+    left: 0;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar-menu {
+    list-style: none;
+    width: 100%;
+    padding: 0;
+}
+
+.sidebar-menu li {
+    width: 100%;
+}
+
+.sidebar-menu a {
+    display: block;
+    padding: 15px 20px;
+    color: #EEEEEE;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.sidebar-menu a:hover {
+    background-color: #508C9B;
+}
+
+/* Konten Utama */
+.main-content {
+    margin-left: 180px; /* Offset untuk menyesuaikan dengan sidebar */
+    margin-top: 40px    ;
+    width: calc(100% - 220px);
+    padding: 20px;
+}
+
+/* Hero Section */
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 100px 20px;
+    background-color: rgba(32, 30, 67, 0.7);
+}
+
+.content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 40px 20px; /* Tambahkan padding */
+    gap: 40px; /* Jarak antar elemen box */
+}
+
+.content-box {
+    width: 300px;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.content-box h2 {
+    margin-bottom: 10px;
+    color: #134B70;
+}
+
+.content-box p {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #333333;
+}
+
+.content-link {
+    color: white;
+    background-color: #134B70;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.content-link:hover {
+    background-color: #508C9B;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaksi Pelanggaran</title>
+    <link rel="stylesheet" href="transaksiPelanggaran.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="admin.php" class="navbar-brand">Polinema</a>
+        <ul class="navbar-menu">
+            <li><a href="admin.php">Home</a></li>
+            <li><a href="#">Profil</a></li>
+            <li><a href="#">Laporan</a></li>
+            <li><a href="#">Bantuan</a></li>
+        </ul>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="admin.html">Dashboard</a></li>
+            <li><a href="manajemenPelanggaran.html">Manajemen Pengguna</a></li>
+            <li><a href="Laporan.html">Laporan</a></li>
+            <li><a href="Pengaturan.html">Pengaturan</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- Konten Utama -->
+    <main class="main-content">
+        <section class="content">
+            <!-- Judul Halaman -->
+            <h1>Transaksi Pelanggaran</h1>
+
+            <!-- Subjudul dan Tabel -->
+            <div class="report-list">
+                <h2>Daftar Pelanggaran</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Mahasiswa</th>
+                            <th>NIM</th>
+                            <th>Detail Pelanggaran</th>
+                            <th>Pelapor</th>
+                            <th>Waktu Laporan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data Dummy -->
+                        <tr>
+                            <td>1</td>
+                            <td>John Doe</td>
+                            <td>2020123456</td>
+                            <td>Terlambat masuk kelas</td>
+                            <td>Dosen A</td>
+                            <td>2024-11-27 10:15</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Jane Smith</td>
+                            <td>2021123457</td>
+                            <td>Melanggar aturan parkir</td>
+                            <td>Staff B</td>
+                            <td>2024-11-27 09:30</td>
+                        </tr>
+                        <!-- Tambahkan data lainnya -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
