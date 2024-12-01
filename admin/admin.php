@@ -7,39 +7,10 @@
     <title>Home Admin</title>
     <!-- Link ke Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
         .bg-dongker {
             background-color: #001f54 !important;
-        }
-
-        .sidebar {
-            width: 200px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -150px;
-            background-color: #001f54;
-            color: white;
-            transition: all 0.3s ease;
-            overflow-y: auto;
-            z-index: 10;
-            padding-top: 90px;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px 20px;
-        }
-
-        .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-        }
-
-        .sidebar:hover {
-            left: 0;
         }
 
         .menu-icon {
@@ -64,17 +35,28 @@
         }
 
         .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             z-index: 11;
-            position: relative;
         }
 
-        main.content {
-            margin-left: 50px;
+        .content-box {
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: #001f54;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #003080;
         }
 
         .card {
             margin-right: 40px;
-            margin-top: 30px;
         }
 
         .card-header {
@@ -82,6 +64,10 @@
             color: #001f54 !important;
             text-align: center;
             border: none;
+        }
+
+        .custom-margin-top {
+            margin-top: 90px;
         }
     </style>
 </head>
@@ -98,10 +84,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="admin.php">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="admin.php">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Profil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Laporan</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Bantuan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="logout.php">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -115,17 +101,9 @@
     <div class="container-fluid">
         <div class="row">
             <div class="sidebar-trigger"></div>
-            <div class="sidebar">
-                <ul class="nav flex-column">
-                    <li><a href="admin.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
-                    <li><a href="manajemenPelanggaran.php"><i class="bi bi-person-lines-fill me-2"></i>Manajemen Pengguna</a></li>
-                    <li><a href="laporan.php"><i class="bi bi-file-earmark-text me-2"></i>Laporan</a></li>
-                    <li><a href="pengaturan.php"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
-                    <li><a href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                </ul>
-            </div>
+            <?php include"sidebar.php"; ?>
 
-            <main class="col-md-10 ms-sm-auto px-md-4">
+            <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
                     <div class="card shadow-sm">
                         <div class="card-header text-center">
@@ -133,36 +111,56 @@
                             <p class="lead">Di Portal Akademik Polinema</p>
                             <a href="#" class="btn bg-dongker text-white">Explore Now</a>
                         </div>
-                        <div class="card-body">
-                            <section class="row justify-content-center mt-4">
-                                <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="card shadow">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title fw-bold">Manajemen Pengguna</h5>
-                                            <p class="card-text">Kelola data pengguna seperti dosen, mahasiswa, dan staf.</p>
-                                            <a href="manajemenPelanggaran.php" class="btn bg-dongker text-white">Kelola Pengguna</a>
+                        <div class="card-body mt-5">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="card text-center shadow-sm content-box">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold">Kelola Pengguna</h5>
+                                            <p class="card-text">Lihat dan kelola data pengguna yang terlibat dalam pelanggaran.</p>
+                                            <a href="kelolaPengguna.php" class="btn btn-primary">Kelola Pengguna</a>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="card shadow">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title fw-bold">Laporan</h5>
-                                            <p class="card-text">Periksa dan analisis laporan kegiatan akademik.</p>
-                                            <a href="laporan.php" class="btn bg-dongker text-white">Lihat Laporan</a>
+                                <div class="col-md-4">
+                                    <div class="card text-center shadow-sm content-box">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold">Transaksi Pelanggaran</h5>
+                                            <p class="card-text">Lihat daftar seluruh pelanggaran yang terjadi.</p>
+                                            <a href="transaksiPelanggaran.html" class="btn btn-primary">Lihat Pelanggaran</a>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="card shadow">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title fw-bold">Pengaturan</h5>
-                                            <p class="card-text">Kelola pengaturan sistem dan aplikasi.</p>
-                                            <a href="pengaturan.php" class="btn bg-dongker text-white">Akses Pengaturan</a>
+                                <div class="col-md-4">
+                                    <div class="card text-center shadow-sm content-box">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold">Edit Pelanggaran</h5>
+                                            <p class="card-text">Ubah data pelanggaran atau sanksi yang diberikan.</p>
+                                            <a href="editPelanggaran.html" class="btn btn-primary">Edit Pelanggaran</a>
                                         </div>
                                     </div>
                                 </div>
-                            </section>
+                                <div class="row g-3 justify-content-center">
+                                    <div class="col-md-4">
+                                        <div class="card text-center shadow-sm content-box">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">Cek Tugas</h5>
+                                                <p class="card-text">Periksa tugas yang dikumpulkan oleh mahasiswa yang melanggar.</p>
+                                                <a href="cek_tugas.html" class="btn btn-primary">Cek Tugas</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card text-center shadow-sm content-box">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">Buat Laporan</h5>
+                                                <p class="card-text">Buat laporan dari pelanggaran yang sudah terjadi.</p>
+                                                <a href="buat_laporan.html" class="btn btn-primary">Buat Laporan</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -170,10 +168,8 @@
         </div>
     </div>
 
-    <!-- Link Bootstrap JS dan Icon -->
+    <!-- Link Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-
     <script>
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');

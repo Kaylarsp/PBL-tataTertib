@@ -12,34 +12,26 @@
             background-color: #001f54 !important;
         }
 
-        .sidebar {
-            width: 200px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -150px;
+        .card-option {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .card-option:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
             background-color: #001f54;
-            color: white;
-            transition: all 0.3s ease;
-            overflow-y: auto;
-            z-index: 10;
-            padding-top: 90px;
+            border: none;
         }
 
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px 20px;
+        .btn-primary:hover {
+            background-color: #003080;
         }
 
-        .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-        }
-
-        .sidebar:hover {
-            left: 0;
+        .cardContent {
+            margin-left: 70px;
         }
 
         .menu-icon {
@@ -64,27 +56,19 @@
         }
 
         .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             z-index: 11;
-            position: relative;
         }
 
-        main.content {
-            margin-left: 50px;
+        .full-height {
+            height: 100vh;
         }
 
-        .table th,
-        .table td {
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .btn-primary {
-            background-color: #001f54;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background-color: #003080;
+        .text-dongker {
+            color: #001f54;
         }
     </style>
 </head>
@@ -94,7 +78,7 @@
     <nav class="navbar navbar-expand-lg bg-dongker navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="admin.php">
-                <i class="bi bi-tools me-2"></i>Polinema Admin
+                <i class="bi bi-mortarboard-fill me-2"></i>Polinema
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -115,85 +99,68 @@
         <i class="bi bi-list"></i>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="sidebar-trigger"></div>
-            <div class="sidebar">
-                <ul class="nav flex-column">
-                    <li><a href="admin.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
-                    <li><a href="manajemenPelanggaran.php"><i class="bi bi-person-lines-fill me-2"></i>Manajemen Pengguna</a></li>
-                    <li><a href="laporan.php"><i class="bi bi-file-earmark-text me-2"></i>Laporan</a></li>
-                    <li><a href="pengaturan.php"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
-                    <li><a href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                </ul>
+    <div class="sidebar-trigger"></div>
+    <?php include "sidebar.php"; ?>
+
+    <!-- Konten Utama -->
+    <div class="d-flex align-items-center justify-content-center full-height">
+        <div class="card cardContent shadow p-4" style="width: 100%; max-width: 850px;">
+            <div class="text-center mb-4">
+                <h1 class="display-5 fw-bold text-dongker">Kelola Pengguna</h1>
+                <p class="lead">Pilih jenis pengguna yang ingin dikelola.</p>
             </div>
 
-            <main class="col-md-10 ms-sm-auto px-md-4">
-                <div class="pt-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header text-center">
-                            <h1 class="display-5 fw-bold mt-3">Kelola Pengguna</h1>
-                            <p class="lead">Data pengguna yang terdaftar di sistem.</p>
-                            <button class="btn btn-primary text-white" onclick="tambahPengguna()">Tambah Pengguna</button>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-hover table-striped">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Nama</th>
-                                        <th>NIM</th>
-                                        <th>Kelas</th>
-                                        <th>Status Akademik</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Ahmad Maulana</td>
-                                        <td>20351001</td>
-                                        <td>TI-3A</td>
-                                        <td>Aktif</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm">Edit</button>
-                                            <button class="btn btn-danger btn-sm">Hapus</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Siti Aisyah</td>
-                                        <td>20351002</td>
-                                        <td>TI-3B</td>
-                                        <td>Cuti</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm">Edit</button>
-                                            <button class="btn btn-danger btn-sm">Hapus</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+            <div class="row  d-flex justify-content-center">
+                <div class="col-md-4 mb-4 ">
+                    <div class="d-flex justify-content-center">
+
+                        <div class="card card-option shadow" onclick="location.href='staff.php'">
+                            <div class="card-body text-center">
+                                <i class="bi bi-briefcase-fill display-4 text-primary mb-3"></i>
+                                <h5 class="card-title fw-bold">Staff</h5>
+                                <p class="card-text">Kelola data pengguna yang berperan sebagai staff.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </main>
+                <div class="col-md-4 mb-4 ">
+                    <div class="d-flex justify-content-center">
+
+                        <div class="card card-option shadow" onclick="location.href='dosen.php'">
+                            <div class="card-body text-center">
+                                <i class="bi bi-person-workspace display-4 text-success mb-3"></i>
+                                <h5 class="card-title fw-bold">Dosen</h5>
+                                <p class="card-text">Kelola data pengguna yang berperan sebagai dosen.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 ">
+                    <div class="d-flex justify-content-center">
+
+                        <div class="card card-option shadow" onclick="location.href='kelolaMahasiswa.php'">
+                            <div class="card-body text-center">
+                                <i class="bi bi-people-fill display-4 text-warning mb-3"></i>
+                                <h5 class="card-title fw-bold">Mahasiswa</h5>
+                                <p class="card-text">Kelola data pengguna yang berperan sebagai mahasiswa.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Link Bootstrap JS dan Icon -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-
     <script>
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
             sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
         }
-
-        function tambahPengguna() {
-            alert("Fitur Tambah Pengguna belum tersedia.");
-        }
     </script>
+
 </body>
 
 </html>
