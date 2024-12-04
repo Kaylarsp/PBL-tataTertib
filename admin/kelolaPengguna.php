@@ -126,7 +126,7 @@
                 <div class="col-md-4 mb-4 ">
                     <div class="d-flex justify-content-center">
 
-                        <div class="card card-option shadow" onclick="location.href='dosen.php'">
+                        <div class="card card-option shadow" onclick="location.href='kelolaDosen.php'">
                             <div class="card-body text-center">
                                 <i class="bi bi-person-workspace display-4 text-success mb-3"></i>
                                 <h5 class="card-title fw-bold">Dosen</h5>

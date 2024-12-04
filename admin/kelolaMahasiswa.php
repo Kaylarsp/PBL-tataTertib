@@ -10,13 +10,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'add') {
     $status_akademik = $_POST['status_akademik'];
 
     $sql = "INSERT INTO mahasiswa (nama, nim, kelas, status_akademik) VALUES (?, ?, ?, ?)";
-    $stmt = sqlsrv_prepare($conn, $sql, array($nama, $nim, $kelas, $status_akademik));
+    $stmt = sqlsrv_query($conn, $sql, array($nama, $nim, $kelas, $status_akademik));
 
-    if (sqlsrv_execute($stmt)) {
-        echo "Pengguna berhasil ditambahkan.";
-    } else {
-        echo "Gagal menambah pengguna.";
+    if (!$stmt) {
+        die(print_r(sqlsrv_errors(), true));
     }
+
+    echo "Pengguna berhasil ditambahkan.";
+    exit;
 }
 
 // Proses untuk mengedit pengguna
@@ -35,35 +36,43 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit') {
     } else {
         echo "Gagal mengubah pengguna.";
     }
+    exit;
 }
 
-// Proses untuk mengambil semua pengguna
-if (isset($_POST['action']) && $_POST['action'] == 'get_all') {
-    $sql = "SELECT m.id_mahasiswa, m.nama, m.nim, k.nama_kelas, m.status_akademik
-            FROM mahasiswa AS m
-            INNER JOIN kelas AS k ON m.kelas = k.id_kelas";
-    $stmt = sqlsrv_query($conn, $sql);
+// Proses untuk menghapus pengguna
+if (isset($_POST['action']) && $_POST['action'] == 'delete') {
+    $id_mahasiswa = $_POST['id'];
 
-    if ($stmt === false) {
-        die(print_r(sqlsrv_errors(), true));
+    $sql = "DELETE FROM mahasiswa WHERE id_mahasiswa = ?";
+    $stmt = sqlsrv_prepare($conn, $sql, array($id_mahasiswa));
+
+    if (sqlsrv_execute($stmt)) {
+        echo "Pengguna berhasil dihapus.";
+    } else {
+        echo "Gagal menghapus pengguna.";
     }
+    exit;
+}
 
-    $data = [];
-    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-        $data[] = $row;
-    }
+// Proses untuk mengambil data kelas
+$sql_kelas = "SELECT id_kelas, nama_kelas FROM kelas";
+$stmt_kelas = sqlsrv_query($conn, $sql_kelas);
+if ($stmt_kelas === false) {
+    die(print_r(sqlsrv_errors(), true));
+}
 
-    echo json_encode($data);
+$kelas_options = [];
+while ($row_kelas = sqlsrv_fetch_array($stmt_kelas, SQLSRV_FETCH_ASSOC)) {
+    $kelas_options[] = $row_kelas;
 }
 
 // Query untuk mengambil data mahasiswa
 $sql = "
-    SELECT  m.id_mahasiswa, m.nama, m.nim, k.nama_kelas, m.status_akademik
+    SELECT m.id_mahasiswa, m.nama, m.nim, k.nama_kelas, m.status_akademik
     FROM mahasiswa AS m
     INNER JOIN kelas AS k ON m.kelas = k.id_kelas
 ";
 $stmt = sqlsrv_query($conn, $sql);
-
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
@@ -76,11 +85,32 @@ if ($stmt === false) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Mahasiswa</title>
-    <!-- Link ke Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .bg-dongker {
             background-color: #001f54 !important;
+        }
+
+        .card-option {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .card-option:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background-color: #001f54;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #003080;
+        }
+
+        .cardContent {
+            margin-left: 70px;
         }
 
         .menu-icon {
@@ -105,29 +135,24 @@ if ($stmt === false) {
         }
 
         .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             z-index: 11;
-            position: relative;
         }
 
-        main.content {
-            margin-left: 50px;
+        .full-height {
+            height: 100vh;
         }
 
-        .table th,
-        .table td {
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .btn-primary {
-            background-color: #001f54;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background-color: #003080;
+        .text-dongker {
+            color: #001f54;
         }
     </style>
+    <script>
+        const kelasOptions = <?= json_encode($kelas_options); ?>;
+    </script>
 </head>
 
 <body class="bg-light">
@@ -156,106 +181,80 @@ if ($stmt === false) {
         <i class="bi bi-list"></i>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="sidebar-trigger"></div>
-            <?php include "sidebar.php"; ?>
+    <div class="sidebar-trigger"></div>
+    <?php include "sidebar.php"; ?>
 
-            <main class="col-md-10 ms-sm-auto px-md-4">
-                <div class="pt-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header text-center">
-                            <h1 class="display-5 fw-bold mt-3">Kelola Mahasiswa</h1>
-                            <p class="lead">Data pengguna yang terdaftar di sistem.</p>
-                            <button class="btn btn-primary text-white" onclick="tambahPengguna()">Tambah Pengguna</button>
-
-                            <!-- Form Input Tambah Pengguna -->
-                            <div id="formTambahPengguna" style="display:none; margin-top: 20px;">
-                                <input type="text" id="tambahNama" class="form-control" placeholder="Nama Mahasiswa">
-                                <input type="text" id="tambahNim" class="form-control" placeholder="NIM Mahasiswa">
-                                <input type="text" id="tambahKelas" class="form-control" placeholder="Kelas Mahasiswa">
-                                <input type="text" id="tambahStatus" class="form-control" placeholder="Status Akademik">
-                                <button class="btn btn-success mt-2" onclick="simpanTambahPengguna()">Simpan</button>
-                                <button class="btn btn-danger mt-2" onclick="batalTambahPengguna()">Batal</button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-hover table-striped">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Nim</th>
-                                        <th>Nama</th>
-                                        <th>Kelas</th>
-                                        <th>Status Akademik</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    $no = 1;
-                                    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-                                        // Menghindari masalah dengan tanda kutip pada data string
-                                        $nama = htmlspecialchars($row['nama'], ENT_QUOTES, 'UTF-8');
-                                        $nim = htmlspecialchars($row['nim'], ENT_QUOTES, 'UTF-8');
-                                        $kelas = htmlspecialchars($row['nama_kelas'], ENT_QUOTES, 'UTF-8');
-                                        $status_akademik = htmlspecialchars($row['status_akademik'], ENT_QUOTES, 'UTF-8');
-
-                                    ?>
-                                        <tr id="row-<?php echo $row['id_mahasiswa']; ?>">
-                                            <td><?php echo $no++; ?></td>
-                                            <td><?php echo $row['nim']; ?></td>
-                                            <td><?php echo $row['nama']; ?></td>
-                                            <td><?php echo $row['nama_kelas']; ?></td>
-                                            <td><?php echo $row['status_akademik']; ?></td>
-                                            <td>
-                                                <button class="btn btn-warning btn-sm" onclick="editPengguna('<?php echo $row['id_mahasiswa']; ?>', '<?php echo addslashes($row['nama']); ?>', '<?php echo addslashes($row['nim']); ?>', '<?php echo addslashes($row['nama_kelas']); ?>', '<?php echo addslashes($row['status_akademik']); ?>')">Edit</button>
-                                                <button class="btn btn-danger btn-sm" onclick="hapusPengguna(<?php echo $row['id_mahasiswa']; ?>)">Hapus</button>
-                                            </td>
-                                        </tr>
-                                    <?php } ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+    <!-- Konten Utama -->
+    <div class="d-flex align-items-center justify-content-center full-height">
+        <div class="card cardContent shadow p-4" style="width: 100%; max-width: 850px;">
+            <div class="text-center mb-4">
+                <h1 class="display-5 fw-bold text-dongker">Kelola Mahasiswa</h1>
+                <button class="btn btn-primary mt-2" onclick="tambahPengguna()">Tambah Pengguna</button>
+            </div>
+            <div class="card-body">
+                <div id="formTambahPengguna" style="display:none;">
+                    <input type="text" id="tambahNama" class="form-control" placeholder="Nama Mahasiswa">
+                    <input type="text" id="tambahNim" class="form-control mt-2" placeholder="NIM Mahasiswa">
+                    <select id="tambahKelas" class="form-select mt-2">
+                        <option value="" disabled selected>Pilih Kelas</option>
+                        <?php foreach ($kelas_options as $kelas) { ?>
+                            <option value="<?= $kelas['id_kelas'] ?>"><?= $kelas['nama_kelas'] ?></option>
+                        <?php } ?>
+                    </select>
+                    <input type="text" id="tambahStatus" class="form-control mt-2" placeholder="Status Akademik">
+                    <button class="btn btn-success mt-2" onclick="simpanTambahPengguna()">Simpan</button>
+                    <button class="btn btn-danger mt-2" onclick="batalTambahPengguna()">Batal</button>
                 </div>
-            </main>
+                <table class="table table-striped mt-4">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>NIM</th>
+                            <th>Nama</th>
+                            <th>Kelas</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $no = 1;
+                        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) { ?>
+                            <tr id="row-<?= $row['id_mahasiswa'] ?>">
+                                <td><?= $no++ ?></td>
+                                <td><?= htmlspecialchars($row['nim']) ?></td>
+                                <td><?= htmlspecialchars($row['nama']) ?></td>
+                                <td><?= htmlspecialchars($row['nama_kelas']) ?></td>
+                                <td><?= htmlspecialchars($row['status_akademik']) ?></td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" onclick="editPengguna(<?= $row['id_mahasiswa'] ?>)">Edit</button>
+                                    <button class="btn btn-danger btn-sm" onclick="hapusPengguna(<?= $row['id_mahasiswa'] ?>)">Hapus</button>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Link Bootstrap JS dan Icon -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
-        }
-
-        function tambahPengguna() {
-            alert("Fitur Tambah Pengguna belum tersedia.");
-        }
-    </script>
-
     <script>
         function tambahPengguna() {
-            document.getElementById('formTambahPengguna').style.display = 'block'; // Menampilkan form
+            document.getElementById('formTambahPengguna').style.display = 'block';
         }
 
         function simpanTambahPengguna() {
-            let nama = document.getElementById('tambahNama').value;
-            let nim = document.getElementById('tambahNim').value;
-            let kelas = document.getElementById('tambahKelas').value;
-            let status_akademik = document.getElementById('tambahStatus').value;
+            const nama = document.getElementById('tambahNama').value;
+            const nim = document.getElementById('tambahNim').value;
+            const kelas = document.getElementById('tambahKelas').value;
+            const status = document.getElementById('tambahStatus').value;
 
-            if (nama && nim && kelas && status_akademik) {
+            if (nama && nim && kelas && status) {
                 const formData = new FormData();
                 formData.append('action', 'add');
                 formData.append('nama', nama);
                 formData.append('nim', nim);
                 formData.append('kelas', kelas);
-                formData.append('status_akademik', status_akademik);
+                formData.append('status_akademik', status);
 
                 fetch('', {
                         method: 'POST',
@@ -265,47 +264,51 @@ if ($stmt === false) {
                     .then(data => {
                         alert(data);
                         location.reload();
-                    })
-                    .catch(error => console.error('Error:', error));
+                    });
             } else {
                 alert("Semua data harus diisi!");
             }
         }
 
-        function batalTambahPengguna() {
-            document.getElementById('formTambahPengguna').style.display = 'none'; // Menyembunyikan form
-        }
+        function editPengguna(id) {
+            const row = document.getElementById(`row-${id}`);
+            const nama = row.cells[2].textContent.trim();
+            const nim = row.cells[1].textContent.trim();
+            const kelas = row.cells[3].textContent.trim();
+            const status = row.cells[4].textContent.trim();
 
-        function editPengguna(id, nama, nim, kelas, status_akademik) {
-            // Menyisipkan form input di baris yang sesuai
-            let row = document.getElementById('row-' + id);
-            row.innerHTML = `
-        <td>${row.cells[0].innerText}</td>
-        <td><input type="text" class="form-control" value="${nama}" id="editNama-${id}"></td>
-        <td><input type="text" class="form-control" value="${nim}" id="editNim-${id}"></td>
-        <td><input type="text" class="form-control" value="${kelas}" id="editKelas-${id}"></td>
-        <td><input type="text" class="form-control" value="${status_akademik}" id="editStatus-${id}"></td>
-        <td>
-            <button class="btn btn-success btn-sm" onclick="simpanEditPengguna(${id})">Simpan</button>
-            <button class="btn btn-secondary btn-sm" onclick="batalEditPengguna(${id}, '${nama}', '${nim}', '${kelas}', '${status_akademik}')">Batal</button>
-        </td>
-    `;
+            const formHtml = `
+                <td colspan="6">
+                    <input type="text" id="editNama" class="form-control" value="${nama}">
+                    <input type="text" id="editNim" class="form-control mt-2" value="${nim}">
+                    <select id="editKelas" class="form-select mt-2">
+                        ${kelasOptions.map(option => `
+                            <option value="${option.id_kelas}" ${option.nama_kelas === kelas ? 'selected' : ''}>
+                                ${option.nama_kelas}
+                            </option>`).join('')}
+                    </select>
+                    <input type="text" id="editStatus" class="form-control mt-2" value="${status}">
+                    <button class="btn btn-success mt-2" onclick="simpanEditPengguna(${id})">Simpan</button>
+                    <button class="btn btn-danger mt-2" onclick="batalEditPengguna(${id})">Batal</button>
+                </td>
+            `;
+            row.innerHTML = formHtml;
         }
 
         function simpanEditPengguna(id) {
-            let newNama = document.getElementById('editNama-' + id).value;
-            let newNim = document.getElementById('editNim-' + id).value;
-            let newKelas = document.getElementById('editKelas-' + id).value;
-            let newStatus = document.getElementById('editStatus-' + id).value;
+            const nama = document.getElementById('editNama').value;
+            const nim = document.getElementById('editNim').value;
+            const kelas = document.getElementById('editKelas').value;
+            const status = document.getElementById('editStatus').value;
 
-            if (newNama && newNim && newKelas && newStatus) {
+            if (nama && nim && kelas && status) {
                 const formData = new FormData();
                 formData.append('action', 'edit');
                 formData.append('id', id);
-                formData.append('nama', newNama);
-                formData.append('nim', newNim);
-                formData.append('kelas', newKelas);
-                formData.append('status_akademik', newStatus);
+                formData.append('nama', nama);
+                formData.append('nim', nim);
+                formData.append('kelas', kelas);
+                formData.append('status_akademik', status);
 
                 fetch('', {
                         method: 'POST',
@@ -315,26 +318,14 @@ if ($stmt === false) {
                     .then(data => {
                         alert(data);
                         location.reload();
-                    })
-                    .catch(error => console.error('Error:', error));
+                    });
             } else {
                 alert("Semua data harus diisi!");
             }
         }
 
-        function batalEditPengguna(id, nama, nim, kelas, status_akademik) {
-            let row = document.getElementById('row-' + id);
-            row.innerHTML = `
-        <td>${row.cells[0].innerText}</td>
-        <td>${nama}</td>
-        <td>${nim}</td>
-        <td>${kelas}</td>
-        <td>${status_akademik}</td>
-        <td>
-            <button class="btn btn-warning btn-sm" onclick="editPengguna(${id}, '${nama}', '${nim}', '${kelas}', '${status_akademik}')">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="hapusPengguna(${id})">Hapus</button>
-        </td>
-    `;
+        function batalEditPengguna(id) {
+            location.reload();
         }
 
         function hapusPengguna(id) {
@@ -349,11 +340,25 @@ if ($stmt === false) {
                     })
                     .then(response => response.text())
                     .then(data => {
-                        alert(data); // Menampilkan pesan sukses/gagal
-                        location.reload(); // Reload halaman untuk menampilkan data terbaru
-                    })
-                    .catch(error => console.error('Error:', error));
+                        alert(data);
+                        document.getElementById(`row-${id}`).remove();
+                    });
             }
+        }
+
+        function batalTambahPengguna() {
+            document.getElementById('formTambahPengguna').style.display = 'none';
+        }
+    </script>
+
+    <!-- Link Bootstrap JS dan Icon -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
         }
     </script>
 
