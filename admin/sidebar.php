@@ -49,8 +49,14 @@
             </div>
         </li>
         <li><a href="laporan.php"><i class="bi bi-file-earmark-text me-2"></i>Laporan</a></li>
-        <li><a href="pengaturan.php"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
         <li><a href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
 
     </ul>
 </div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
+    }
+</script>

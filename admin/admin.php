@@ -1,3 +1,16 @@
+<?php
+session_start();
+
+// Pastikan pengguna sudah login
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php"); // Redirect ke halaman login
+    exit();
+}
+
+// Ambil username dari sesi
+$username = $_SESSION['username'];
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -73,7 +86,7 @@
 </head>
 
 <body class="bg-light">
-    <!-- Navbar di bagian atas -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-dongker navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="admin.php">
@@ -84,10 +97,16 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="admin.php">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Profil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Bantuan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="logout.php">Logout</a></li>
+                    <!-- Dropdown untuk Profil dan Logout -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i><?= htmlspecialchars($username); ?>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person me-2"></i>Profil</a></li>
+                            <li><a class="dropdown-item" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -101,7 +120,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="sidebar-trigger"></div>
-            <?php include"sidebar.php"; ?>
+            <?php include "sidebar.php"; ?>
 
             <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
@@ -127,7 +146,7 @@
                                         <div class="card-body">
                                             <h5 class="card-title fw-bold">Transaksi Pelanggaran</h5>
                                             <p class="card-text">Lihat daftar seluruh pelanggaran yang terjadi.</p>
-                                            <a href="transaksiPelanggaran.html" class="btn btn-primary">Lihat Pelanggaran</a>
+                                            <a href="transaksiPelanggaran.php" class="btn btn-primary">Lihat Pelanggaran</a>
                                         </div>
                                     </div>
                                 </div>
