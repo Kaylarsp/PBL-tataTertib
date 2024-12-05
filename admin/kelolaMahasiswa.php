@@ -28,6 +28,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit') {
     $kelas = $_POST['kelas'];
     $status_akademik = $_POST['status_akademik'];
 
+
     $sql = "UPDATE mahasiswa SET nama = ?, nim = ?, kelas = ?, status_akademik = ? WHERE id_mahasiswa = ?";
     $stmt = sqlsrv_prepare($conn, $sql, array($nama, $nim, $kelas, $status_akademik, $id_mahasiswa));
 
@@ -134,14 +135,6 @@ if ($stmt === false) {
             background-color: #003080;
         }
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 11;
-        }
-
         .full-height {
             height: 100vh;
         }
@@ -156,25 +149,7 @@ if ($stmt === false) {
 </head>
 
 <body class="bg-light">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-dongker navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="admin.php">
-                <i class="bi bi-mortarboard-fill me-2"></i>Polinema
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="admin.php">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Profil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Laporan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Bantuan</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?php include "navbar.php"; ?>
 
     <!-- Ikon Menu -->
     <div class="menu-icon" onclick="toggleSidebar()">
@@ -186,27 +161,38 @@ if ($stmt === false) {
 
     <!-- Konten Utama -->
     <div class="d-flex align-items-center justify-content-center full-height">
-        <div class="card cardContent shadow p-4" style="width: 100%; max-width: 850px;">
+        <div class="card cardContent shadow p-4" style="width: 100%; max-width: 850px; margin-top: 90px;">
             <div class="text-center mb-4">
                 <h1 class="display-5 fw-bold text-dongker">Kelola Mahasiswa</h1>
-                <button class="btn btn-primary mt-2" onclick="tambahPengguna()">Tambah Pengguna</button>
+                <button class="btn btn-primary mt-2" onclick="tambahPenggunaInline()">Tambah Pengguna</button>
             </div>
             <div class="card-body">
                 <div id="formTambahPengguna" style="display:none;">
-                    <input type="text" id="tambahNama" class="form-control" placeholder="Nama Mahasiswa">
-                    <input type="text" id="tambahNim" class="form-control mt-2" placeholder="NIM Mahasiswa">
-                    <select id="tambahKelas" class="form-select mt-2">
-                        <option value="" disabled selected>Pilih Kelas</option>
-                        <?php foreach ($kelas_options as $kelas) { ?>
-                            <option value="<?= $kelas['id_kelas'] ?>"><?= $kelas['nama_kelas'] ?></option>
-                        <?php } ?>
-                    </select>
-                    <input type="text" id="tambahStatus" class="form-control mt-2" placeholder="Status Akademik">
-                    <button class="btn btn-success mt-2" onclick="simpanTambahPengguna()">Simpan</button>
-                    <button class="btn btn-danger mt-2" onclick="batalTambahPengguna()">Batal</button>
+                    <div class="card p-3 mt-3 shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">Tambah Pengguna</h5>
+                            <input type="text" id="tambahNama" class="form-control mt-2" placeholder="Nama Mahasiswa">
+                            <input type="text" id="tambahNim" class="form-control mt-2" placeholder="NIM Mahasiswa">
+                            <select id="tambahKelas" class="form-select form-select-sm">
+                                <option value="" disabled selected>Kelas</option>
+                                ${kelasOptions.map(option => `
+                                <option value="${option.id_kelas}">${option.nama_kelas}</option>
+                                `).join('')}
+                            </select>
+
+                            <select id="tambahStatus" class="form-select form-select-sm">
+                                <option value="" disabled selected>Status</option>
+                                <option value="Aktif">Aktif</option>
+                                <option value="Cuti">Cuti</option>
+                                <option value="Tidak Aktif">Tidak Aktif</option>
+                            </select>
+                            <button class="btn btn-success mt-3" onclick="simpanTambahPenggunaInline()">Simpan</button>
+                            <button class="btn btn-danger mt-3" onclick="batalTambahPenggunaInline()">Batal</button>
+                        </div>
+                    </div>
                 </div>
-                <table class="table table-striped mt-4">
-                    <thead>
+                <table class="table table-bordered table-hover mt-4">
+                    <thead class="table-dark">
                         <tr>
                             <th>No</th>
                             <th>NIM</th>
@@ -226,7 +212,7 @@ if ($stmt === false) {
                                 <td><?= htmlspecialchars($row['nama_kelas']) ?></td>
                                 <td><?= htmlspecialchars($row['status_akademik']) ?></td>
                                 <td>
-                                    <button class="btn btn-warning btn-sm" onclick="editPengguna(<?= $row['id_mahasiswa'] ?>)">Edit</button>
+                                    <button class="btn btn-warning btn-sm" onclick="editPenggunaInline(<?= $row['id_mahasiswa'] ?>)">Edit</button>
                                     <button class="btn btn-danger btn-sm" onclick="hapusPengguna(<?= $row['id_mahasiswa'] ?>)">Hapus</button>
                                 </td>
                             </tr>
@@ -238,68 +224,42 @@ if ($stmt === false) {
     </div>
 
     <script>
-        function tambahPengguna() {
-            document.getElementById('formTambahPengguna').style.display = 'block';
-        }
-
-        function simpanTambahPengguna() {
-            const nama = document.getElementById('tambahNama').value;
-            const nim = document.getElementById('tambahNim').value;
-            const kelas = document.getElementById('tambahKelas').value;
-            const status = document.getElementById('tambahStatus').value;
-
-            if (nama && nim && kelas && status) {
-                const formData = new FormData();
-                formData.append('action', 'add');
-                formData.append('nama', nama);
-                formData.append('nim', nim);
-                formData.append('kelas', kelas);
-                formData.append('status_akademik', status);
-
-                fetch('', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.text())
-                    .then(data => {
-                        alert(data);
-                        location.reload();
-                    });
-            } else {
-                alert("Semua data harus diisi!");
-            }
-        }
-
-        function editPengguna(id) {
+        function editPenggunaInline(id) {
             const row = document.getElementById(`row-${id}`);
             const nama = row.cells[2].textContent.trim();
             const nim = row.cells[1].textContent.trim();
             const kelas = row.cells[3].textContent.trim();
             const status = row.cells[4].textContent.trim();
 
-            const formHtml = `
-                <td colspan="6">
-                    <input type="text" id="editNama" class="form-control" value="${nama}">
-                    <input type="text" id="editNim" class="form-control mt-2" value="${nim}">
-                    <select id="editKelas" class="form-select mt-2">
+            row.innerHTML = `
+                <td>${row.cells[0].textContent}</td>
+                <td><input type="text" class="form-control form-control-sm" id="editNim-${id}" value="${nim}"></td>
+                <td><input type="text" class="form-control form-control-sm" id="editNama-${id}" value="${nama}"></td>
+                <td>
+                    <select class="form-select form-select-sm" id="editKelas-${id}">
                         ${kelasOptions.map(option => `
                             <option value="${option.id_kelas}" ${option.nama_kelas === kelas ? 'selected' : ''}>
                                 ${option.nama_kelas}
                             </option>`).join('')}
                     </select>
-                    <input type="text" id="editStatus" class="form-control mt-2" value="${status}">
-                    <button class="btn btn-success mt-2" onclick="simpanEditPengguna(${id})">Simpan</button>
-                    <button class="btn btn-danger mt-2" onclick="batalEditPengguna(${id})">Batal</button>
+                </td>
+                    <select class="form-select form-select-sm" id="editStatus-${id}">
+                        <option value="Aktif" ${status === 'Aktif' ? 'selected' : ''}>Aktif</option>
+                        <option value="Tidak Aktif" ${status === 'Tidak Aktif' ? 'selected' : ''}>Tidak Aktif</option>
+                        <option value="Cuti" ${status === 'Cuti' ? 'selected' : ''}>Cuti</option>
+                    </select>
+                <td>
+                    <button class="btn btn-success btn-sm me-1" onclick="simpanEditPenggunaInline(${id})"><i class="bi bi-check-lg"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="batalEditPenggunaInline()"><i class="bi bi-x-lg"></i></button>
                 </td>
             `;
-            row.innerHTML = formHtml;
         }
 
-        function simpanEditPengguna(id) {
-            const nama = document.getElementById('editNama').value;
-            const nim = document.getElementById('editNim').value;
-            const kelas = document.getElementById('editKelas').value;
-            const status = document.getElementById('editStatus').value;
+        function simpanEditPenggunaInline(id) {
+            const nim = document.getElementById(`editNim-${id}`).value;
+            const nama = document.getElementById(`editNama-${id}`).value;
+            const kelas = document.getElementById(`editKelas-${id}`).value;
+            const status = document.getElementById(`editStatus-${id}`).value;
 
             if (nama && nim && kelas && status) {
                 const formData = new FormData();
@@ -324,7 +284,78 @@ if ($stmt === false) {
             }
         }
 
-        function batalEditPengguna(id) {
+        function tambahPenggunaInline() {
+            const tbody = document.querySelector('tbody');
+            const currentRowCount = tbody.rows.length; // Mengambil jumlah baris yang sudah ada di dalam tabel
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${currentRowCount + 1}</td> <!-- Nomor urut -->
+                <td><input type="text" class="form-control form-control-sm" id="tambahNim" placeholder="Masukkan NIM"></td>
+                <td><input type="text" class="form-control form-control-sm" id="tambahNama" placeholder="Masukkan Nama"></td>
+                <td>
+                    <select class="form-select form-select-sm" id="tambahKelas">
+                        <option value="" disabled selected>Kelas</option>
+                        ${kelasOptions.map(option => `
+                            <option value="${option.id_kelas}">${option.nama_kelas}</option>
+                        `).join('')}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select form-select-sm" id="tambahStatus"> <!-- Dropdown untuk Status Akademik -->
+                        <option value="" disabled selected>Status</option>
+                        <option value="Aktif">Aktif</option>
+                        <option value="Cuti">Cuti</option>
+                        <option value="Tidak Aktif">Tidak Aktif</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="btn btn-success btn-sm me-1" onclick="simpanTambahPenggunaInline()"><i class="bi bi-check-lg"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="batalTambahPenggunaInline()"><i class="bi bi-x-lg"></i></button>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+        }
+
+        function simpanTambahPenggunaInline() {
+            const nim = document.getElementById('tambahNim').value.trim();
+            const nama = document.getElementById('tambahNama').value.trim();
+            const kelas = document.getElementById('tambahKelas').value;
+            const status = document.getElementById('tambahStatus').value;
+
+            console.log({
+                nim,
+                nama,
+                kelas,
+                status
+            }); // Debugging
+
+            if (nim && nama && kelas && status) {
+                const formData = new FormData();
+                formData.append('action', 'add');
+                formData.append('nama', nama);
+                formData.append('nim', nim);
+                formData.append('kelas', kelas);
+                formData.append('status_akademik', status);
+
+                fetch('', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        location.reload();
+                    });
+            } else {
+                alert("Semua data harus diisi!");
+            }
+        }
+
+        function batalEditPenggunaInline() {
+            location.reload();
+        }
+
+        function batalTambahPenggunaInline() {
             location.reload();
         }
 

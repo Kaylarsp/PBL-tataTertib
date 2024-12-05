@@ -55,14 +55,6 @@
             background-color: #003080;
         }
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 11;
-        }
-
         .full-height {
             height: 100vh;
         }
@@ -74,25 +66,8 @@
 </head>
 
 <body class="bg-light">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-dongker navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="admin.php">
-                <i class="bi bi-mortarboard-fill me-2"></i>Polinema
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="admin.php">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Profil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Laporan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Bantuan</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+
+<?php include "navbar.php"; ?>
 
     <!-- Ikon Menu -->
     <div class="menu-icon" onclick="toggleSidebar()">
