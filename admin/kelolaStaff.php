@@ -16,8 +16,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'add') {
     }
 
     // Setelah data staff berhasil ditambahkan, tambahkan ke tabel user
-    $username = $nama; // Gunakan NIDN sebagai username
-    $password = '123'; // Hash NIDN untuk password awal
+    $username = $nama;
+    $password = '123';
     $role = 2; // Tentukan role untuk user staff
 
     $sqlUser = "INSERT INTO [user] (username, password, role) VALUES (?, ?, ?)";
