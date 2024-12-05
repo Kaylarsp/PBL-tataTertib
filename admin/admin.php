@@ -115,7 +115,7 @@ $username = $_SESSION['username'];
                                         <div class="card-body">
                                             <h5 class="card-title fw-bold">Transaksi Pelanggaran</h5>
                                             <p class="card-text">Lihat daftar seluruh pelanggaran yang terjadi.</p>
-                                            <a href="transaksiPelanggaran.php" class="btn btn-primary">Lihat Pelanggaran</a>
+                                            <a href="lihatPelanggaran.php" class="btn btn-primary">Lihat Pelanggaran</a>
                                         </div>
                                     </div>
                                 </div>
