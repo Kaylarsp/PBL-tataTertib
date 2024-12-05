@@ -43,8 +43,8 @@
             <div class="collapse" id="dashboard-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     <li><a href="kelolaMahasiswa.php" class="link-dark rounded text-white">Mahasiswa</a></li>
-                    <li><a href="#" class="link-dark rounded text-white">Staff</a></li>
-                    <li><a href="#" class="link-dark rounded text-white">Dosen</a></li>
+                    <li><a href="kelolaStaff.php" class="link-dark rounded text-white">Staff</a></li>
+                    <li><a href="kelolaDosen.php" class="link-dark rounded text-white">Dosen</a></li>
                 </ul>
             </div>
         </li>

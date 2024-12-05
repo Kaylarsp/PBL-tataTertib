@@ -89,7 +89,7 @@
                 <div class="col-md-4 mb-4 ">
                     <div class="d-flex justify-content-center">
 
-                        <div class="card card-option shadow" onclick="location.href='staff.php'">
+                        <div class="card card-option shadow" onclick="location.href='kelolaStaff.php'">
                             <div class="card-body text-center">
                                 <i class="bi bi-briefcase-fill display-4 text-primary mb-3"></i>
                                 <h5 class="card-title fw-bold">Staff</h5>

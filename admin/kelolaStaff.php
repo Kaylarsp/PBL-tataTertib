@@ -4,21 +4,21 @@ require_once '../connection.php';
 
 if (isset($_POST['action']) && $_POST['action'] == 'add') {
     $nama = $_POST['nama'];
-    $nidn = $_POST['nidn'];
+    $nip = $_POST['nip'];
     $tgl_lahir = $_POST['tgl_lahir'];
 
-    // Tambahkan data ke tabel dosen
-    $sql = "INSERT INTO dosen (nama, nidn, tgl_lahir) VALUES (?, ?, ?)";
-    $stmt = sqlsrv_query($conn, $sql, array($nama, $nidn, $tgl_lahir));
+    // Tambahkan data ke tabel staff
+    $sql = "INSERT INTO staff (nama, nip, tgl_lahir) VALUES (?, ?, ?)";
+    $stmt = sqlsrv_query($conn, $sql, array($nama, $nip, $tgl_lahir));
 
     if (!$stmt) {
         die(print_r(sqlsrv_errors(), true));
     }
 
-    // Setelah data dosen berhasil ditambahkan, tambahkan ke tabel user
+    // Setelah data staff berhasil ditambahkan, tambahkan ke tabel user
     $username = $nama; // Gunakan NIDN sebagai username
     $password = '123'; // Hash NIDN untuk password awal
-    $role = 2; // Tentukan role untuk user dosen
+    $role = 2; // Tentukan role untuk user staff
 
     $sqlUser = "INSERT INTO [user] (username, password, role) VALUES (?, ?, ?)";
     $stmtUser = sqlsrv_query($conn, $sqlUser, array($username, $password, $role));
@@ -27,47 +27,47 @@ if (isset($_POST['action']) && $_POST['action'] == 'add') {
         die(print_r(sqlsrv_errors(), true));
     }
 
-    echo "Dosen berhasil ditambahkan";
+    echo "Staff berhasil ditambahkan";
     exit;
 }
 
-// Proses untuk mengedit dosen
+// Proses untuk mengedit staff
 if (isset($_POST['action']) && $_POST['action'] == 'edit') {
-    $id_dosen = $_POST['id'];
+    $id_staff = $_POST['id'];
     $nama = $_POST['nama'];
-    $nidn = $_POST['nidn'];
+    $nip = $_POST['nip'];
     $tgl_lahir = $_POST['tgl_lahir'];
 
-    $sql = "UPDATE dosen SET nama = ?, nidn = ?, tgl_lahir = ? WHERE id_dosen = ?";
-    $stmt = sqlsrv_prepare($conn, $sql, array($nama, $nidn, $tgl_lahir, $id_dosen));
+    $sql = "UPDATE staff SET nama = ?, nip = ?, tgl_lahir = ? WHERE id_staff = ?";
+    $stmt = sqlsrv_prepare($conn, $sql, array($nama, $nip, $tgl_lahir, $id_staff));
 
     if (sqlsrv_execute($stmt)) {
-        echo "Dosen berhasil diubah.";
+        echo "Staff berhasil diubah.";
     } else {
-        echo "Gagal mengubah dosen.";
+        echo "Gagal mengubah staff.";
     }
     exit;
 }
 
 if (isset($_POST['action']) && $_POST['action'] == 'delete') {
-    $id_dosen = $_POST['id'];
+    $id_staff = $_POST['id'];
 
-    // Ambil id_user dari tabel dosen
-    $sqlSelect = "SELECT id_user FROM dosen WHERE id_dosen = ?";
-    $stmtSelect = sqlsrv_query($conn, $sqlSelect, array($id_dosen));
+    // Ambil id_user dari tabel staff
+    $sqlSelect = "SELECT id_user FROM staff WHERE id_staff = ?";
+    $stmtSelect = sqlsrv_query($conn, $sqlSelect, array($id_staff));
 
     if ($stmtSelect === false || !($row = sqlsrv_fetch_array($stmtSelect, SQLSRV_FETCH_ASSOC))) {
-        echo "Data dosen tidak ditemukan.";
+        echo "Data staff tidak ditemukan.";
         exit;
     }
 
     $id_user = $row['id_user'];
 
-    // Hapus data dari tabel dosen
-    $sqlDeleteDosen = "DELETE FROM dosen WHERE id_dosen = ?";
-    $stmtDeleteDosen = sqlsrv_query($conn, $sqlDeleteDosen, array($id_dosen));
+    // Hapus data dari tabel staff
+    $sqlDeleteStaff = "DELETE FROM staff WHERE id_staff = ?";
+    $stmtDeleteStaff = sqlsrv_query($conn, $sqlDeleteStaff, array($id_staff));
 
-    if (!$stmtDeleteDosen) {
+    if (!$stmtDeleteStaff) {
         die(print_r(sqlsrv_errors(), true));
     }
 
@@ -79,12 +79,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete') {
         die(print_r(sqlsrv_errors(), true));
     }
 
-    echo "Data dosen berhasil dihapus.";
+    echo "Data staff berhasil dihapus.";
     exit;
 }
 
-// Query untuk mengambil data dosen
-$sql = "SELECT id_dosen, nama, nidn, tgl_lahir FROM dosen";
+// Query untuk mengambil data staff
+$sql = "SELECT id_staff, nama, nip, tgl_lahir FROM staff";
 $stmt = sqlsrv_query($conn, $sql);
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
@@ -97,7 +97,7 @@ if ($stmt === false) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Dosen</title>
+    <title>Kelola Staff</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .bg-dongker {
@@ -180,16 +180,16 @@ if ($stmt === false) {
     <div class="d-flex align-items-center justify-content-center full-height">
         <div class="card cardContent shadow p-4" style="width: 100%; max-width: 850px;">
             <div class="text-center mb-4">
-                <h1 class="display-5 fw-bold text-dongker">Kelola Dosen</h1>
-                <button class="btn btn-primary mt-2" onclick="tambahDosen()">Tambah Dosen</button>
+                <h1 class="display-5 fw-bold text-dongker">Kelola Staff</h1>
+                <button class="btn btn-primary mt-2" onclick="tambahStaff()">Tambah Staff</button>
             </div>
             <div class="card-body">
-                <div id="formTambahDosen" style="display:none;">
-                    <input type="text" id="tambahNama" class="form-control" placeholder="Nama Dosen">
-                    <input type="text" id="tambahNidn" class="form-control mt-2" placeholder="NIDN Dosen">
+                <div id="formTambahStaff" style="display:none;">
+                    <input type="text" id="tambahNama" class="form-control" placeholder="Nama Staff">
+                    <input type="text" id="tambahNidn" class="form-control mt-2" placeholder="NIDN Staff">
                     <input type="date" id="tambahTglLahir" class="form-control mt-2" placeholder="Tanggal Lahir">
-                    <button class="btn btn-success mt-2" onclick="simpanTambahDosen()">Simpan</button>
-                    <button class="btn btn-danger mt-2" onclick="batalTambahDosen()">Batal</button>
+                    <button class="btn btn-success mt-2" onclick="simpanTambahStaff()">Simpan</button>
+                    <button class="btn btn-danger mt-2" onclick="batalTambahStaff()">Batal</button>
                 </div>
                 <table class="table table-striped mt-4">
                     <thead>
@@ -204,14 +204,14 @@ if ($stmt === false) {
                     <tbody>
                         <?php $no = 1;
                         while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) { ?>
-                            <tr id="row-<?= $row['id_dosen'] ?>">
+                            <tr id="row-<?= $row['id_staff'] ?>">
                                 <td><?= $no++ ?></td>
-                                <td><?= htmlspecialchars($row['nidn']) ?></td>
+                                <td><?= htmlspecialchars($row['nip']) ?></td>
                                 <td><?= htmlspecialchars($row['nama']) ?></td>
                                 <td><?= htmlspecialchars($row['tgl_lahir']->format('Y-m-d')) ?></td>
                                 <td>
-                                    <button class="btn btn-warning btn-sm" onclick="editDosen(<?= $row['id_dosen'] ?>)">Edit</button>
-                                    <button class="btn btn-danger btn-sm" onclick="hapusDosen(<?= $row['id_dosen'] ?>)">Hapus</button>
+                                    <button class="btn btn-warning btn-sm" onclick="editStaff(<?= $row['id_staff'] ?>)">Edit</button>
+                                    <button class="btn btn-danger btn-sm" onclick="hapusStaff(<?= $row['id_staff'] ?>)">Hapus</button>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -222,20 +222,20 @@ if ($stmt === false) {
     </div>
 
     <script>
-        function tambahDosen() {
-            document.getElementById('formTambahDosen').style.display = 'block';
+        function tambahStaff() {
+            document.getElementById('formTambahStaff').style.display = 'block';
         }
 
-        function simpanTambahDosen() {
+        function simpanTambahStaff() {
             const nama = document.getElementById('tambahNama').value;
-            const nidn = document.getElementById('tambahNidn').value;
+            const nip = document.getElementById('tambahNidn').value;
             const tglLahir = document.getElementById('tambahTglLahir').value;
 
-            if (nama && nidn && tglLahir) {
+            if (nama && nip && tglLahir) {
                 const formData = new FormData();
                 formData.append('action', 'add');
                 formData.append('nama', nama);
-                formData.append('nidn', nidn);
+                formData.append('nip', nip);
                 formData.append('tgl_lahir', tglLahir);
 
                 fetch('', {
@@ -252,32 +252,32 @@ if ($stmt === false) {
             }
         }
 
-        function editDosen(id) {
+        function editStaff(id) {
             const row = document.getElementById(`row-${id}`);
             const nama = row.cells[2].innerText;
-            const nidn = row.cells[1].innerText;
+            const nip = row.cells[1].innerText;
             const tglLahir = row.cells[3].innerText;
 
             const form = `
                 <input type="text" id="editNama" class="form-control" value="${nama}">
-                <input type="text" id="editNidn" class="form-control mt-2" value="${nidn}">
+                <input type="text" id="editNidn" class="form-control mt-2" value="${nip}">
                 <input type="date" id="editTglLahir" class="form-control mt-2" value="${tglLahir}">
-                <button class="btn btn-warning mt-2" onclick="simpanEditDosen(${id})">Simpan</button>
-                <button class="btn btn-danger mt-2" onclick="batalEditDosen(${id})">Batal</button>
+                <button class="btn btn-warning mt-2" onclick="simpanEditStaff(${id})">Simpan</button>
+                <button class="btn btn-danger mt-2" onclick="batalEditStaff(${id})">Batal</button>
             `;
             row.cells[2].innerHTML = form;
         }
 
-        function simpanEditDosen(id) {
+        function simpanEditStaff(id) {
             const nama = document.getElementById('editNama').value;
-            const nidn = document.getElementById('editNidn').value;
+            const nip = document.getElementById('editNidn').value;
             const tglLahir = document.getElementById('editTglLahir').value;
 
             const formData = new FormData();
             formData.append('action', 'edit');
             formData.append('id', id);
             formData.append('nama', nama);
-            formData.append('nidn', nidn);
+            formData.append('nip', nip);
             formData.append('tgl_lahir', tglLahir);
 
             fetch('', {
@@ -291,7 +291,7 @@ if ($stmt === false) {
                 });
         }
 
-        function hapusDosen(id) {
+        function hapusStaff(id) {
             const formData = new FormData();
             formData.append('action', 'delete');
             formData.append('id', id);
@@ -307,11 +307,11 @@ if ($stmt === false) {
                 });
         }
 
-        function batalTambahDosen() {
-            document.getElementById('formTambahDosen').style.display = 'none';
+        function batalTambahStaff() {
+            document.getElementById('formTambahStaff').style.display = 'none';
         }
 
-        function batalEditDosen(id) {
+        function batalEditStaff(id) {
             const row = document.getElementById(`row-${id}`);
             row.cells[2].innerHTML = row.cells[2].innerText;
             row.cells[3].innerHTML = row.cells[3].innerText;
