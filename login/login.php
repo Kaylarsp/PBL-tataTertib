@@ -124,13 +124,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     dataType: 'json',
                     success: function (response) {
                         if (response.status === 'success') {
-                            if (response.role == 1001) {
+                            if (response.role == 1) {
                                 window.location.href = '../admin/admin.php';
-                            } else if (response.role == 1002) {
+                            } else if (response.role == 2) {
                                 window.location.href = '../dosen/dosen.php';
-                            } else if (response.role == 1003) {
+                            } else if (response.role == 3) {
                                 window.location.href = '../staff/staff.php';
-                            } else if (response.role == 1004) {
+                            } else if (response.role == 4) {
                                 window.location.href = '../mahasiswa/mahasiswa.php';
                             }
                         } else {
