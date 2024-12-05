@@ -1,7 +1,7 @@
 <?php
 $serverName = "LAPTOP-CCV6QK6I";
 
-$connectionInfo = array("Database"=>"PBL");
+$connectionInfo = array("Database"=>"tatib");
 $conn = sqlsrv_connect($serverName, $connectionInfo);
 
 // if ($conn) {
