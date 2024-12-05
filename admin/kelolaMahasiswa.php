@@ -9,10 +9,28 @@ if (isset($_POST['action']) && $_POST['action'] == 'add') {
     $kelas = $_POST['kelas'];
     $status_akademik = $_POST['status_akademik'];
 
+    // Menambahkan data ke tabel mahasiswa
     $sql = "INSERT INTO mahasiswa (nama, nim, kelas, status_akademik) VALUES (?, ?, ?, ?)";
     $stmt = sqlsrv_query($conn, $sql, array($nama, $nim, $kelas, $status_akademik));
 
     if (!$stmt) {
+        die(print_r(sqlsrv_errors(), true));
+    }
+
+    // Ambil ID mahasiswa yang baru ditambahkan
+    $sql_last_insert_id = "SELECT SCOPE_IDENTITY() AS id_mahasiswa";
+    $stmt_last_id = sqlsrv_query($conn, $sql_last_insert_id);
+    $row = sqlsrv_fetch_array($stmt_last_id, SQLSRV_FETCH_ASSOC);
+    $id_mahasiswa = $row['id_mahasiswa'];
+
+    // Tambahkan data ke tabel user
+    $sql_user = "INSERT INTO user (id_user, username, password, role) VALUES (?, ?, ?, ?)";
+    $username = $nama;
+    $password = '123'; // Password default, bisa diubah kemudian
+    $role = 4; // Role default
+    $stmt_user = sqlsrv_query($conn, $sql_user, array($id_mahasiswa, $username, $password, $role));
+
+    if (!$stmt_user) {
         die(print_r(sqlsrv_errors(), true));
     }
 
@@ -286,7 +304,7 @@ if ($stmt === false) {
 
         function tambahPenggunaInline() {
             const tbody = document.querySelector('tbody');
-            const currentRowCount = tbody.rows.length; // Mengambil jumlah baris yang sudah ada di dalam tabel
+            const currentRowCount = tbody.rows.length;
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
                 <td>${currentRowCount + 1}</td> <!-- Nomor urut -->
@@ -317,8 +335,8 @@ if ($stmt === false) {
         }
 
         function simpanTambahPenggunaInline() {
-            const nim = document.getElementById('tambahNim').value.trim();
-            const nama = document.getElementById('tambahNama').value.trim();
+            const nim = document.getElementById('tambahNim').value;
+            const nama = document.getElementById('tambahNama').value;
             const kelas = document.getElementById('tambahKelas').value;
             const status = document.getElementById('tambahStatus').value;
 
@@ -375,10 +393,6 @@ if ($stmt === false) {
                         document.getElementById(`row-${id}`).remove();
                     });
             }
-        }
-
-        function batalTambahPengguna() {
-            document.getElementById('formTambahPengguna').style.display = 'none';
         }
     </script>
 
