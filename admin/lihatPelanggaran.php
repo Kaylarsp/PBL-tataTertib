@@ -23,11 +23,11 @@ if (isset($_GET['action']) && $_GET['action'] == 'verify' && isset($_GET['id_lap
 // Query untuk mengambil data laporan
 $sql = "SELECT
             l.id_laporan,
-            t.tingkat,
             up.username AS nama_pelapor,
             ut.username AS nama_terlapor,
             m.nim AS nim_terlapor,
             p.nama_pelanggaran,
+            t.tingkat,
             l.verify_by,
             l.verify_at
         FROM laporan l
@@ -79,6 +79,12 @@ if ($stmt === false) {
 
         .cardContent {
             margin-left: 70px;
+            margin-top: 70px;
+            /* Jarak dari navbar */
+            max-height: calc(100vh - 150px);
+            /* Batas tinggi untuk scrolling */
+            overflow-y: auto;
+            /* Tambahkan scrolling vertikal */
         }
 
         .menu-icon {
@@ -110,17 +116,13 @@ if ($stmt === false) {
             z-index: 11;
         }
 
-        .full-height {
-            height: 80vh;
+        .content-margin {
+            margin-top: 10px;
+            /* Jarak dari elemen atas */
         }
 
         .text-dongker {
             color: #001f54;
-        }
-
-        .content-margin {
-            margin-top: 10px;
-            /* Sesuaikan jarak ini */
         }
     </style>
 </head>
@@ -138,7 +140,7 @@ if ($stmt === false) {
 
     <div class="container content-margin">
         <!-- Konten Utama -->
-        <div class="d-flex align-items-center justify-content-center full-height">
+        <div class="d-flex align-items-center justify-content-center">
             <div class="card cardContent shadow p-4" style="width: 90%;">
                 <div class="text-center mb-4">
                     <h1 class="display-5 fw-bold text-dongker">Lihat Pelanggaran</h1>
@@ -156,11 +158,11 @@ if ($stmt === false) {
                         <thead class="table-dark">
                             <tr>
                                 <th>No</th>
-                                <th>Tingkat</th>
                                 <th>Pelapor</th>
                                 <th>Terlapor</th>
-                                <th>NIM Terlapor</th>
+                                <th>NIM</th>
                                 <th>Pelanggaran</th>
+                                <th>Tingkat</th>
                                 <th>Verifikasi</th>
                             </tr>
                         </thead>
@@ -170,20 +172,37 @@ if ($stmt === false) {
                             while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                 echo "<tr>
                                 <td>{$no}</td>
-                                <td>{$row['tingkat']}</td>
                                 <td>{$row['nama_pelapor']}</td>
                                 <td>{$row['nama_terlapor']}</td>
                                 <td>{$row['nim_terlapor']}</td>
-                                <td>{$row['nama_pelanggaran']}</td>
+                                <td>
+                                    <button class='btn btn-link btn-sm text-decoration-none' data-bs-toggle='modal' data-bs-target='#modal{$row['id_laporan']}'>Detail</button>
+
+                                    <!-- Modal -->
+                                    <div class='modal fade' id='modal{$row['id_laporan']}' tabindex='-1' aria-labelledby='modalLabel{$row['id_laporan']}' aria-hidden='true'>
+                                        <div class='modal-dialog'>
+                                            <div class='modal-content'>
+                                                <div class='modal-header'>
+                                                    <h5 class='modal-title' id='modalLabel{$row['id_laporan']}'>Detail Pelanggaran</h5>
+                                                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                                                </div>
+                                                <div class='modal-body'>
+                                                    {$row['nama_pelanggaran']}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{$row['tingkat']}</td>
                                 <td>";
                                 if ($row['verify_by'] && $row['verify_at']) {
                                     $formattedDate = $row['verify_at']->format('Y-m-d H:i:s');
-                                    echo "Verified by {$row['verify_by']} at {$formattedDate}";
+                                    echo "Verified";
                                 } else {
                                     echo "<a href='?action=verify&id_laporan={$row['id_laporan']}' class='btn btn-success btn-sm'>Verifikasi</a>";
                                 }
                                 echo "</td>
-                                    </tr>";
+                                </tr>";
                                 $no++;
                             }
                             ?>
