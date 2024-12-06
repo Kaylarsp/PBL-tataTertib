@@ -119,7 +119,8 @@ if ($stmt === false) {
         }
 
         .content-margin {
-            margin-top: 10px; /* Sesuaikan jarak ini */
+            margin-top: 10px;
+            /* Sesuaikan jarak ini */
         }
     </style>
 </head>
@@ -168,20 +169,21 @@ if ($stmt === false) {
                             $no = 1;
                             while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                 echo "<tr>
-                            <td>{$no}</td>
-                            <td>{$row['tingkat']}</td>
-                            <td>{$row['pelapor']}</td>
-                            <td>{$row['pelaku']}</td>
-                            <td>{$row['nim']}</td>
-                            <td>{$row['nama_pelanggaran']}</td>
-                            <td>";
+                                <td>{$no}</td>
+                                <td>{$row['tingkat']}</td>
+                                <td>{$row['nama_pelapor']}</td>
+                                <td>{$row['nama_terlapor']}</td>
+                                <td>{$row['nim_terlapor']}</td>
+                                <td>{$row['nama_pelanggaran']}</td>
+                                <td>";
                                 if ($row['verify_by'] && $row['verify_at']) {
-                                    echo "Verified by {$row['verify_by']} at {$row['verify_at']}";
+                                    $formattedDate = $row['verify_at']->format('Y-m-d H:i:s');
+                                    echo "Verified by {$row['verify_by']} at {$formattedDate}";
                                 } else {
                                     echo "<a href='?action=verify&id_laporan={$row['id_laporan']}' class='btn btn-success btn-sm'>Verifikasi</a>";
                                 }
                                 echo "</td>
-                        </tr>";
+                                    </tr>";
                                 $no++;
                             }
                             ?>

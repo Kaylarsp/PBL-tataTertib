@@ -1,16 +1,3 @@
-<?php
-session_start();
-
-// Pastikan pengguna sudah login
-if (!isset($_SESSION['username'])) {
-    header("Location: login.php"); // Redirect ke halaman login
-    exit();
-}
-
-// Ambil username dari sesi
-$username = $_SESSION['username'];
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 
@@ -113,7 +100,7 @@ $username = $_SESSION['username'];
                                 <div class="col-md-4">
                                     <div class="card text-center shadow-sm content-box">
                                         <div class="card-body">
-                                            <h5 class="card-title fw-bold">Transaksi Pelanggaran</h5>
+                                            <h5 class="card-title fw-bold">Lihat Pelanggaran</h5>
                                             <p class="card-text">Lihat daftar seluruh pelanggaran yang terjadi.</p>
                                             <a href="lihatPelanggaran.php" class="btn btn-primary">Lihat Pelanggaran</a>
                                         </div>
