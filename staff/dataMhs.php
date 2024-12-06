@@ -121,25 +121,8 @@ if ($stmt === false) {
 </head>
 
 <body class="bg-light">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-dongker navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="staff.php">
-                <i class="bi bi-mortarboard-fill me-2"></i>Polinema
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="staff.php">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Profil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Jadwal</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Bantuan</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- Navbar di bagian atas -->
+    <?php include "navbar.php"; ?>
 
     <!-- Ikon Menu -->
     <div class="menu-icon" onclick="toggleSidebar()">
@@ -156,7 +139,7 @@ if ($stmt === false) {
                     <li><a href="staff.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
                     <li><a href="dataMhs.php"><i class="bi bi-people me-2"></i>Data Mahasiswa</a></li>
                     <li><a href="laporanPelanggaran.php"><i class="bi bi-exclamation-circle me-2"></i>Laporkan Pelanggaran</a></li>
-                    <li><a href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    <li><a href="riwayatLaporan.php"><i class="bi bi-bar-chart-line me-2"></i>Memantau Pelanggaran</a></li>
                 </ul>
             </div>
 
