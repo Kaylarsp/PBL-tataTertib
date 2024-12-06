@@ -124,6 +124,16 @@ if ($stmt === false) {
         .text-dongker {
             color: #001f54;
         }
+
+        .modal-dialog {
+            margin-top: 100px;
+            /* Atur sesuai kebutuhan */
+        }
+
+        .custom-modal {
+            margin-top: 150px;
+            /* Atur sesuai kebutuhan */
+        }
     </style>
 </head>
 
@@ -180,7 +190,7 @@ if ($stmt === false) {
 
                                     <!-- Modal -->
                                     <div class='modal fade' id='modal{$row['id_laporan']}' tabindex='-1' aria-labelledby='modalLabel{$row['id_laporan']}' aria-hidden='true'>
-                                        <div class='modal-dialog'>
+                                        <div class='modal-dialog custom-modal'>
                                             <div class='modal-content'>
                                                 <div class='modal-header'>
                                                     <h5 class='modal-title' id='modalLabel{$row['id_laporan']}'>Detail Pelanggaran</h5>

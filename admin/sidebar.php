@@ -48,7 +48,7 @@
                 </ul>
             </div>
         </li>
-        <li><a href="laporan.php"><i class="bi bi-file-earmark-text me-2"></i>Laporan</a></li>
+        <li><a href="lihatPelanggaran.php"><i class="bi bi-file-earmark-text me-2"></i>Lihat Laporan</a></li>
         <li><a href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
 
     </ul>

@@ -19,18 +19,12 @@ $username = $_SESSION['username'];
         width: 100%;
         z-index: 11;
     }
-    /* Navbar z-index untuk menghindari ketumpukan */
-    .navbar {
-        z-index: 11;
-        position: relative;
-    }
-
 </style>
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg bg-dongker navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="admin.php">
+        <a class="navbar-brand" href="dosen.php">
             <i class="bi bi-mortarboard-fill me-2"></i>Polinema
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

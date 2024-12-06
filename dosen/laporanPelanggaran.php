@@ -96,12 +96,6 @@ if ($stmt === false) {
             background-color: #003080;
         }
 
-        /* Navbar z-index untuk menghindari ketumpukan */
-        .navbar {
-            z-index: 11;
-            position: relative;
-        }
-
         /* Konten utama */
         main.content {
             margin-left: 50px;
@@ -126,7 +120,6 @@ if ($stmt === false) {
     <!-- Navbar di bagian atas -->
     <?php include "navbar.php"; ?>
 
-
     <!-- Ikon Menu -->
     <div class="menu-icon" onclick="toggleSidebar()">
         <i class="bi bi-list"></i>
@@ -139,7 +132,7 @@ if ($stmt === false) {
             <div class="sidebar-trigger"></div> <!-- Hover trigger -->
             <div class="sidebar">
                 <ul class="nav flex-column">
-                <li><a href="dosen.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
+                    <li><a href="dosen.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
                     <li><a href="dataMhs.php"><i class="bi bi-people me-2"></i>Data Mahasiswa</a></li>
                     <li><a href="laporanPelanggaran.php"><i class="bi bi-exclamation-circle me-2"></i>Laporkan Pelanggaran</a></li>
                     <li><a href="riwayatLaporan.php"><i class="bi bi-bar-chart-line me-2"></i>Memantau Pelanggaran</a></li>
@@ -155,8 +148,8 @@ if ($stmt === false) {
                         </div>
                         <div class="card-body">
                             <!-- Form untuk membuat laporan pelanggaran baru -->
-                            <form action="prosesLaporan.php" method="POST">
-                                <div class="mb-3">
+                            <form action="prosesLaporan.php" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
                                     <label for="nama_pelaku" class="form-label">Nama Pelaku</label>
                                     <input type="text" class="form-control" id="nama_pelaku" name="nama_pelaku" required>
                                 </div>
@@ -181,6 +174,10 @@ if ($stmt === false) {
                                         }
                                         ?>
                                     </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Upload Gambar</label>
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="deskripsi" class="form-label">Deskripsi Pelanggaran</label>
@@ -220,6 +217,24 @@ if ($stmt === false) {
                     $('#responseMessage').html('<div class="alert alert-danger">Gagal mengirim laporan. Coba lagi.</div>');
                 }
             });
+        });
+    </script>
+
+    <script>
+        // Validasi file sebelum upload
+        document.getElementById('image').addEventListener('change', function() {
+            const file = this.files[0];
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+            if (file && !allowedTypes.includes(file.type)) {
+                alert('Hanya file JPG, PNG, atau GIF yang diizinkan!');
+                this.value = ''; // Reset input file
+            }
+
+            if (file && file.size > 2 * 1024 * 1024) {
+                alert('Ukuran file terlalu besar! Maksimal 2MB.');
+                this.value = ''; // Reset input file
+            }
         });
     </script>
 </body>
