@@ -35,7 +35,7 @@
         <li><a href="dosen.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
         <li><a href="dataMhs.php"><i class="bi bi-people me-2"></i>Data Mahasiswa</a></li>
         <li><a href="laporanPelanggaran.php"><i class="bi bi-exclamation-circle me-2"></i>Laporkan Pelanggaran</a></li>
-        <li><a href="riwayatLaporan.php"><i class="bi bi-bar-chart-line me-2"></i>Memantau Pelanggaran</a></li>
+        <li><a href="riwayatLaporan.php"><i class="bi bi-bar-chart-line me-2"></i>Riwayat Laporan</a></li>
     </ul>
 </div>
 

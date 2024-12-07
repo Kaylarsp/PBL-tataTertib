@@ -108,16 +108,8 @@ if ($stmt === false) {
             background-color: #003080;
         }
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 11;
-        }
-
         .content-margin {
-            margin-top: 10px;
+            margin-top: 50px;
             /* Jarak dari elemen atas */
         }
 
@@ -186,7 +178,7 @@ if ($stmt === false) {
                                 <td>{$row['nama_terlapor']}</td>
                                 <td>{$row['nim_terlapor']}</td>
                                 <td>
-                                    <button class='btn btn-link btn-sm text-decoration-none' data-bs-toggle='modal' data-bs-target='#modal{$row['id_laporan']}'>Detail</button>
+                                    <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#modal{$row['id_laporan']}'>Detail</button>
 
                                     <!-- Modal -->
                                     <div class='modal fade' id='modal{$row['id_laporan']}' tabindex='-1' aria-labelledby='modalLabel{$row['id_laporan']}' aria-hidden='true'>
