@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaman Admin - Buat Laporan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        /* Latar dan gaya umum */
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #003080;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Hover untuk tabel */
+        .table-hover tbody tr:hover {
+            background-color: #cce5ff;
+        }
+
+        /* Tombol utama */
+        .btn-primary {
+            background-color: #00274d;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #004080;
+        }
+
+        /* Perbaikan tabel agar lebih responsif */
+        .table-responsive {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-person-circle me-2"></i>Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-house-door me-2"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            Menu
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
+                            <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="container my-5">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <h1 class="card-title text-center mb-4">Buat Laporan</h1>
+                <h2 class="h5 mb-3 text-center">Daftar Pelanggaran yang Sudah Selesai</h2>
+                <div class="table-responsive mt-4">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>NIM</th>
+                                <th>Kelas</th>
+                                <th>Dosen</th>
+                                <th>Deskripsi Pelanggaran</th>
+                                <th>Sanksi</th>
+                                <th>Tanggal Selesai</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Contoh data untuk tabel dengan tombol Unduh Laporan -->
+                            <tr>
+                                <td>1</td>
+                                <td>Ani Rahma</td>
+                                <td>123456789</td>
+                                <td>TI-1A</td>
+                                <td>Dosen A</td>
+                                <td>Keterlambatan penyelesaian tugas</td>
+                                <td>Peringatan</td>
+                                <td>01/11/2023</td>
+                                <td>Selesai</td>
+                                <td>
+                                    <a href="generate_report.php?report_id=1" class="btn btn-primary btn-sm">Unduh Laporan</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Budi Santoso</td>
+                                <td>987654321</td>
+                                <td>TI-2B</td>
+                                <td>Dosen B</td>
+                                <td>Plagiarisme</td>
+                                <td>Pemberhentian</td>
+                                <td>15/11/2023</td>
+                                <td>Selesai</td>
+                                <td>
+                                    <a href="generate_report.php?report_id=2" class="btn btn-primary btn-sm">Unduh Laporan</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Rani Fitri</td>
+                                <td>1122334455</td>
+                                <td>TI-2A</td>
+                                <td>Dosen C</td>
+                                <td>Kecurangan ujian</td>
+                                <td>Skorsing</td>
+                                <td>01/12/2023</td>
+                                <td>Selesai</td>
+                                <td>
+                                    <a href="generate_report.php?report_id=3" class="btn btn-primary btn-sm">Unduh Laporan</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

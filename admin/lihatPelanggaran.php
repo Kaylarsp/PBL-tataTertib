@@ -1,16 +1,23 @@
 <?php
-// Memanggil koneksi database
+session_start();
 require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connect`
+
+// Pastikan sesi `id_user` aktif
+if (!isset($_SESSION['id_user'])) {
+    header('Location: login.php');
+    exit();
+}
+
+$id_user = $_SESSION['id_user']; // Ambil ID user dari sesi
 
 // Proses verifikasi jika ada request verifikasi
 if (isset($_GET['action']) && $_GET['action'] == 'verify' && isset($_GET['id_laporan'])) {
     $id_laporan = $_GET['id_laporan'];
-    $admin_id = 1; // Ganti dengan ID admin yang sedang login
     $verify_at = date("Y-m-d H:i:s");
 
     // Menggunakan prepared statement untuk update
     $sql = "UPDATE laporan SET verify_by = ?, verify_at = ? WHERE id_laporan = ?";
-    $params = [$admin_id, $verify_at, $id_laporan];
+    $params = [$id_user, $verify_at, $id_laporan];
 
     $stmt = sqlsrv_query($conn, $sql, $params);
     if ($stmt === false) {
@@ -21,13 +28,15 @@ if (isset($_GET['action']) && $_GET['action'] == 'verify' && isset($_GET['id_lap
 }
 
 // Query untuk mengambil data laporan
-$sql = "SELECT
+$sql = "
+        SELECT
             l.id_laporan,
             up.username AS nama_pelapor,
             ut.username AS nama_terlapor,
             m.nim AS nim_terlapor,
             p.nama_pelanggaran,
             t.tingkat,
+            l.bukti_filepath,
             l.verify_by,
             l.verify_at
         FROM laporan l
@@ -35,7 +44,8 @@ $sql = "SELECT
         JOIN [user] up ON l.id_pelapor = up.id_user
         JOIN [user] ut ON l.id_pelaku = ut.id_user
         JOIN mahasiswa m ON ut.id_user = m.id_user
-        JOIN pelanggaran p ON l.id_pelanggaran = p.id_pelanggaran";
+        JOIN pelanggaran p ON l.id_pelanggaran = p.id_pelanggaran
+";
 
 $stmt = sqlsrv_query($conn, $sql);
 
@@ -79,7 +89,7 @@ if ($stmt === false) {
 
         .cardContent {
             margin-left: 70px;
-            margin-top: 70px;
+            margin-top: 30px;
             /* Jarak dari navbar */
             max-height: calc(100vh - 150px);
             /* Batas tinggi untuk scrolling */
@@ -110,7 +120,6 @@ if ($stmt === false) {
 
         .content-margin {
             margin-top: 50px;
-            /* Jarak dari elemen atas */
         }
 
         .text-dongker {
@@ -164,7 +173,7 @@ if ($stmt === false) {
                                 <th>Terlapor</th>
                                 <th>NIM</th>
                                 <th>Pelanggaran</th>
-                                <th>Tingkat</th>
+                                <th>Bukti</th>
                                 <th>Verifikasi</th>
                             </tr>
                         </thead>
@@ -174,9 +183,9 @@ if ($stmt === false) {
                             while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                 echo "<tr>
                                 <td>{$no}</td>
-                                <td>{$row['nama_pelapor']}</td>
-                                <td>{$row['nama_terlapor']}</td>
-                                <td>{$row['nim_terlapor']}</td>
+                                <td>" . htmlspecialchars($row['nama_pelapor']) . "</td>
+                                <td>" . htmlspecialchars($row['nama_terlapor']) . "</td>
+                                <td>" . htmlspecialchars($row['nim_terlapor']) . "</td>
                                 <td>
                                     <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#modal{$row['id_laporan']}'>Detail</button>
 
@@ -189,19 +198,28 @@ if ($stmt === false) {
                                                     <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                                                 </div>
                                                 <div class='modal-body'>
-                                                    {$row['nama_pelanggaran']}
+                                                    <p><strong>Nama Pelanggaran:</strong> " . htmlspecialchars($row['nama_pelanggaran']) . "</p>
+                                                    <p><strong>Tingkat:</strong> " . htmlspecialchars($row['tingkat']) . "</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
-                                <td>{$row['tingkat']}</td>
+                                <td>";
+                                if (!empty($row['bukti_filepath'])) {
+                                    echo "<button class='btn btn-primary btn-sm' onclick=\"window.open('" . htmlspecialchars($row['bukti_filepath']) . "', '_blank')\">Lihat Bukti</button>";
+                                } else {
+                                    echo "<button class='btn btn-secondary btn-sm' disabled>Tidak Ada Bukti</button>";
+                                }
+                                echo "</td>
                                 <td>";
                                 if ($row['verify_by'] && $row['verify_at']) {
                                     $formattedDate = $row['verify_at']->format('Y-m-d H:i:s');
                                     echo "Verified";
                                 } else {
-                                    echo "<a href='?action=verify&id_laporan={$row['id_laporan']}' class='btn btn-success btn-sm'>Verifikasi</a>";
+                                    echo "
+                                    <a href='?action=verify&id_laporan={$row['id_laporan']}' class='btn btn-success btn-sm'>Verifikasi</a>
+                                    <a href='?action=reject&id_laporan={$row['id_laporan']}' class='btn btn-danger btn-sm' onclick=\"return confirm('Apakah Anda yakin ingin menolak laporan ini?')\">Tolak</a>";
                                 }
                                 echo "</td>
                                 </tr>";
@@ -225,6 +243,20 @@ if ($stmt === false) {
             sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
         }
     </script>
+    <?php if (isset($message)) : ?>
+        <div class="alert alert-info text-center" id="message-box">
+            <?= $message; ?>
+        </div>
+        <script>
+            // Menghilangkan pesan setelah 5 detik
+            setTimeout(() => {
+                const messageBox = document.getElementById('message-box');
+                if (messageBox) {
+                    messageBox.style.display = 'none';
+                }
+            }, 5000); // 5000 ms = 5 detik
+        </script>
+    <?php endif; ?>
 </body>
 
 </html>
