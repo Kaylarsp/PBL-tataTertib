@@ -149,20 +149,9 @@ if ($stmt === false) {
                         <div class="card-body">
                             <!-- Form untuk membuat laporan pelanggaran baru -->
                             <form action="prosesLaporan.php" method="POST" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                    <label for="nama_pelaku" class="form-label">Nama Pelaku</label>
-                                    <input type="text" class="form-control" id="nama_pelaku" name="nama_pelaku" required>
-                                </div>
                                 <div class="mb-3">
-                                    <label for="kelas" class="form-label">Kelas</label>
-                                    <select class="form-select" id="kelas" name="kelas" required>
-                                        <option value="">Pilih Kelas</option>
-                                        <?php
-                                        while ($row = sqlsrv_fetch_array($stmt_kelas, SQLSRV_FETCH_ASSOC)) {
-                                            echo "<option value='" . $row['id_kelas'] . "'>" . htmlspecialchars($row['nama_kelas']) . "</option>";
-                                        }
-                                        ?>
-                                    </select>
+                                    <label for="nim_pelaku" class="form-label">Nim Pelaku</label>
+                                    <input type="text" class="form-control" id="nim_pelaku" name="nim_pelaku" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="pelanggaran" class="form-label">Jenis Pelanggaran</label>

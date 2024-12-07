@@ -12,19 +12,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Ambil data dari form secara aman
-$nama_pelaku = isset($_POST['nama_pelaku']) ? trim($_POST['nama_pelaku']) : null;
-$id_kelas = isset($_POST['kelas']) ? trim($_POST['kelas']) : null;
+$nim_pelaku = isset($_POST['nim_pelaku']) ? trim($_POST['nim_pelaku']) : null;
 $id_pelanggaran = isset($_POST['pelanggaran']) ? trim($_POST['pelanggaran']) : null;
 $deskripsi = isset($_POST['deskripsi']) ? trim($_POST['deskripsi']) : null;
 
 // Validasi data yang diterima
-if (empty($nama_pelaku) || empty($id_kelas) || empty($id_pelanggaran) || empty($deskripsi)) {
+if (empty($nim_pelaku) || empty($id_pelanggaran) || empty($deskripsi)) {
     die("Semua data wajib diisi.");
 }
 
 // Query untuk mencari ID pelaku berdasarkan nama
-$sql_pelaku = "SELECT id_user FROM [user] WHERE username = ?";
-$stmt_pelaku = sqlsrv_query($conn, $sql_pelaku, array($nama_pelaku));
+$sql_pelaku = "SELECT id_user FROM mahasiswa WHERE nim = ?";
+$stmt_pelaku = sqlsrv_query($conn, $sql_pelaku, array($nim_pelaku));
 
 // Cek jika query berhasil dan jika ada hasil
 if ($stmt_pelaku === false) {
