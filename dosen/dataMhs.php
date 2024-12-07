@@ -1,14 +1,21 @@
 <?php
+session_start();
 // Memanggil koneksi database
 require_once '../connection.php';
 
-// Query untuk mengambil data mahasiswa
+$id_user = $_SESSION['id_user']; // ID dosen yang sedang login
+
+// Query dengan join tabel dosen, kelas, dan mahasiswa
 $sql = "
     SELECT m.nama, m.nim, k.nama_kelas, m.status_akademik
     FROM mahasiswa AS m
     INNER JOIN kelas AS k ON m.kelas = k.id_kelas
+    INNER JOIN dosen AS d ON k.id_kelas = d.id_kelas
+    WHERE d.id_user = ?
 ";
-$stmt = sqlsrv_query($conn, $sql);
+
+$params = [$id_user]; // Parameter untuk query
+$stmt = sqlsrv_query($conn, $sql, $params);
 
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
@@ -108,7 +115,6 @@ if ($stmt === false) {
 
         .card {
             margin-right: 40px;
-            margin-top: 30px;
         }
 
         .card-header {
@@ -117,6 +123,11 @@ if ($stmt === false) {
             text-align: center;
             border: none;
         }
+
+        .custom-margin-top {
+            margin-top: 90px;
+        }
+
     </style>
 </head>
 
@@ -135,17 +146,10 @@ if ($stmt === false) {
         <div class="row">
             <!-- Sidebar -->
             <div class="sidebar-trigger"></div> <!-- Hover trigger -->
-            <div class="sidebar">
-                <ul class="nav flex-column">
-                <li><a href="dosen.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
-                    <li><a href="dataMhs.php"><i class="bi bi-people me-2"></i>Data Mahasiswa</a></li>
-                    <li><a href="laporanPelanggaran.php"><i class="bi bi-exclamation-circle me-2"></i>Laporkan Pelanggaran</a></li>
-                    <li><a href="riwayatLaporan.php"><i class="bi bi-bar-chart-line me-2"></i>Memantau Pelanggaran</a></li>
-                </ul>
-            </div>
+            <?php include "sidebar.php"; ?>
 
             <!-- Konten Utama -->
-            <main class="col-md-10 ms-sm-auto px-md-4">
+            <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
                     <div class="card shadow-sm">
                         <div class="card-header">

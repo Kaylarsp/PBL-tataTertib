@@ -1,13 +1,3 @@
-<?php
-//session_start();
-
-// Cek apakah session sudah ada dan apakah role adalah dosen
-// if (!isset($_SESSION['username']) || $_SESSION['role'] !== 1002) {
-//     header("Location: ../login/login.php");
-// }
-//
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 
@@ -22,40 +12,6 @@
             background-color: #001f54 !important;
         }
 
-        /* Sidebar styling */
-        .sidebar {
-            width: 200px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -150px;
-            /* Hide sidebar initially */
-            background-color: #001f54;
-            color: white;
-            transition: all 0.3s ease;
-            overflow-y: auto;
-            z-index: 10;
-            padding-top: 90px;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px 20px;
-        }
-
-        .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-        }
-
-        /* Sidebar muncul saat hover */
-        .sidebar:hover {
-            left: 0;
-        }
-
-        /* Ikon menu tetap terlihat */
         .menu-icon {
             position: fixed;
             top: 50px;
@@ -77,12 +33,6 @@
             background-color: #003080;
         }
 
-        /* Navbar z-index untuk menghindari ketumpukan */
-        .navbar {
-            z-index: 11;
-            position: relative;
-        }
-
         /* Konten utama */
         main.content {
             margin-left: 50px;
@@ -91,7 +41,6 @@
 
         .card {
             margin-right: 40px;
-            margin-top: 30px;
         }
 
         .card-header {
@@ -99,6 +48,10 @@
             color: #001f54 !important;
             text-align: center;
             border: none;
+        }
+
+        .custom-margin-top {
+            margin-top: 90px;
         }
     </style>
 </head>
@@ -114,18 +67,10 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar di bagian kiri -->
-            <div class="sidebar-trigger"></div> <!-- Hover trigger -->
-            <div class="sidebar">
-                <ul class="nav flex-column">
-                    <li><a href="dosen.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
-                    <li><a href="dataMhs.php"><i class="bi bi-people me-2"></i>Data Mahasiswa</a></li>
-                    <li><a href="laporanPelanggaran.php"><i class="bi bi-exclamation-circle me-2"></i>Laporkan Pelanggaran</a></li>
-                    <li><a href="riwayatLaporan.php"><i class="bi bi-bar-chart-line me-2"></i>Memantau Pelanggaran</a></li>
-                </ul>
-            </div>
-
-            <main class="col-md-10 ms-sm-auto px-md-4">
+            <div class="sidebar-trigger"></div>
+            <?php include "sidebar.php"; ?>
+            
+            <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
                     <div class="card shadow-sm">
                         <div class="card-header text-center">
