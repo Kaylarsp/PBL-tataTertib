@@ -1,15 +1,38 @@
 <?php
-// Sertakan file koneksi
-include "../connection.php";
+session_start();
+require_once '../connection.php';
+
+// Pastikan sesi `id_user` aktif
+if (!isset($_SESSION['id_user'])) {
+    header('Location: login.php');
+    exit();
+}
+
+$id_user = $_SESSION['id_user']; // Ambil ID user dari sesi
 
 // Cek koneksi
 if ($conn === false) {
     die(print_r(sqlsrv_errors(), true));
 }
 
-// Query untuk mengambil data notifikasi
-$sql = "SELECT * FROM notifikasi ORDER BY sent_at DESC";
-$stmt = sqlsrv_query($conn, $sql);
+// Query untuk mengambil data laporan
+$sql = "
+    SELECT
+        l.id_laporan,
+        u.username AS pelaku,
+        t.tingkat AS tingkat,
+        p.nama_pelanggaran AS pelanggaran,
+        l.deskripsi,
+        l.bukti_filepath
+    FROM laporan AS l
+    INNER JOIN tingkat AS t ON l.id_tingkat = t.id_tingkat
+    INNER JOIN [user] AS u ON l.id_pelaku = u.id_user
+    INNER JOIN pelanggaran AS p ON l.id_pelanggaran = p.id_pelanggaran
+    WHERE l.id_pelaku = ?
+";
+
+$params = [$id_user];
+$stmt = sqlsrv_query($conn, $sql, $params);
 
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
@@ -54,12 +77,11 @@ if ($stmt === false) {
             <?php while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)): ?>
                 <div class="card shadow-sm mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Pelanggaran: <?= htmlspecialchars($row['nama']) ?></h5>
-                        <p class="card-text">Tanggal: <?= htmlspecialchars($row['sent_at']->format('Y-m-d H:i:s')) ?></p>
-                        <p class="card-text">Deskripsi: <?= htmlspecialchars($row['content']) ?></p>
+                        <h5 class="card-title">Pelanggaran: <?= htmlspecialchars($row['pelanggaran']) ?></h5>
+                        <p class="card-text">Deskripsi: <?= htmlspecialchars($row['deskripsi']) ?></p>
                         <div class="d-flex justify-content-between">
                             <button class="btn btn-success btn-sm" onclick="terimaPelanggaran()">Terima</button>
-                            <button class="btn btn-danger btn-sm" onclick="ajukanPenolakan(<?= $row['id_notifikasi'] ?>)">Ajukan Penolakan</button>
+                            <button class="btn btn-danger btn-sm" onclick="ajukanPenolakan(<?= $row['id_laporan'] ?>)">Ajukan Penolakan</button>
                         </div>
                     </div>
                 </div>

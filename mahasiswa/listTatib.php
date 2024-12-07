@@ -1,19 +1,14 @@
 <?php
 // Koneksi ke database
-$serverName = "LAPTOP-2R5AJL0O"; // Ganti dengan nama server Anda
-$connectionOptions = [
-    "Database" => "tatib", // Nama database Anda
-];
-
-$conn = sqlsrv_connect($serverName, $connectionOptions);
+require_once '../connection.php';
 
 // Periksa koneksi
 if ($conn === false) {
     die("Koneksi ke database gagal: " . print_r(sqlsrv_errors(), true));
 }
 
-// Query untuk mengambil data dari tabel dbo.pelanggaran
-$sql = "SELECT id_pelanggaran, nama_pelanggaran, tingkat FROM dbo.pelanggaran";
+// Query untuk mengambil data dari tabel pelanggaran
+$sql = "SELECT id_pelanggaran, nama_pelanggaran, id_tingkat FROM pelanggaran";
 $stmt = sqlsrv_query($conn, $sql);
 
 // Periksa apakah query berhasil
@@ -68,7 +63,7 @@ if ($stmt === false) {
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
                                 <?= htmlspecialchars($row['nama_pelanggaran']); ?>
                             </span>
-                            <span class="badge bg-primary rounded-pill">Tingkat: <?= htmlspecialchars($row['tingkat']); ?></span>
+                            <span class="badge bg-primary rounded-pill">Tingkat: <?= htmlspecialchars($row['id_tingkat']); ?></span>
                         </li>
                     <?php endwhile; ?>
                 </ul>
@@ -87,9 +82,3 @@ if ($stmt === false) {
 </body>
 
 </html>
-
-<?php
-// Tutup koneksi
-sqlsrv_free_stmt($stmt);
-sqlsrv_close($conn);
-?>
