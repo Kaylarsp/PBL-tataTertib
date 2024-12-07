@@ -1,3 +1,37 @@
+<?php
+session_start();
+require_once '../connection.php';
+
+// Pastikan sesi `id_user` aktif
+if (!isset($_SESSION['id_user'])) {
+    header('Location: login.php');
+    exit();
+}
+
+$id_user = $_SESSION['id_user']; // Ambil ID user dari sesi
+
+$sql = "
+    SELECT
+        u.username AS pelaku,
+        t.tingkat AS tingkat,
+        p.nama_pelanggaran AS pelanggaran,
+        l.deskripsi,
+        l.bukti_filepath
+    FROM laporan AS l
+    INNER JOIN tingkat AS t ON l.id_tingkat = t.id_tingkat
+    INNER JOIN [user] AS u ON l.id_pelaku = u.id_user
+    INNER JOIN pelanggaran AS p ON l.id_pelanggaran = p.id_pelanggaran
+    WHERE l.id_pelapor = ?
+";
+
+$params = [$id_user];
+$stmt = sqlsrv_query($conn, $sql, $params);
+
+if ($stmt === false) {
+    die(print_r(sqlsrv_errors(), true));
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -10,36 +44,6 @@
     <style>
         .bg-dongker {
             background-color: #001f54 !important;
-        }
-
-        .sidebar {
-            width: 200px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -150px;
-            background-color: #001f54;
-            color: white;
-            transition: all 0.3s ease;
-            overflow-y: auto;
-            z-index: 10;
-            padding-top: 90px;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px 20px;
-        }
-
-        .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-        }
-
-        .sidebar:hover {
-            left: 0;
         }
 
         .menu-icon {
@@ -63,19 +67,12 @@
             background-color: #003080;
         }
 
-        .navbar {
-            z-index: 11;
-            position: relative;
-        }
-
         main.content {
             margin-left: 50px;
         }
 
-        .table th,
-        .table td {
-            text-align: center;
-            vertical-align: middle;
+        .card {
+            margin-right: 40px;
         }
 
         .btn-primary {
@@ -86,12 +83,17 @@
         .btn-primary:hover {
             background-color: #003080;
         }
+
+        .custom-margin-top {
+            margin-top: 70px;
+        }
     </style>
 </head>
 
 <body class="bg-light">
     <!-- Navbar di bagian atas -->
     <?php include "navbar.php"; ?>
+
 
     <!-- Ikon Menu -->
     <div class="menu-icon" onclick="toggleSidebar()">
@@ -100,19 +102,9 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <div class="sidebar-trigger"></div> <!-- Hover trigger -->
-            <div class="sidebar">
-                <ul class="nav flex-column">
-                    <li><a href="staff.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
-                    <li><a href="dataMhs.php"><i class="bi bi-people me-2"></i>Data Mahasiswa</a></li>
-                    <li><a href="laporanPelanggaran.php"><i class="bi bi-exclamation-circle me-2"></i>Laporkan Pelanggaran</a></li>
-                    <li><a href="riwayatLaporan.php"><i class="bi bi-bar-chart-line me-2"></i>Memantau Pelanggaran</a></li>
-                </ul>
-            </div>
+            <?php include "sidebar.php"; ?>
 
-
-            <main class="col-md-10 ms-sm-auto px-md-4">
+            <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
                     <div class="card shadow-sm">
                         <div class="card-header text-center">
@@ -124,37 +116,60 @@
                                 <thead class="table-dark">
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama Pelapor</th>
+                                        <th>Tingkat</th>
                                         <th>Nama Terlapor</th>
+                                        <th>Deskripsi</th>
                                         <th>Jenis Pelanggaran</th>
-                                        <th>Waktu Laporan</th>
-                                        <th>Aksi</th>
+                                        <th>Bukti</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Data tabel akan dimasukkan di sini -->
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Dosen A</td>
-                                        <td>John Doe</td>
-                                        <td>Terlambat Masuk Kelas</td>
-                                        <td>2024-11-27 10:00</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm">Edit</button>
-                                            <button class="btn btn-danger btn-sm">Hapus</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Staff B</td>
-                                        <td>Jane Smith</td>
-                                        <td>Parkir Sembarangan</td>
-                                        <td>2024-11-27 09:30</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm">Edit</button>
-                                            <button class="btn btn-danger btn-sm">Hapus</button>
-                                        </td>
-                                    </tr>
+                                    <?php
+                                    $no = 1;
+                                    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) : ?>
+                                        <tr>
+                                            <td><?= $no ?></td>
+                                            <td><?= htmlspecialchars($row['tingkat']) ?></td>
+                                            <td><?= htmlspecialchars($row['pelaku']) ?></td>
+                                            <td><?= htmlspecialchars($row['deskripsi']) ?></td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalDetail<?= $no ?>">Detail</button>
+                                            </td>
+                                            <td>
+                                                <button
+                                                    class="btn btn-primary btn-sm"
+                                                    <?= empty($row['bukti_filepath']) ? 'disabled' : "onclick=\"window.open('" . htmlspecialchars($row['bukti_filepath']) . "', '_blank')\"" ?>>
+                                                    Lihat Bukti
+                                                </button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Modal untuk detail laporan -->
+                                        <div class="modal fade" id="modalDetail<?= $no ?>" tabindex="-1" aria-labelledby="modalLabel<?= $no ?>" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="modalLabel<?= $no ?>">Detail Laporan</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p><strong>Jenis Pelanggaran:</strong> <?= htmlspecialchars($row['pelanggaran']) ?></p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php
+                                        $no++;
+                                    endwhile;
+
+                                    if ($no === 1) : ?>
+                                        <tr>
+                                            <td colspan="6" class="text-center">Tidak ada laporan</td>
+                                        </tr>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>

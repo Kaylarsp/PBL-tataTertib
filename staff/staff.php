@@ -1,13 +1,3 @@
-<?php
-session_start();
-
-// Cek apakah session sudah ada dan apakah role adalah staff
-// if (!isset($_SESSION['username']) || $_SESSION['role'] !== 1002) {
-//     header("Location: ../login/login.php");
-// }
-//
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 
@@ -77,12 +67,6 @@ session_start();
             background-color: #003080;
         }
 
-        /* Navbar z-index untuk menghindari ketumpukan */
-        .navbar {
-            z-index: 11;
-            position: relative;
-        }
-
         /* Konten utama */
         main.content {
             margin-left: 50px;
@@ -91,7 +75,6 @@ session_start();
 
         .card {
             margin-right: 40px;
-            margin-top: 30px;
         }
 
         .card-header {
@@ -99,6 +82,10 @@ session_start();
             color: #001f54 !important;
             text-align: center;
             border: none;
+        }
+
+        .custom-margin-top {
+            margin-top: 90px;
         }
     </style>
 </head>
@@ -116,16 +103,9 @@ session_start();
         <div class="row">
             <!-- Sidebar di bagian kiri -->
             <div class="sidebar-trigger"></div> <!-- Hover trigger -->
-            <div class="sidebar">
-                <ul class="nav flex-column">
-                    <li><a href="staff.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
-                    <li><a href="dataMhs.php"><i class="bi bi-people me-2"></i>Data Mahasiswa</a></li>
-                    <li><a href="laporanPelanggaran.php"><i class="bi bi-exclamation-circle me-2"></i>Laporkan Pelanggaran</a></li>
-                    <li><a href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                </ul>
-            </div>
+            <?php include "sidebar.php"; ?>
 
-            <main class="col-md-10 ms-sm-auto px-md-4">
+            <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
                     <div class="card shadow-sm">
                         <div class="card-header text-center">
@@ -135,16 +115,6 @@ session_start();
                         </div>
                         <div class="card-body">
                             <section class="row justify-content-center mt-4">
-                                <!-- Card for Data Mahasiswa -->
-                                <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="card shadow">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title fw-bold">Data Mahasiswa</h5>
-                                            <p class="card-text">Kelola informasi dan perkembangan mahasiswa di sini.</p>
-                                            <a href="dataMhs.php" class="btn bg-dongker text-white">Lihat Data</a>
-                                        </div>
-                                    </div>
-                                </div>
                                 <!-- Card for Pelanggaran -->
                                 <div class="col-lg-4 col-md-6 mb-4">
                                     <div class="card shadow">
@@ -155,6 +125,17 @@ session_start();
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Card for Riwayat Pelanggaran -->
+                                <div class="col-lg-4 col-md-6 mb-4">
+                                    <div class="card shadow">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title fw-bold">Riwayat Pelanggaran</h5>
+                                            <p class="card-text">Lihat pelanggaran yang sudah dilaporkan.</p>
+                                            <a href="riwayatLaporan.php" class="btn bg-dongker text-white">Riwayat Pelanggaran</a>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </section>
                         </div>
                     </div>

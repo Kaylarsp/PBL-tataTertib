@@ -70,6 +70,10 @@ if ($stmt === false) {
         main.content {
             margin-left: 50px;
         }
+        
+        .card {
+            margin-right: 40px;
+        }
 
         .btn-primary {
             background-color: #001f54;
@@ -81,7 +85,7 @@ if ($stmt === false) {
         }
 
         .custom-margin-top {
-            margin-top: 90px;
+            margin-top: 70px;
         }
     </style>
 </head>

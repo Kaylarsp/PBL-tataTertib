@@ -41,39 +41,6 @@ if ($stmt === false) {
             color: white;
         }
 
-        /* Sidebar styling */
-        .sidebar {
-            width: 200px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -150px;
-            /* Hide sidebar initially */
-            background-color: #001f54;
-            color: white;
-            transition: all 0.3s ease;
-            overflow-y: auto;
-            z-index: 10;
-            padding-top: 90px;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px 20px;
-        }
-
-        .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-        }
-
-        /* Sidebar muncul saat hover */
-        .sidebar:hover {
-            left: 0;
-        }
-
         /* Ikon menu tetap terlihat */
         .menu-icon {
             position: fixed;
@@ -96,12 +63,6 @@ if ($stmt === false) {
             background-color: #003080;
         }
 
-        /* Navbar z-index untuk menghindari ketumpukan */
-        .navbar {
-            z-index: 11;
-            position: relative;
-        }
-
         /* Konten utama */
         main.content {
             margin-left: 50px;
@@ -110,7 +71,6 @@ if ($stmt === false) {
 
         .card {
             margin-right: 40px;
-            margin-top: 30px;
         }
 
         .card-header {
@@ -118,6 +78,10 @@ if ($stmt === false) {
             color: #001f54 !important;
             text-align: center;
             border: none;
+        }
+
+        .custom-margin-top {
+            margin-top: 90px;
         }
     </style>
 </head>
@@ -135,18 +99,11 @@ if ($stmt === false) {
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div class="sidebar-trigger"></div> <!-- Hover trigger -->
-            <div class="sidebar">
-                <ul class="nav flex-column">
-                    <li><a href="dosen.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
-                    <li><a href="dataMhs.php"><i class="bi bi-people me-2"></i>Data Mahasiswa</a></li>
-                    <li><a href="laporanPelanggaran.php"><i class="bi bi-exclamation-circle me-2"></i>Laporkan Pelanggaran</a></li>
-                    <li><a href="riwayatLaporan.php"><i class="bi bi-bar-chart-line me-2"></i>Memantau Pelanggaran</a></li>
-                </ul>
-            </div>
+            <div class="sidebar-trigger"></div>
+            <?php include "sidebar.php"; ?>
 
             <!-- Konten Utama -->
-            <main class="col-md-10 ms-sm-auto px-md-4">
+            <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
                     <div class="card shadow-sm">
                         <div class="card-header">
@@ -154,21 +111,10 @@ if ($stmt === false) {
                         </div>
                         <div class="card-body">
                             <!-- Form untuk membuat laporan pelanggaran baru -->
-                            <form action="prosesLaporan.php" method="POST">
+                            <form action="prosesLaporan.php" method="POST" enctype="multipart/form-data">
                                 <div class="mb-3">
-                                    <label for="nama_pelaku" class="form-label">Nama Pelaku</label>
-                                    <input type="text" class="form-control" id="nama_pelaku" name="nama_pelaku" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kelas" class="form-label">Kelas</label>
-                                    <select class="form-select" id="kelas" name="kelas" required>
-                                        <option value="">Pilih Kelas</option>
-                                        <?php
-                                        while ($row = sqlsrv_fetch_array($stmt_kelas, SQLSRV_FETCH_ASSOC)) {
-                                            echo "<option value='" . $row['id_kelas'] . "'>" . htmlspecialchars($row['nama_kelas']) . "</option>";
-                                        }
-                                        ?>
-                                    </select>
+                                    <label for="nim_pelaku" class="form-label">Nim Pelaku</label>
+                                    <input type="text" class="form-control" id="nim_pelaku" name="nim_pelaku" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="pelanggaran" class="form-label">Jenis Pelanggaran</label>
@@ -180,6 +126,10 @@ if ($stmt === false) {
                                         }
                                         ?>
                                     </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Upload Gambar</label>
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="deskripsi" class="form-label">Deskripsi Pelanggaran</label>
@@ -219,6 +169,24 @@ if ($stmt === false) {
                     $('#responseMessage').html('<div class="alert alert-danger">Gagal mengirim laporan. Coba lagi.</div>');
                 }
             });
+        });
+    </script>
+
+    <script>
+        // Validasi file sebelum upload
+        document.getElementById('image').addEventListener('change', function() {
+            const file = this.files[0];
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+            if (file && !allowedTypes.includes(file.type)) {
+                alert('Hanya file JPG, PNG, atau GIF yang diizinkan!');
+                this.value = ''; // Reset input file
+            }
+
+            if (file && file.size > 2 * 1024 * 1024) {
+                alert('Ukuran file terlalu besar! Maksimal 2MB.');
+                this.value = ''; // Reset input file
+            }
         });
     </script>
 </body>
