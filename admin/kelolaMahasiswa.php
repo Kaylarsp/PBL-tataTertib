@@ -2,39 +2,78 @@
 // Memanggil koneksi database
 require_once '../connection.php';
 
-// Proses untuk menambah pengguna
 if (isset($_POST['action']) && $_POST['action'] == 'add') {
+    // Ambil data dari form
     $nama = $_POST['nama'];
     $nim = $_POST['nim'];
     $kelas = $_POST['kelas'];
     $status_akademik = $_POST['status_akademik'];
 
-    // Menambahkan data ke tabel mahasiswa
-    $sql = "INSERT INTO mahasiswa (nama, nim, kelas, status_akademik) VALUES (?, ?, ?, ?)";
-    $stmt = sqlsrv_query($conn, $sql, array($nama, $nim, $kelas, $status_akademik));
+    // Mulai transaksi
+    $beginTransaction = sqlsrv_begin_transaction($conn);
 
-    if (!$stmt) {
-        die(print_r(sqlsrv_errors(), true));
+    // Cek apakah transaksi berhasil dimulai
+    if (!$beginTransaction) {
+        die("Error starting transaction: " . print_r(sqlsrv_errors(), true));
     }
 
-    // Ambil ID mahasiswa yang baru ditambahkan
-    $sql_last_insert_id = "SELECT SCOPE_IDENTITY() AS id_mahasiswa";
-    $stmt_last_id = sqlsrv_query($conn, $sql_last_insert_id);
-    $row = sqlsrv_fetch_array($stmt_last_id, SQLSRV_FETCH_ASSOC);
-    $id_mahasiswa = $row['id_mahasiswa'];
-
-    // Tambahkan data ke tabel user
-    $sql_user = "INSERT INTO user (id_user, username, password, role) VALUES (?, ?, ?, ?)";
+    // Tambahkan data ke tabel user terlebih dahulu
+    $sql_user = "INSERT INTO [user] (username, password, role) VALUES (?, ?, ?)";
     $username = $nama;
     $password = '123'; // Password default, bisa diubah kemudian
     $role = 4; // Role default
-    $stmt_user = sqlsrv_query($conn, $sql_user, array($id_mahasiswa, $username, $password, $role));
+    $stmt_user = sqlsrv_query($conn, $sql_user, array($username, $password, $role));
 
     if (!$stmt_user) {
-        die(print_r(sqlsrv_errors(), true));
+        sqlsrv_rollback($conn);
+        die("Error inserting user: " . print_r(sqlsrv_errors(), true));
     }
 
-    echo "Pengguna berhasil ditambahkan.";
+    // Ambil ID user yang baru ditambahkan menggunakan @@IDENTITY
+    $sql_last_insert_user_id = "SELECT @@IDENTITY AS id_user";
+    $stmt_last_user_id = sqlsrv_query($conn, $sql_last_insert_user_id);
+
+    if (!$stmt_last_user_id) {
+        sqlsrv_rollback($conn);
+        die("Error fetching last insert id: " . print_r(sqlsrv_errors(), true));
+    }
+
+    $row_user = sqlsrv_fetch_array($stmt_last_user_id, SQLSRV_FETCH_ASSOC);
+
+    // Debugging: Print the result of the fetch to check what is returned
+    if ($row_user) {
+    } else {
+        sqlsrv_rollback($conn);
+        die("No row returned after fetch. Please check your query and database setup.");
+    }
+
+    $id_user = $row_user['id_user'];
+
+    // Periksa apakah ID user berhasil didapatkan
+    if (!$id_user) {
+        sqlsrv_rollback($conn);
+        die('Gagal mendapatkan id_user. Returned value: ' . print_r($row_user, true));
+    }
+
+    // Menambahkan data ke tabel mahasiswa dengan id_user yang sudah didapatkan
+    $sql = "INSERT INTO mahasiswa (nama, nim, kelas, status_akademik, id_user) VALUES (?, ?, ?, ?, ?)";
+    $stmt = sqlsrv_query($conn, $sql, array($nama, $nim, $kelas, $status_akademik, $id_user));
+
+    if (!$stmt) {
+        sqlsrv_rollback($conn);
+        die("Error inserting mahasiswa: " . print_r(sqlsrv_errors(), true));
+    }
+
+    // Commit transaksi
+    $commitTransaction = sqlsrv_commit($conn);
+
+    if (!$commitTransaction) {
+        sqlsrv_rollback($conn);
+        die("Error committing transaction: " . print_r(sqlsrv_errors(), true));
+    }else{
+        echo "Pengguna berhasil ditambahkan.";
+    }
+
     exit;
 }
 
@@ -45,7 +84,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit') {
     $nim = $_POST['nim'];
     $kelas = $_POST['kelas'];
     $status_akademik = $_POST['status_akademik'];
-
 
     $sql = "UPDATE mahasiswa SET nama = ?, nim = ?, kelas = ?, status_akademik = ? WHERE id_mahasiswa = ?";
     $stmt = sqlsrv_prepare($conn, $sql, array($nama, $nim, $kelas, $status_akademik, $id_mahasiswa));
@@ -96,6 +134,7 @@ if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="id">
@@ -160,7 +199,12 @@ if ($stmt === false) {
         .text-dongker {
             color: #001f54;
         }
+
+        .custom-margin-top {
+            margin-top: 90px;
+        }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script>
         const kelasOptions = <?= json_encode($kelas_options); ?>;
     </script>
@@ -178,7 +222,7 @@ if ($stmt === false) {
     <?php include "sidebar.php"; ?>
 
     <!-- Konten Utama -->
-    <div class="d-flex align-items-center justify-content-center full-height">
+    <div class="d-flex align-items-center justify-content-center full-height custom-margin-top">
         <div class="card cardContent shadow p-4" style="width: 100%; max-width: 850px; margin-top: 90px;">
             <div class="text-center mb-4">
                 <h1 class="display-5 fw-bold text-dongker">Kelola Mahasiswa</h1>
@@ -274,10 +318,10 @@ if ($stmt === false) {
         }
 
         function simpanEditPenggunaInline(id) {
-            const nim = document.getElementById(`editNim-${id}`).value;
-            const nama = document.getElementById(`editNama-${id}`).value;
-            const kelas = document.getElementById(`editKelas-${id}`).value;
-            const status = document.getElementById(`editStatus-${id}`).value;
+            let nim = document.getElementById(`editNim-${id}`).value;
+            let nama = document.getElementById(`editNama-${id}`).value;
+            let kelas = document.getElementById(`editKelas-${id}`).value;
+            let status = document.getElementById(`editStatus-${id}`).value;
 
             if (nama && nim && kelas && status) {
                 const formData = new FormData();
@@ -308,10 +352,10 @@ if ($stmt === false) {
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
                 <td>${currentRowCount + 1}</td> <!-- Nomor urut -->
-                <td><input type="text" class="form-control form-control-sm" id="tambahNim" placeholder="Masukkan NIM"></td>
-                <td><input type="text" class="form-control form-control-sm" id="tambahNama" placeholder="Masukkan Nama"></td>
+                <td><input type="text" class="form-control form-control-sm tambahNim" id="tambahNim" placeholder="Masukkan NIM"></td>
+                <td><input type="text" class="form-control form-control-sm tambahNama" id="tambahNama" placeholder="Masukkan Nama"></td>
                 <td>
-                    <select class="form-select form-select-sm" id="tambahKelas">
+                    <select class="form-select form-select-sm tambahKelas" id="tambahKelas">
                         <option value="" disabled selected>Kelas</option>
                         ${kelasOptions.map(option => `
                             <option value="${option.id_kelas}">${option.nama_kelas}</option>
@@ -319,7 +363,7 @@ if ($stmt === false) {
                     </select>
                 </td>
                 <td>
-                    <select class="form-select form-select-sm" id="tambahStatus"> <!-- Dropdown untuk Status Akademik -->
+                    <select class="form-select form-select-sm tambahStatus" id="tambahStatus"> <!-- Dropdown untuk Status Akademik -->
                         <option value="" disabled selected>Status</option>
                         <option value="Aktif">Aktif</option>
                         <option value="Cuti">Cuti</option>
@@ -335,17 +379,17 @@ if ($stmt === false) {
         }
 
         function simpanTambahPenggunaInline() {
-            const nim = document.getElementById('tambahNim').value;
-            const nama = document.getElementById('tambahNama').value;
-            const kelas = document.getElementById('tambahKelas').value;
-            const status = document.getElementById('tambahStatus').value;
+            const nim = $('.tambahNim').val();
+            const nama = $('.tambahNama').val();
+            const kelas = $('.tambahKelas').val();
+            const status = $('.tambahStatus').val();
 
             console.log({
                 nim,
                 nama,
                 kelas,
                 status
-            }); // Debugging
+            }); // Debugging anjay 
 
             if (nim && nama && kelas && status) {
                 const formData = new FormData();

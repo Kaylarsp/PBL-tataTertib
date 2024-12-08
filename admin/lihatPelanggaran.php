@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connect`
-
+// taks
 // Pastikan sesi `id_user` aktif
 if (!isset($_SESSION['id_user'])) {
     header('Location: login.php');
@@ -10,20 +10,29 @@ if (!isset($_SESSION['id_user'])) {
 
 $id_user = $_SESSION['id_user']; // Ambil ID user dari sesi
 
-// Proses verifikasi jika ada request verifikasi
-if (isset($_GET['action']) && $_GET['action'] == 'verify' && isset($_GET['id_laporan'])) {
+// Proses verifikasi atau penolakan jika ada request
+if (isset($_GET['action']) && isset($_GET['id_laporan'])) {
     $id_laporan = $_GET['id_laporan'];
-    $verify_at = date("Y-m-d H:i:s");
 
-    // Menggunakan prepared statement untuk update
-    $sql = "UPDATE laporan SET verify_by = ?, verify_at = ? WHERE id_laporan = ?";
-    $params = [$id_user, $verify_at, $id_laporan];
+    if ($_GET['action'] == 'verify') {
+        $verify_at = date("Y-m-d H:i:s");
+
+        // Update kolom verify dan statusTolak
+        $sql = "UPDATE laporan SET verify_by = ?, verify_at = ?, statusTolak = 1 WHERE id_laporan = ?";
+        $params = [$id_user, $verify_at, $id_laporan];
+    } elseif ($_GET['action'] == 'reject') {
+        // Update kolom statusTolak
+        $sql = "UPDATE laporan SET statusTolak = 2 WHERE id_laporan = ?";
+        $params = [$id_laporan];
+    }
 
     $stmt = sqlsrv_query($conn, $sql, $params);
     if ($stmt === false) {
         $message = "Error: " . print_r(sqlsrv_errors(), true);
     } else {
-        $message = "Laporan berhasil diverifikasi.";
+        $message = ($_GET['action'] == 'verify')
+            ? "Laporan berhasil diverifikasi."
+            : "Laporan berhasil ditolak.";
     }
 }
 
@@ -31,19 +40,26 @@ if (isset($_GET['action']) && $_GET['action'] == 'verify' && isset($_GET['id_lap
 $sql = "
         SELECT
             l.id_laporan,
+            l.id_tingkat,
             up.username AS nama_pelapor,
             ut.username AS nama_terlapor,
             m.nim AS nim_terlapor,
             p.nama_pelanggaran,
             t.tingkat,
+            t.sanksi AS opsi_sanksi,
             l.bukti_filepath,
             l.verify_by,
-            l.verify_at
+            l.verify_at,
+            l.statusTolak,
+            d.nama AS dpa,
+            k.nama_kelas AS kelas
         FROM laporan l
         JOIN tingkat t ON l.id_tingkat = t.id_tingkat
         JOIN [user] up ON l.id_pelapor = up.id_user
         JOIN [user] ut ON l.id_pelaku = ut.id_user
         JOIN mahasiswa m ON ut.id_user = m.id_user
+        JOIN kelas k ON m.kelas = k.id_kelas
+        JOIN dosen d ON k.id_kelas = d.id_kelas
         JOIN pelanggaran p ON l.id_pelanggaran = p.id_pelanggaran
 ";
 
@@ -60,9 +76,10 @@ if ($stmt === false) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Laporan</title>
+    <title>Lihat Pelanggaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
         .bg-dongker {
@@ -90,11 +107,8 @@ if ($stmt === false) {
         .cardContent {
             margin-left: 70px;
             margin-top: 30px;
-            /* Jarak dari navbar */
             max-height: calc(100vh - 150px);
-            /* Batas tinggi untuk scrolling */
             overflow-y: auto;
-            /* Tambahkan scrolling vertikal */
         }
 
         .menu-icon {
@@ -128,12 +142,10 @@ if ($stmt === false) {
 
         .modal-dialog {
             margin-top: 100px;
-            /* Atur sesuai kebutuhan */
         }
 
         .custom-modal {
             margin-top: 150px;
-            /* Atur sesuai kebutuhan */
         }
     </style>
 </head>
@@ -150,31 +162,31 @@ if ($stmt === false) {
     <?php include "sidebar.php"; ?>
 
     <div class="container content-margin">
-        <!-- Konten Utama -->
         <div class="d-flex align-items-center justify-content-center">
             <div class="card cardContent shadow p-4" style="width: 90%;">
                 <div class="text-center mb-4">
                     <h1 class="display-5 fw-bold text-dongker">Lihat Pelanggaran</h1>
                 </div>
                 <div class="card-body">
-                    <!-- Menampilkan pesan jika ada -->
                     <?php if (isset($message)) : ?>
                         <div class="alert alert-info text-center">
                             <?= $message; ?>
                         </div>
                     <?php endif; ?>
 
-                    <!-- Tabel Pelanggaran -->
-                    <table class="table table-hover table-striped mt-4">
+                    <table class="table table-hover table-striped table-bordered text-center">
                         <thead class="table-dark">
                             <tr>
                                 <th>No</th>
                                 <th>Pelapor</th>
                                 <th>Terlapor</th>
                                 <th>NIM</th>
+                                <th>Kelas</th>
+                                <th>DPA</th>
                                 <th>Pelanggaran</th>
                                 <th>Bukti</th>
-                                <th>Verifikasi</th>
+                                <th>Sanksi</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -186,10 +198,10 @@ if ($stmt === false) {
                                 <td>" . htmlspecialchars($row['nama_pelapor']) . "</td>
                                 <td>" . htmlspecialchars($row['nama_terlapor']) . "</td>
                                 <td>" . htmlspecialchars($row['nim_terlapor']) . "</td>
+                                <td>" . htmlspecialchars($row['kelas']) . "</td>
+                                <td>" . htmlspecialchars($row['dpa']) . "</td>
                                 <td>
                                     <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#modal{$row['id_laporan']}'>Detail</button>
-
-                                    <!-- Modal -->
                                     <div class='modal fade' id='modal{$row['id_laporan']}' tabindex='-1' aria-labelledby='modalLabel{$row['id_laporan']}' aria-hidden='true'>
                                         <div class='modal-dialog custom-modal'>
                                             <div class='modal-content'>
@@ -207,15 +219,26 @@ if ($stmt === false) {
                                 </td>
                                 <td>";
                                 if (!empty($row['bukti_filepath'])) {
-                                    echo "<button class='btn btn-primary btn-sm' onclick=\"window.open('" . htmlspecialchars($row['bukti_filepath']) . "', '_blank')\">Lihat Bukti</button>";
+                                    echo "<button class='btn btn-primary btn-sm' onclick=\"window.open('" . htmlspecialchars($row['bukti_filepath']) . "', '_blank')\">Tinjau</button>";
                                 } else {
                                     echo "<button class='btn btn-secondary btn-sm' disabled>Tidak Ada Bukti</button>";
                                 }
                                 echo "</td>
+                                <td>
+                                <select id='sanksiDropdown_{$row['id_laporan']}'
+                                    data-id_laporan='{$row['id_laporan']}'
+                                    data-id_tingkat='{$row['id_tingkat']}'
+                                    class='form-select form-select-sm sanksiDropdown_{$no}'
+                                    onchange='saveSanksi({$row['id_laporan']})'
+                                    >
+                                    <option value='' disabled selected>Pilih Sanksi</option>
+                                </select>
+                                </td>
                                 <td>";
-                                if ($row['verify_by'] && $row['verify_at']) {
-                                    $formattedDate = $row['verify_at']->format('Y-m-d H:i:s');
-                                    echo "Verified";
+                                if ($row['statusTolak'] == 1) {
+                                    echo "Terverifikasi";
+                                } elseif ($row['statusTolak'] == 2) {
+                                    echo "Ditolak";
                                 } else {
                                     echo "
                                     <a href='?action=verify&id_laporan={$row['id_laporan']}' class='btn btn-success btn-sm'>Verifikasi</a>
@@ -231,32 +254,142 @@ if ($stmt === false) {
                 </div>
             </div>
         </div>
-        <!-- End Card -->
     </div>
 
-    <!-- Link Bootstrap JS dan Icon -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <script>
+        $(() => {
+            var no = "<?= $no ?>";
+
+            for (i = 0; i <= no; i++) {
+                let dropdown = $(`.sanksiDropdown_${i}`);
+
+                if (dropdown.length > 0) { // Pastikan elemen dengan ID ini ada
+                    let idTingkat = dropdown.data('id_tingkat');
+                    let idLaporan = dropdown.data('id_laporan');
+
+                    loadSanctions(idLaporan, idTingkat)
+                }
+            }
+        })
+
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
             sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
         }
-    </script>
-    <?php if (isset($message)) : ?>
-        <div class="alert alert-info text-center" id="message-box">
-            <?= $message; ?>
-        </div>
-        <script>
-            // Menghilangkan pesan setelah 5 detik
-            setTimeout(() => {
-                const messageBox = document.getElementById('message-box');
-                if (messageBox) {
-                    messageBox.style.display = 'none';
+
+        function loadSanctions(id_laporan, id_tingkat) {
+            // Mendapatkan id_tingkat dari selectElement yang sedang dipilih
+            // const id_tingkat = $(selectElement).data('id-tingkat'); // Mengambil id_tingkat dari selectElement yang dipilih
+
+            // console.log("ID Tingkat:", id_tingkat); // Debug: Cek nilai ID Tingkat
+            // console.log("ID Laporan:", id_laporan); // Debug: Cek ID Laporan
+
+            // Pastikan id_tingkat valid sebelum mengirimkan request
+            if (!id_tingkat) {
+                alert("ID Tingkat tidak ditemukan.");
+                return;
+            }
+
+            // Kirim AJAX request untuk mengambil sanksi berdasarkan id_tingkat
+            $.ajax({
+                url: "get_sanksi.php", // Ganti dengan URL file PHP yang menghandle permintaan sanksi
+                method: "POST",
+                data: {
+                    id_tingkat: id_tingkat
+                },
+                success: function(data) {
+                    // console.log("Data Sanksi:", data); // Debug: Cek data yang diterima
+                    const sanksiDropdown = $(`#sanksiDropdown_${id_laporan}`);
+                    sanksiDropdown.empty().append(`<option value='' disabled selected>Pilih Sanksi</option>`);
+                    sanksiDropdown.append(data); // Menambahkan opsi sanksi ke dropdown
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", error); // Debug: Lihat error
+                    alert("Gagal memuat sanksi.");
                 }
-            }, 5000); // 5000 ms = 5 detik
-        </script>
-    <?php endif; ?>
+            });
+        }
+
+        function saveSanksi(idLaporan) {
+            const selectedSanksi = $(`#sanksiDropdown_${idLaporan}`).val();
+
+            if (!selectedSanksi) {
+                alert("Pilih sanksi terlebih dahulu.");
+                return;
+            }
+
+            // Kirim data ke server untuk disimpan
+            $.ajax({
+                url: "save_sanksi.php",
+                method: "POST",
+                data: {
+                    id_laporan: idLaporan,
+                    sanksi: selectedSanksi
+                },
+                success: function(response) {
+                    const result = JSON.parse(response);
+                    if (result.status === "success") {
+                        alert(result.message);
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", error);
+                    alert("Gagal menyimpan sanksi.");
+                }
+            });
+        }
+    </script>
+
+    <?php
+    if (isset($_POST['action']) && $_POST['action'] == 'get_sanksi') {
+        $id_tingkat = $_POST['id_tingkat'];
+        $sanctions = [];
+
+        switch ($id_tingkat) {
+            case 1:
+                $sanctions = [
+                    'Dinonaktifkan (Cuti Akademik/ Terminal) selama dua semester',
+                    'Diberhentikan sebagai mahasiswa',
+                ];
+                break;
+            case 2:
+                $sanctions = [
+                    'Dikenakan penggantian kerugian atau penggantian benda/barang semacamnya',
+                    'Melakukan tugas layanan sosial dalam jangka waktu tertentu',
+                    'Diberikan nilai D pada mata kuliah terkait saat melakukan pelanggaran',
+                ];
+                break;
+            case 3:
+                $sanctions = [
+                    'Membuat surat pernyataan tidak mengulangi perbuatan tersebut, dibubuhi materai',
+                    'Melakukan tugas khusus seperti bertanggungjawab memperbaiki/ membersihkan kembali',
+                ];
+                break;
+            case 4:
+                $sanctions = [
+                    'Teguran tertulis disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai',
+                ];
+                break;
+            case 5:
+                $sanctions = [
+                    'Teguran lisan disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai',
+                ];
+                break;
+            default:
+                $sanctions = [];
+        }
+
+        // Kembalikan sanksi sebagai HTML <option> untuk dropdown
+        foreach ($sanctions as $sanction) {
+            echo "<option value='$sanction'>$sanction</option>";
+        }
+
+        exit; // Pastikan tidak ada output tambahan
+    }
+    ?>
 </body>
 
 </html>

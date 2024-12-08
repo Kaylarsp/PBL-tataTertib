@@ -1,3 +1,31 @@
+<?php
+require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connect`
+
+// Query untuk mengambil data dari tabel pelanggaran
+$sql = "
+    SELECT
+        p.id_pelanggaran,
+        p.nama_pelanggaran,
+        t.tingkat,
+        t.sanksi
+    FROM pelanggaran p
+    JOIN tingkat t ON p.id_tingkat = t.id_tingkat
+";
+$stmt = sqlsrv_query($conn, $sql);
+
+// Periksa apakah query berhasil
+if ($stmt === false) {
+    die("Query gagal: " . print_r(sqlsrv_errors(), true));
+}
+
+// Query untuk mendapatkan daftar tingkat
+$tingkatQuery = "SELECT * FROM tingkat";
+$tingkatStmt = sqlsrv_query($conn, $tingkatQuery);
+if ($tingkatStmt === false) {
+    die("Query gagal: " . print_r(sqlsrv_errors(), true));
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -10,36 +38,6 @@
     <style>
         .bg-dongker {
             background-color: #001f54 !important;
-        }
-
-        .sidebar {
-            width: 200px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -150px;
-            background-color: #001f54;
-            color: white;
-            transition: all 0.3s ease;
-            overflow-y: auto;
-            z-index: 10;
-            padding-top: 90px;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px 20px;
-        }
-
-        .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-        }
-
-        .sidebar:hover {
-            left: 0;
         }
 
         .menu-icon {
@@ -63,11 +61,6 @@
             background-color: #003080;
         }
 
-        .navbar {
-            z-index: 11;
-            position: relative;
-        }
-
         main.content {
             margin-left: 50px;
         }
@@ -86,29 +79,16 @@
         .btn-primary:hover {
             background-color: #003080;
         }
+
+        .custom-margin-top {
+            margin-top: 90px;
+        }
     </style>
 </head>
 
 <body class="bg-light">
     <!-- Navbar di bagian atas -->
-    <nav class="navbar navbar-expand-lg bg-dongker navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="admin.php">
-                <i class="bi bi-tools me-2"></i>Polinema Admin
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="admin.php">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Profil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Laporan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Bantuan</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?php include "navbar.php"; ?>
 
     <!-- Ikon Menu -->
     <div class="menu-icon" onclick="toggleSidebar()">
@@ -118,15 +98,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="sidebar-trigger"></div>
-            <div class="sidebar">
-                <ul class="nav flex-column">
-                    <li><a href="admin.php"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>
-                    <li><a href="manajemenPelanggaran.php"><i class="bi bi-person-lines-fill me-2"></i>Manajemen Pengguna</a></li>
-                    <li><a href="laporan.php"><i class="bi bi-file-earmark-text me-2"></i>Laporan</a></li>
-                    <li><a href="pengaturan.php"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
-                    <li><a href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                </ul>
-            </div>
+            <?php include "sidebar.php"; ?>
 
             <main class="col-md-10 ms-sm-auto px-md-4">
                 <div class="pt-4">
@@ -134,37 +106,110 @@
                         <div class="card-header text-center">
                             <h1 class="display-5 fw-bold mt-3">Kelola Pelanggaran Mahasiswa</h1>
                             <p class="lead">Data pelanggaran mahasiswa yang terdaftar di sistem.</p>
-                            <button class="btn btn-primary text-white" onclick="tambahPelanggaran()">Tambah Pelanggaran</button>
+                            <button class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#tambahModal">Tambah Pelanggaran</button>
                         </div>
                         <div class="card-body">
                             <table class="table table-hover table-striped">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama Mahasiswa</th>
-                                        <th>NIM</th>
-                                        <th>Pelanggaran</th>
+                                        <th>Jenis Pelanggaran</th>
+                                        <th>Tingkat</th>
+                                        <th>Sanksi</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Data tabel akan dimasukkan di sini -->
-                                    <tr>
-                                        <td>1</td>
-                                        <td>John Doe</td>
-                                        <td>12345678</td>
-                                        <td>Terlambat</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm">Edit</button>
-                                            <button class="btn btn-danger btn-sm">Hapus</button>
-                                        </td>
-                                    </tr>
+                                    <?php
+                                    $no = 1;
+                                    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+                                        echo "<tr>";
+                                        echo "<td>{$no}</td>";
+                                        echo "<td>{$row['nama_pelanggaran']}</td>";
+                                        echo "<td>{$row['tingkat']}</td>";
+                                        echo "<td>{$row['sanksi']}</td>";
+                                        echo "<td>
+                                                <button class='btn btn-warning btn-sm' onclick='editPelanggaran({$row['id_pelanggaran']})' data-bs-toggle=\"modal\" data-bs-target=\"#editModal\">Edit</button>
+                                                <form action='delete_pelanggaran.php' method='POST' style='display:inline;'>
+                                                    <input type='hidden' name='id_pelanggaran' value='{$row['id_pelanggaran']}'>
+                                                    <button type='submit' class='btn btn-danger btn-sm'>Hapus</button>
+                                                </form>
+                                                </td>";
+                                        echo "</tr>";
+                                        $no++;
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </main>
+        </div>
+    </div>
+
+    <!-- Modal Tambah -->
+    <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="create_pelanggaran.php" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tambahModalLabel">Tambah Pelanggaran</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="namaPelanggaran" class="form-label">Nama Pelanggaran</label>
+                            <input type="text" class="form-control" id="namaPelanggaran" name="nama_pelanggaran" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idTingkat" class="form-label">Tingkat</label>
+                            <select class="form-select" id="idTingkat" name="id_tingkat" required>
+                                <?php
+                                while ($tingkat = sqlsrv_fetch_array($tingkatStmt, SQLSRV_FETCH_ASSOC)) {
+                                    echo "<option value='{$tingkat['tingkat']}'>{$tingkat['tingkat']}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="update_pelanggaran.php" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit Pelanggaran</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id_pelanggaran" id="editIdPelanggaran">
+                        <div class="mb-3">
+                            <label for="editNamaPelanggaran" class="form-label">Nama Pelanggaran</label>
+                            <input type="text" class="form-control" id="editNamaPelanggaran" name="nama_pelanggaran" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editIdTingkat" class="form-label">Tingkat</label>
+                            <select class="form-select" id="editIdTingkat" name="id_tingkat" required>
+                                <!-- Options akan di-load di runtime -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -178,8 +223,10 @@
             sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
         }
 
-        function tambahPelanggaran() {
-            alert("Fungsi tambah pelanggaran belum tersedia!");
+        function editPelanggaran(id) {
+            // Load data pelanggaran berdasarkan ID ke modal edit
+            // Ini hanya placeholder, sesuaikan dengan fetch data yang dibutuhkan
+            document.getElementById('editIdPelanggaran').value = id;
         }
     </script>
 </body>

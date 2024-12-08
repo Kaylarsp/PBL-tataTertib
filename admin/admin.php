@@ -111,7 +111,7 @@
                                         <div class="card-body">
                                             <h5 class="card-title fw-bold">Edit Pelanggaran</h5>
                                             <p class="card-text">Ubah data pelanggaran atau sanksi yang diberikan.</p>
-                                            <a href="editPelanggaran.html" class="btn btn-primary">Edit Pelanggaran</a>
+                                            <a href="kelolaPelanggaran.php" class="btn btn-primary">Edit Pelanggaran</a>
                                         </div>
                                     </div>
                                 </div>
@@ -121,7 +121,7 @@
                                             <div class="card-body">
                                                 <h5 class="card-title fw-bold">Cek Tugas</h5>
                                                 <p class="card-text">Periksa tugas yang dikumpulkan oleh mahasiswa yang melanggar.</p>
-                                                <a href="cek_tugas.html" class="btn btn-primary">Cek Tugas</a>
+                                                <a href="cektugas.php" class="btn btn-primary">Cek Tugas</a>
                                             </div>
                                         </div>
                                     </div>
