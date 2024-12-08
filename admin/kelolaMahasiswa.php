@@ -98,16 +98,34 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit') {
 
 // Proses untuk menghapus pengguna
 if (isset($_POST['action']) && $_POST['action'] == 'delete') {
-    $id_mahasiswa = $_POST['id'];
+    $id_user = $_POST['id']; // Mengambil id_user dari request
 
-    $sql = "DELETE FROM mahasiswa WHERE id_mahasiswa = ?";
-    $stmt = sqlsrv_prepare($conn, $sql, array($id_mahasiswa));
+    // Mulai transaksi
+    sqlsrv_begin_transaction($conn);
 
-    if (sqlsrv_execute($stmt)) {
-        echo "Pengguna berhasil dihapus.";
-    } else {
-        echo "Gagal menghapus pengguna.";
+    // Hapus dari tabel mahasiswa berdasarkan id_user
+    $sql_mahasiswa = "DELETE FROM mahasiswa WHERE id_user = ?";
+    $stmt_mahasiswa = sqlsrv_prepare($conn, $sql_mahasiswa, array($id_user));
+
+    if (!$stmt_mahasiswa || !sqlsrv_execute($stmt_mahasiswa)) {
+        sqlsrv_rollback($conn);
+        echo "Gagal menghapus data dari tabel mahasiswa.";
+        exit;
     }
+
+    // Hapus dari tabel user berdasarkan id_user
+    $sql_user = "DELETE FROM user WHERE id_user = ?";
+    $stmt_user = sqlsrv_prepare($conn, $sql_user, array($id_user));
+
+    if (!$stmt_user || !sqlsrv_execute($stmt_user)) {
+        sqlsrv_rollback($conn);
+        echo "Gagal menghapus data dari tabel user.";
+        exit;
+    }
+
+    // Jika kedua query berhasil, commit transaksi
+    sqlsrv_commit($conn);
+    echo "Pengguna dan data terkait berhasil dihapus.";
     exit;
 }
 
