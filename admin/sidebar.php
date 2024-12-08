@@ -48,8 +48,8 @@
                 </ul>
             </div>
         </li>
-        <li><a href="lihatPelanggaran.php"><i class="bi bi-file-earmark-text me-2"></i>Lihat<br>Pelanggaran</a></li>
-        <li><a href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+        <li><a href="lihatPelanggaran.php"><i class="bi bi-clipboard-check me-2"></i>Lihat<br>Pelanggaran</a></li>
+        <li><a href="kelolaPelanggaran.php"><i class="bi bi-journal-check me-2"></i>Kelola Pelanggaran</a></li>
 
     </ul>
 </div>
