@@ -1,15 +1,5 @@
 <?php
-// Koneksi ke database
-$serverName = "LAPTOP-2R5AJL0O"; // Ganti dengan nama server Anda
-$connectionOptions = [
-    "Database" => "tatib", // Nama database Anda
-];
-$conn = sqlsrv_connect($serverName, $connectionOptions);
-
-// Periksa koneksi
-if ($conn === false) {
-    die("Koneksi ke database gagal: " . print_r(sqlsrv_errors(), true));
-}
+require_once '../connection.php'; // Ensure connection is established using `sqlsrv_connect`
 
 // Query untuk mengambil data pelanggaran dari tabel dbo.pelanggaran
 $sql = "SELECT id_pelanggaran, nama_pelanggaran FROM dbo.pelanggaran";
@@ -158,14 +148,14 @@ if ($stmt === false) {
                         // Sesuaikan judul dan pesan berdasarkan status respons
                         $('#toastMessage').text(data.message);
                         $('#toast').removeClass('text-bg-primary')
-                                   .addClass(data.status === 'success' ? 'text-bg-success' : 'text-bg-danger');
+                                    .addClass(data.status === 'success' ? 'text-bg-success' : 'text-bg-danger');
                         var toast = new bootstrap.Toast($('#toast'));
                         toast.show();
                     },
                     error: function () {
                         $('#toastMessage').text('Terjadi kesalahan pada server.');
                         $('#toast').removeClass('text-bg-primary')
-                                   .addClass('text-bg-danger');
+                                    .addClass('text-bg-danger');
                         var toast = new bootstrap.Toast($('#toast'));
                         toast.show();
                     }
