@@ -15,10 +15,7 @@ $sql = "
         p.nama_pelanggaran AS pelanggaran,
         t.tingkat,
         l.sanksi,
-        l.statusSanksi,
-        l.deskripsi_pelanggaran,
-        l.tanggal_pelanggaran,
-        l.tanggal_selesai,
+        l.deskripsi,
         up.statusSanksi
     FROM laporan l
     JOIN [user] u ON l.id_pelaku = u.id_user
@@ -28,17 +25,23 @@ $sql = "
     JOIN tingkat t ON l.id_tingkat = t.id_tingkat
     JOIN pelanggaran p ON t.id_tingkat = p.id_tingkat
     JOIN upload up ON m.id_mahasiswa = up.id_mahasiswa
-    WHERE l.id_laporan = ?
+    WHERE l.id_laporan = ? AND up.statusSanksi = 1
 ";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id_laporan);
-$stmt->execute();
-$result = $stmt->get_result();
-$laporan = $result->fetch_assoc();
+
+// Menyiapkan query untuk eksekusi
+$params = array($id_laporan);
+$stmt = sqlsrv_prepare($conn, $sql, $params);
+
+// Eksekusi query
+if( sqlsrv_execute($stmt) ) {
+    $laporan = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+} else {
+    die( print_r(sqlsrv_errors(), true));
+}
 
 // Menutup koneksi
-$stmt->close();
-$conn->close();
+sqlsrv_free_stmt($stmt);
+sqlsrv_close($conn);
 
 // Jika data laporan tidak ditemukan
 if (!$laporan) {
@@ -54,10 +57,9 @@ Nama Pelapor: " . $laporan['nama_pelapor'] . "
 NIM: " . $laporan['nim'] . "
 Kelas: " . $laporan['nama_kelas'] . "
 Dosen: " . $laporan['dosen'] . "
-Deskripsi Pelanggaran: " . $laporan['deskripsi_pelanggaran'] . "
-Tanggal Pelanggaran: " . $laporan['tanggal_pelanggaran'] . "
+Pelanggaran: " . $laporan['pelanggaran'] . "
+Deskripsi Pelanggaran: " . $laporan['deskripsi'] . "
 Sanksi: " . $laporan['sanksi'] . "
-Tanggal Selesai: " . $laporan['tanggal_selesai'] . "
 ";
 
     // Menyiapkan nama file unduhan
@@ -73,7 +75,6 @@ Tanggal Selesai: " . $laporan['tanggal_selesai'] . "
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -237,8 +238,10 @@ Tanggal Selesai: " . $laporan['tanggal_selesai'] . "
         </div>
 
         <div class="report-section">
+            <p class="report-section-title">Pelanggaran</p>
+            <p style="text-align: justify;"><?php echo $laporan['pelanggaran']; ?></p>
             <p class="report-section-title">Deskripsi Pelanggaran</p>
-            <p><?php echo $laporan['deskripsi_pelanggaran']; ?></p>
+            <p><?php echo $laporan['deskripsi']; ?></p>
         </div>
 
         <!-- Data Sanksi yang Diberikan -->
@@ -246,16 +249,8 @@ Tanggal Selesai: " . $laporan['tanggal_selesai'] . "
             <p class="report-section-title">Rincian Sanksi</p>
             <table>
                 <tr>
-                    <th>Tanggal Pelanggaran</th>
-                    <td><?php echo $laporan['tanggal_pelanggaran']; ?></td>
-                </tr>
-                <tr>
                     <th>Sanksi</th>
                     <td><?php echo $laporan['sanksi']; ?></td>
-                </tr>
-                <tr>
-                    <th>Tanggal Selesai</th>
-                    <td><?php echo $laporan['tanggal_selesai']; ?></td>
                 </tr>
             </table>
         </div>
