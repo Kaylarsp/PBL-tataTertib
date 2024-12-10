@@ -35,18 +35,18 @@ if ($stmt === false) {
     <!-- Navbar di bagian atas -->
     <?php include "navbar.php"; ?>
 
-   <!-- Sidebar -->
-   <div class="menu-icon" onclick="toggleSidebar()">
-    <i class="bi bi-list"></i>
-</div>
-<div class="sidebar">
-    <ul class="nav flex-column">
-        <li><a href="listTatib.php"><i class="bi bi-list-check me-2"></i>List Tata Tertib</a></li>
-        <li><a href="notifikasi.php"><i class="bi bi-bell me-2"></i>Notifikasi</a></li>
-        <li><a href="uploadSanksi.php"><i class="bi bi-cloud-upload me-2"></i>Upload Sanksi</a></li>
-        <li><a href="../login/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-    </ul>
-</div>
+    <!-- Sidebar -->
+    <div class="menu-icon" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </div>
+    <div class="sidebar">
+        <ul class="nav flex-column">
+            <li><a href="listTatib.php"><i class="bi bi-list-check me-2"></i>List Tata Tertib</a></li>
+            <li><a href="notifikasi.php"><i class="bi bi-bell me-2"></i>Notifikasi</a></li>
+            <li><a href="uploadSanksi.php"><i class="bi bi-cloud-upload me-2"></i>Upload Sanksi</a></li>
+            <li><a href="../login/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+        </ul>
+    </div>
 
     <!-- Konten -->
     <div class="container mt-5">

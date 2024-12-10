@@ -49,7 +49,7 @@
             </div>
         </li>
         <li><a href="lihatPelanggaran.php"><i class="bi bi-clipboard-check me-2"></i>Lihat<br>Pelanggaran</a></li>
-        <li><a href="kelolaPelanggaran.php"><i class="bi bi-journal-check me-2"></i>Kelola Pelanggaran</a></li>
+        <li><a href="kelolaPelanggaran.php"><i class="bi bi-journal-check me-2"></i>Kelola <br> Pelanggaran</a></li>
 
     </ul>
 </div>

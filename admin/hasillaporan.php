@@ -1,3 +1,76 @@
+<?php
+require_once '../connection.php';
+
+// Mendapatkan ID laporan dari URL atau form
+$id_laporan = isset($_GET['report_id']) ? $_GET['report_id'] : 0;
+
+// Query untuk mengambil data laporan berdasarkan ID
+$sql = "
+    SELECT
+        l.id_laporan,
+        u.username AS nama_pelapor,
+        m.nim,
+        k.nama_kelas,
+        d.nama AS dosen,
+        p.nama_pelanggaran AS pelanggaran,
+        t.tingkat,
+        l.sanksi,
+        l.statusSanksi,
+        l.deskripsi_pelanggaran,
+        l.tanggal_pelanggaran,
+        l.tanggal_selesai,
+        up.statusSanksi
+    FROM laporan l
+    JOIN [user] u ON l.id_pelaku = u.id_user
+    JOIN mahasiswa m ON u.id_user = m.id_user
+    JOIN kelas k ON m.kelas = k.id_kelas
+    JOIN dosen d ON k.id_kelas = d.id_kelas
+    JOIN tingkat t ON l.id_tingkat = t.id_tingkat
+    JOIN pelanggaran p ON t.id_tingkat = p.id_tingkat
+    JOIN upload up ON m.id_mahasiswa = up.id_mahasiswa
+    WHERE l.id_laporan = ?
+";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id_laporan);
+$stmt->execute();
+$result = $stmt->get_result();
+$laporan = $result->fetch_assoc();
+
+// Menutup koneksi
+$stmt->close();
+$conn->close();
+
+// Jika data laporan tidak ditemukan
+if (!$laporan) {
+    die("Laporan tidak ditemukan.");
+}
+
+// Fungsi untuk mengunduh laporan
+if (isset($_POST['unduh'])) {
+    $laporanContent = "
+Laporan Pelanggaran
+------------------------------
+Nama Pelapor: " . $laporan['nama_pelapor'] . "
+NIM: " . $laporan['nim'] . "
+Kelas: " . $laporan['nama_kelas'] . "
+Dosen: " . $laporan['dosen'] . "
+Deskripsi Pelanggaran: " . $laporan['deskripsi_pelanggaran'] . "
+Tanggal Pelanggaran: " . $laporan['tanggal_pelanggaran'] . "
+Sanksi: " . $laporan['sanksi'] . "
+Tanggal Selesai: " . $laporan['tanggal_selesai'] . "
+";
+
+    // Menyiapkan nama file unduhan
+    $fileName = "laporan_pelanggaran_" . $id_laporan . ".txt";
+    
+    // Mengatur header untuk mengunduh file
+    header('Content-Type: text/plain');
+    header('Content-Disposition: attachment; filename="' . $fileName . '"');
+    echo $laporanContent;
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,15 +104,15 @@
             background: #ffffff;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            position: relative; /* Agar logo dapat direferensikan dengan posisi absolute */
+            position: relative;
         }
 
         /* Logo pada kiri atas konten laporan */
         .report-logo {
             position: absolute;
-            top: 10px; /* Jarak dari atas kontainer */
-            left: 10px; /* Jarak dari sisi kiri kontainer */
-            width: 90px; /* Ubah ukuran sesuai kebutuhan */
+            top: 10px;
+            left: 10px;
+            width: 90px;
             height: auto;
         }
 
@@ -127,7 +200,7 @@
     </style>
 </head>
 
-<body> 
+<body>
 
     <!-- Container untuk laporan -->
     <div class="report-container">
@@ -137,7 +210,7 @@
         <!-- Header Laporan -->
         <div class="report-header">
             <h2>Laporan Pelanggaran - Format Resmi</h2>
-            <p>Tanggal: 07 Desember 2023</p> 
+            <p>Tanggal: <?php echo date('d F Y'); ?></p>
         </div>
 
         <!-- Informasi Pelanggaran -->
@@ -146,44 +219,26 @@
             <table>
                 <tr>
                     <th>Nama</th>
-                    <td>Ani Rahma</td>
+                    <td><?php echo $laporan['nama_pelapor']; ?></td>
                 </tr>
                 <tr>
                     <th>NIM</th>
-                    <td>123456789</td>
+                    <td><?php echo $laporan['nim']; ?></td>
                 </tr>
                 <tr>
                     <th>Kelas</th>
-                    <td>TI-1A</td>
+                    <td><?php echo $laporan['nama_kelas']; ?></td>
                 </tr>
                 <tr>
                     <th>Dosen</th>
-                    <td>Dosen A</td>
+                    <td><?php echo $laporan['dosen']; ?></td>
                 </tr>
             </table>
         </div>
 
-        <div class="report-section">
-            <p class="report-section-title">Identitas Pelapor</p>
-            <table>
-                <tr>
-                    <th>Nama</th>
-                    <td>Ani Rahma</td>
-                </tr>
-                <tr>
-                    <th>NIP/NIDN</th>
-                    <td>123456789</td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- Deskripsi Pelanggaran -->
         <div class="report-section">
             <p class="report-section-title">Deskripsi Pelanggaran</p>
-            <p>
-                Pelanggaran ini dilakukan oleh mahasiswa atas keterlambatan penyelesaian tugas pada mata kuliah yang dibimbing oleh
-                Dosen A. Penundaan penyelesaian ini menghambat progres perkuliahan dan mempengaruhi hasil evaluasi akhir.
-            </p>
+            <p><?php echo $laporan['deskripsi_pelanggaran']; ?></p>
         </div>
 
         <!-- Data Sanksi yang Diberikan -->
@@ -192,15 +247,15 @@
             <table>
                 <tr>
                     <th>Tanggal Pelanggaran</th>
-                    <td>01 November 2023</td>
+                    <td><?php echo $laporan['tanggal_pelanggaran']; ?></td>
                 </tr>
                 <tr>
                     <th>Sanksi</th>
-                    <td>Peringatan</td>
+                    <td><?php echo $laporan['sanksi']; ?></td>
                 </tr>
                 <tr>
                     <th>Tanggal Selesai</th>
-                    <td>15/11/2023</td>
+                    <td><?php echo $laporan['tanggal_selesai']; ?></td>
                 </tr>
             </table>
         </div>
@@ -210,40 +265,15 @@
             <div class="signature-box">Mahasiswa <br /> (Tanda Tangan)</div>
             <div class="signature-box">Dosen <br /> (Tanda Tangan)</div>
             <div class="signature-box">Admin <br /> (Tanda Tangan)</div>
-        </div> <br><br>
+        </div>
 
         <!-- Tombol Unduh Laporan -->
-        <div class="text-center mt-3">
-            <button class="btn-custom" onclick="unduhLaporan()">Unduh Laporan</button>
-        </div>
+        <form method="post">
+            <div class="text-center mt-3">
+                <button type="submit" name="unduh" class="btn-custom">Unduh Laporan</button>
+            </div>
+        </form>
     </div>
 
-    <!-- JavaScript untuk Unduh Laporan -->
-    <script>
-        function unduhLaporan() {
-            const laporanContent = `
-                Laporan Pelanggaran
-                ------------------------------
-                Nama: Ani Rahma
-                NIM: 123456789
-                Kelas: TI-1A
-                Dosen: Dosen A
-                Deskripsi Pelanggaran: Pelanggaran ini dilakukan atas keterlambatan penyelesaian tugas pada mata kuliah yang dibimbing oleh Dosen A.
-                Tanggal Pelanggaran: 01 November 2023
-                Sanksi: Peringatan
-                Statistik Evaluasi: Memengaruhi kinerja akademik
-            `;
-            const blob = new Blob([laporanContent], { type: "text/plain" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "laporan_pelanggaran.txt";
-            link.click();
-            URL.revokeObjectURL(link.href);
-        }
-    </script>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

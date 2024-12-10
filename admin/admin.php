@@ -130,7 +130,7 @@
                                             <div class="card-body">
                                                 <h5 class="card-title fw-bold">Buat Laporan</h5>
                                                 <p class="card-text">Buat laporan dari pelanggaran yang sudah terjadi.</p>
-                                                <a href="buat_laporan.html" class="btn btn-primary">Buat Laporan</a>
+                                                <a href="laporan.php" class="btn btn-primary">Buat Laporan</a>
                                             </div>
                                         </div>
                                     </div>

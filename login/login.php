@@ -2,36 +2,48 @@
 session_start();
 include '../connection.php'; // Include koneksi
 
+// Kelas User untuk menangani login
+class User {
+    private $conn;
+
+    public function __construct($connection) {
+        $this->conn = $connection;
+    }
+
+    public function login($username, $password) {
+        $query = "SELECT * FROM [user] WHERE username = ?";
+        $params = array($username);
+        $stmt = sqlsrv_query($this->conn, $query, $params);
+
+        if ($stmt === false) {
+            die(print_r(sqlsrv_errors(), true));
+        }
+
+        if ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+            if ($password == $row['password']) {
+                $_SESSION['id_user'] = $row['id_user'];
+                $_SESSION['username'] = $row['username'];
+                $_SESSION['role'] = $row['role'];
+
+                return array(
+                    'status' => 'success',
+                    'role' => $row['role']
+                );
+            } else {
+                return array('status' => 'error', 'message' => 'Password salah!');
+            }
+        } else {
+            return array('status' => 'error', 'message' => 'Username tidak ditemukan!');
+        }
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Query untuk mendapatkan data pengguna termasuk role
-    $query = "SELECT * FROM [user] WHERE username = ?";
-    $params = array($username);
-    $stmt = sqlsrv_query($conn, $query, $params);
-
-    if ($stmt === false) {
-        die(print_r(sqlsrv_errors(), true));
-    }
-
-    // Validasi data pengguna
-    if ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-        if ($password == $row['password']) {
-            $_SESSION['id_user'] = $row['id_user'];
-            $_SESSION['username'] = $row['username'];
-            $_SESSION['role'] = $row['role'];
-
-            $response = array(
-                'status' => 'success',
-                'role' => $row['role']
-            );
-        } else {
-            $response = array('status' => 'error', 'message' => 'Password salah!');
-        }
-    } else {
-        $response = array('status' => 'error', 'message' => 'Username tidak ditemukan!');
-    }
+    $user = new User($conn);
+    $response = $user->login($username, $password);
 
     echo json_encode($response);
     exit;
