@@ -129,9 +129,9 @@
                                 <div class="col-lg-4 col-md-6 mb-4">
                                     <div class="card shadow">
                                         <div class="card-body text-center">
-                                            <h5 class="card-title fw-bold">Riwayat Pelanggaran</h5>
+                                            <h5 class="card-title fw-bold">Riwayat Laporan</h5>
                                             <p class="card-text">Lihat pelanggaran yang sudah dilaporkan.</p>
-                                            <a href="riwayatLaporan.php" class="btn bg-dongker text-white">Riwayat Pelanggaran</a>
+                                            <a href="riwayatLaporan.php" class="btn bg-dongker text-white">Riwayat Laporan</a>
                                         </div>
                                     </div>
                                 </div>

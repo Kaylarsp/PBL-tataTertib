@@ -114,14 +114,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete') {
     }
 
     // Hapus dari tabel user berdasarkan id_user
-    $sql_user = "DELETE FROM user WHERE id_user = ?";
-    $stmt_user = sqlsrv_prepare($conn, $sql_user, array($id_user));
+    // $sql_user = "DELETE FROM user WHERE id_user = ?";
+    // $stmt_user = sqlsrv_prepare($conn, $sql_user, array($id_user));
 
-    if (!$stmt_user || !sqlsrv_execute($stmt_user)) {
-        sqlsrv_rollback($conn);
-        echo "Gagal menghapus data dari tabel user.";
-        exit;
-    }
+    // if (!$stmt_user || !sqlsrv_execute($stmt_user)) {
+    //     sqlsrv_rollback($conn);
+    //     echo "Gagal menghapus data dari tabel user.";
+    //     exit;
+    // }
 
     // Jika kedua query berhasil, commit transaksi
     sqlsrv_commit($conn);

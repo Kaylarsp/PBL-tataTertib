@@ -87,7 +87,7 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
                                 <thead class="bg-dark text-white">
                                     <tr>
                                         <th>No.</th>
-                                        <th>Nama File</th>
+                                        <!-- <th>Nama File</th> -->
                                         <th>Lokasi File</th>
                                         <th>Waktu Upload</th>
                                         <th>Aksi</th>
@@ -95,7 +95,7 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $sql = "SELECT id_upload, nama_file, lokasi_file, waktu FROM upload";
+                                    $sql = "SELECT id_upload, lokasi_file, submit_time FROM upload";
                                     $stmt = sqlsrv_query($conn, $sql);
 
                                     if ($stmt === false) {
@@ -105,9 +105,9 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
                                     while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                         echo "<tr>";
                                         echo "<td>" . $row['id_upload'] . "</td>";
-                                        echo "<td>" . htmlspecialchars($row['nama_file']) . "</td>";
+                                        // echo "<td>" . htmlspecialchars($row['nama_file']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['lokasi_file']) . "</td>";
-                                        echo "<td>" . ($row['waktu'] ? $row['waktu']->format('Y-m-d H:i:s') : '-') . "</td>";
+                                        echo "<td>" . ($row['submit_time'] ? $row['submit_time']->format('Y-m-d H:i:s') : '-') . "</td>";
                                         echo '<td>
                                         <a href="' . htmlspecialchars($row['lokasi_file']) . '" class="btn btn-sm btn-success" download>
                                             <i class="bi bi-download"></i> Download

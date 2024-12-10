@@ -20,16 +20,10 @@
     <div class="menu-icon" onclick="toggleSidebar()">
         <i class="bi bi-list"></i>
     </div>
-    <div class="sidebar">
-        <ul class="nav flex-column">
-            <li><a href="listTatib.php"><i class="bi bi-list-check me-2"></i>List Tata Tertib</a></li>
-            <li><a href="notifikasi.php"><i class="bi bi-bell me-2"></i>Notifikasi</a></li>
-            <li><a href="uploadSanksi.php"><i class="bi bi-cloud-upload me-2"></i>Upload Sanksi</a></li>
-            <li><a href="../login/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-        </ul>
-    </div>
 
-            <main class="col-md-10 ms-sm-auto px-md-4">
+    <?php include "sidebar.php"; ?>
+
+            <main class="col-md-10 ms-sm-auto px-md-4" style="margin-top: 70px;">
                 <div class="pt-4">
                     <div class="card shadow-sm">
                         <div class="card-header text-center">
@@ -43,7 +37,7 @@
                                     <div class="card shadow">
                                         <div class="card-body text-center">
                                             <h5 class="card-title fw-bold">List Tata Tertib</h5>
-                                            <p class="card-text">Lihat aturan yang berlaku di universitas.</p>
+                                            <p class="card-text">Lihat aturan yang berlaku di lingkungan kampus.</p>
                                             <a href="listTatib.php" class="btn bg-dongker text-white">Lihat Tata Tertib</a>
                                         </div>
                                     </div>

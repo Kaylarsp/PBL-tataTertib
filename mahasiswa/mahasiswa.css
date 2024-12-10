@@ -2,36 +2,6 @@
     background-color: #001f54 !important;
 }
 
-.sidebar {
-    width: 200px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: -150px;
-    background-color: #001f54;
-    color: white;
-    transition: all 0.3s ease;
-    overflow-y: auto;
-    z-index: 10;
-    padding-top: 90px;
-}
-
-.sidebar a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    padding: 10px 20px;
-}
-
-.sidebar a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
-}
-
-.sidebar:hover {
-    left: 0;
-}
-
 .menu-icon {
     position: fixed;
     top: 50px;
@@ -59,7 +29,6 @@ main.content {
 
 .card {
     margin-right: 40px;
-    margin-top: 30px;
 }
 
 .card-header {
@@ -67,4 +36,8 @@ main.content {
     color: #001f54 !important;
     text-align: center;
     border: none;
+}
+
+.custom-margin-top {
+    margin-top: 90px;
 }
