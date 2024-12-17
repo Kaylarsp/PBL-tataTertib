@@ -4,7 +4,7 @@ include '../connection.php'; // Include koneksi
 
 // Kelas User untuk menangani login
 class User {
-    private $conn;
+    private $conn; //enkapsuplasi
 
     public function __construct($connection) {
         $this->conn = $connection;

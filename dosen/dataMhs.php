@@ -5,16 +5,39 @@ require_once '../connection.php';
 
 $id_user = $_SESSION['id_user']; // ID dosen yang sedang login
 
-// Query dengan join tabel dosen, kelas, dan mahasiswa
-$sql = "
-    SELECT m.nama, m.nim, k.nama_kelas, m.status_akademik
-    FROM mahasiswa AS m
-    INNER JOIN kelas AS k ON m.kelas = k.id_kelas
-    INNER JOIN dosen AS d ON k.id_kelas = d.id_kelas
+// Query untuk mendapatkan nama kelas berdasarkan ID dosen
+$sql_kelas = "
+    SELECT k.nama_kelas
+    FROM kelas k
+    INNER JOIN dosen d ON k.id_kelas = d.id_kelas
     WHERE d.id_user = ?
 ";
+$params_kelas = [$id_user];
+$stmt_kelas = sqlsrv_query($conn, $sql_kelas, $params_kelas);
 
-$params = [$id_user]; // Parameter untuk query
+$nama_kelas = "Tidak diketahui"; // Default jika query gagal
+if ($stmt_kelas && $row_kelas = sqlsrv_fetch_array($stmt_kelas, SQLSRV_FETCH_ASSOC)) {
+    $nama_kelas = htmlspecialchars($row_kelas['nama_kelas']);
+}
+
+// Query dengan join tabel dosen, kelas, mahasiswa, dan data pelanggarannya
+$sql = "
+    SELECT
+        m.nama,
+        m.nim,
+        m.status_akademik,
+        STRING_AGG(p.nama_pelanggaran, '. ') AS daftar_pelanggaran,
+        STRING_AGG(t.tingkat, '. ') AS daftar_tingkat
+    FROM mahasiswa m
+    INNER JOIN kelas k ON m.kelas = k.id_kelas
+    INNER JOIN dosen d ON k.id_kelas = d.id_kelas
+    LEFT JOIN laporan l ON m.id_user = l.id_pelaku
+    LEFT JOIN tingkat t ON l.id_tingkat = t.id_tingkat
+    LEFT JOIN pelanggaran p ON l.id_pelanggaran = p.id_pelanggaran
+    WHERE d.id_user = ?
+    GROUP BY m.nama, m.nim, m.status_akademik
+";
+$params = [$id_user];
 $stmt = sqlsrv_query($conn, $sql, $params);
 
 if ($stmt === false) {
@@ -125,9 +148,8 @@ if ($stmt === false) {
         }
 
         .custom-margin-top {
-            margin-top: 90px;
+            margin-top: 50px;
         }
-
     </style>
 </head>
 
@@ -153,35 +175,68 @@ if ($stmt === false) {
                 <div class="pt-4">
                     <div class="card shadow-sm">
                         <div class="card-header">
-                            <h1 class="h2 mb-0 fw-bold">Data Mahasiswa</h1>
+                            <h1 class="h2 mb-0 fw-bold">Data Mahasiswa <?php echo $nama_kelas ?></h1>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="max-width: 800px; margin: auto;">
                                 <table class="table table-bordered table-striped table-hover table-dongker">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
-                                            <th>Nama</th>
-                                            <th>NIM</th>
-                                            <th>Kelas</th>
-                                            <th>Status Akademik</th>
+                                            <th style="width: 5%;">No</th>
+                                            <th style="width: 25%;">Nama</th>
+                                            <th style="width: 15%;">NIM</th>
+                                            <th style="width: 20%;">Status Akademik</th>
+                                            <th style="width: 20%;">Jenis Pelanggaran</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
                                         $no = 1;
                                         while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-                                            echo "<tr>";
-                                            echo "<td>" . $no++ . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['nama']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['nim']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['nama_kelas']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['status_akademik']) . "</td>";
-                                            echo "</tr>";
+                                            $pelanggaran = htmlspecialchars($row['daftar_pelanggaran']) ?? 'Tidak Ada';
+                                        ?>
+                                            <tr>
+                                                <td><?php echo $no++; ?></td>
+                                                <td><?php echo htmlspecialchars($row['nama']); ?></td>
+                                                <td><?php echo htmlspecialchars($row['nim']); ?></td>
+                                                <td><?php echo htmlspecialchars($row['status_akademik']); ?></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm bg-dongker text-white" data-bs-toggle="modal" data-bs-target="#modalPelanggaran<?php echo $row['nim']; ?>">
+                                                        Detail
+                                                    </button>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Modal untuk Pelanggaran -->
+                                            <div class="modal fade" id="modalPelanggaran<?php echo $row['nim']; ?>" tabindex="-1" aria-labelledby="modalPelanggaranLabel<?php echo $row['nim']; ?>" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="modalPelanggaranLabel<?php echo $row['nim']; ?>">Daftar Pelanggaran Mahasiswa</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <ul style="text-align: justify;">
+                                                                <?php
+                                                                // Menampilkan daftar pelanggaran beserta tingkatnya jika ada
+                                                                $pelanggaran_list = explode(". ", $pelanggaran);
+                                                                $tingkat_list = explode(". ", htmlspecialchars($row['daftar_tingkat']) ?? '');
+
+                                                                foreach ($pelanggaran_list as $index => $p) {
+                                                                    $tingkat = isset($tingkat_list[$index]) ? " (Tingkat " . $tingkat_list[$index] . ")" : "";
+                                                                    echo "<li>" . $p . $tingkat . "</li>";
+                                                                }
+                                                                ?>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php
                                         }
 
                                         if ($no === 1) {
-                                            echo "<tr><td colspan='5' class='text-center'>Tidak ada data mahasiswa</td></tr>";
+                                            echo "<tr><td colspan='6' class='text-center'>Tidak ada data mahasiswa</td></tr>";
                                         }
                                         ?>
                                     </tbody>

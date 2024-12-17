@@ -84,7 +84,6 @@
                         <div class="card-header text-center">
                             <h1 class="display-5 fw-bold mt-3">Selamat Datang, Admin!</h1>
                             <p class="lead">Di Portal Akademik Polinema</p>
-                            <a href="#" class="btn bg-dongker text-white">Explore Now</a>
                         </div>
                         <div class="card-body mt-5">
                             <div class="row g-3">
