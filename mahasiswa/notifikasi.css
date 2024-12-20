@@ -1,7 +1,7 @@
 /* Warna utama untuk elemen */
 .bg-dongker {
     background-color: #001f54 !important;
-    color: white;
+    /* color: white; */
 }
 
 .menu-icon {
@@ -23,6 +23,10 @@
 
 .menu-icon:hover {
     background-color: #003080;
+}
+
+.text-dongker {
+    color: #001f54;
 }
 
 /* Sidebar */
@@ -73,12 +77,13 @@ main.content {
 
 .card-title {
     color: #001f54;
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
 .card-text {
     margin-bottom: 15px;
-    color: #333;
+    color: #001f54;
+    text-align: justify;
 }
 
 /* Tombol */

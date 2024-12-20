@@ -1,18 +1,18 @@
 /*
- Navicat Premium Dump SQL
+  Navicat Premium Dump SQL
 
- Source Server         : sqlsrv-local
- Source Server Type    : SQL Server
- Source Server Version : 16001135 (16.00.1135)
- Source Host           : LAPTOP-CCV6QK6I:1433
- Source Catalog        : tatib
- Source Schema         : dbo
+  Source Server         : sqlsrv-local
+  Source Server Type    : SQL Server
+  Source Server Version : 16001135 (16.00.1135)
+  Source Host           : LAPTOP-CCV6QK6I:1433
+  Source Catalog        : tatib
+  Source Schema         : dbo
 
- Target Server Type    : SQL Server
- Target Server Version : 16001135 (16.00.1135)
- File Encoding         : 65001
+  Target Server Type    : SQL Server
+  Target Server Version : 16001135 (16.00.1135)
+  File Encoding         : 65001
 
- Date: 05/12/2024 15:49:35
+  Date: 20/12/2024 14:38:35
 */
 
 
@@ -28,7 +28,8 @@ CREATE TABLE [dbo].[dosen] (
   [id_user] int  NULL,
   [nama] varchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
   [nidn] varchar(15) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
-  [tgl_lahir] date  NULL
+  [tgl_lahir] date  NULL,
+  [id_kelas] int  NULL
 )
 GO
 
@@ -42,51 +43,31 @@ GO
 SET IDENTITY_INSERT [dbo].[dosen] ON
 GO
 
-INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir]) VALUES (N'1', N'4', N'biru', N'23459', N'1980-08-15')
+INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'1', N'4', N'biru', N'23459', N'1980-08-15', N'15')
 GO
 
-INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir]) VALUES (N'2', N'11', N'caca', N'23460', N'1988-03-12')
+INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'6', N'18', N'popo', N'23460', N'1988-12-03', N'5')
+GO
+
+INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'8', N'22', N'lala', N'123423', N'1980-12-02', N'8')
+GO
+
+INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'9', N'11', N'caca', N'23412', N'1991-03-10', N'16')
+GO
+
+INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'10', N'21', N'fafa', N'123412', N'1995-06-22', N'10')
+GO
+
+INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'11', N'3', N'ani', N'21231', N'1975-01-06', N'12')
+GO
+
+INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'12', N'24', N'bayu', N'98230', N'1985-04-10', N'2')
+GO
+
+INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'14', NULL, N'tata', N'9834', N'2000-02-05', NULL)
 GO
 
 SET IDENTITY_INSERT [dbo].[dosen] OFF
-GO
-
-
--- ----------------------------
--- Table structure for DPA
--- ----------------------------
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'[dbo].[DPA]') AND type IN ('U'))
-	DROP TABLE [dbo].[DPA]
-GO
-
-CREATE TABLE [dbo].[DPA] (
-  [id_dpa] int  IDENTITY(1,1) NOT NULL,
-  [nama_dpa] varchar(50) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
-  [id_kelas] int  NULL,
-  [id_user] int  NULL
-)
-GO
-
-ALTER TABLE [dbo].[DPA] SET (LOCK_ESCALATION = TABLE)
-GO
-
-
--- ----------------------------
--- Records of DPA
--- ----------------------------
-SET IDENTITY_INSERT [dbo].[DPA] ON
-GO
-
-INSERT INTO [dbo].[DPA] ([id_dpa], [nama_dpa], [id_kelas], [id_user]) VALUES (N'1', N'anto', N'15', N'12')
-GO
-
-INSERT INTO [dbo].[DPA] ([id_dpa], [nama_dpa], [id_kelas], [id_user]) VALUES (N'2', N'jaya', N'2', N'13')
-GO
-
-INSERT INTO [dbo].[DPA] ([id_dpa], [nama_dpa], [id_kelas], [id_user]) VALUES (N'3', N'sasa', N'14', N'14')
-GO
-
-SET IDENTITY_INSERT [dbo].[DPA] OFF
 GO
 
 
@@ -185,11 +166,22 @@ CREATE TABLE [dbo].[laporan] (
   [verify_by] int  NULL,
   [verify_at] datetime  NULL,
   [status] varchar(20) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
-  [deskripsi] text COLLATE SQL_Latin1_General_CP1_CI_AS  NULL
+  [deskripsi] text COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
+  [bukti_filepath] nvarchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
+  [penolakan_filepath] nvarchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
+  [statusTolak] int  NULL,
+  [sanksi] varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL
 )
 GO
 
 ALTER TABLE [dbo].[laporan] SET (LOCK_ESCALATION = TABLE)
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'1=acc, 2=tolak',
+'SCHEMA', N'dbo',
+'TABLE', N'laporan',
+'COLUMN', N'statusTolak'
 GO
 
 
@@ -197,6 +189,42 @@ GO
 -- Records of laporan
 -- ----------------------------
 SET IDENTITY_INSERT [dbo].[laporan] ON
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'22', N'1', N'11', N'10', N'33', N'23', N'2024-12-07 16:48:14.000', N'Selesai', N'gilss', N'../uploads/art therapy 1.jpg', NULL, N'1', N'Diberhentikan sebagai mahasiswa')
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'24', N'2', N'18', N'8', N'16', N'23', N'2024-12-07 16:48:13.000', N'Selesai', N'bla bla', N'../uploads/english-indonesian-dictionary.png', NULL, N'1', N'Dikenakan penggantian kerugian atau penggantian benda/barang semacamnya')
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'25', N'1', N'4', N'10', N'33', N'23', N'2024-12-07 16:48:08.000', N'Belum Selesai', N'astaga', N'../uploads/8aafdcf61dcda90cbcb36352a5eebbe9.jpg', NULL, N'1', N'Dinonaktifkan (Cuti Akademik/ Terminal) selama dua semester')
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'26', N'1', N'6', N'8', N'34', N'23', N'2024-12-07 16:48:11.000', N'Belum Selesai', N'quack', N'../uploads/27d707a2e9cb22b4c53ceca0df231607.jpg', NULL, N'1', N'Dinonaktifkan (Cuti Akademik/ Terminal) selama dua semester')
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'28', N'2', N'3', N'10', N'20', N'23', N'2024-12-07 16:34:47.000', N'Belum Selesai', N'mbuh', N'../uploads/cdb68e97-1712-448c-a871-82d9751ed502.jpg', NULL, N'1', N'Melakukan tugas layanan sosial dalam jangka waktu tertentu')
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'29', N'4', N'11', N'9', N'4', NULL, NULL, NULL, N'y, ok', N'../uploads/WhatsApp Image 2023-08-03 at 07.25.11.jpeg', NULL, N'2', N'Teguran tertulis disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai')
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'30', N'4', N'11', N'7', N'3', N'23', N'2024-12-07 16:33:41.000', NULL, N'oh lord', N'../uploads/Animal Reiki Azores - Teara.jpg', NULL, N'1', N'Teguran tertulis disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai')
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'31', N'4', N'25', N'10', N'6', N'23', N'2024-12-08 09:06:58.000', NULL, N'mkn', N'../uploads/f620dedc-56f4-4b92-92f4-a65d09f5f1bb.png', NULL, N'1', N'Teguran tertulis disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai')
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'32', N'1', N'24', N'39', N'36', NULL, NULL, NULL, N'ini ngeri bgt', N'../uploads/1.jpg', NULL, N'2', NULL)
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'33', N'4', N'4', N'8', N'4', NULL, NULL, NULL, N'jgfjhfjhgfjhg', N'../uploads/1.jpg', NULL, N'2', NULL)
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'34', N'1', N'25', N'7', N'36', NULL, NULL, NULL, N'qeywetwert', N'../uploads/9d845d52-48ed-4f8e-b35e-1e019b4fe2b8.jpg', NULL, NULL, NULL)
+GO
+
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'35', N'3', N'24', N'7', N'9', N'23', N'2024-12-11 02:43:59.000', NULL, N'gaduh', N'../uploads/1.jpg', NULL, N'1', N'Membuat surat pernyataan tidak mengulangi perbuatan tersebut, dibubuhi materai')
 GO
 
 SET IDENTITY_INSERT [dbo].[laporan] OFF
@@ -218,7 +246,7 @@ CREATE TABLE [dbo].[mahasiswa] (
   [tgl_lahir] date  NULL,
   [kelas] int  NULL,
   [status_akademik] varchar(15) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
-  [kontak_ortu] varchar(15) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL
+  [kontak] varchar(15) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL
 )
 GO
 
@@ -232,51 +260,43 @@ GO
 SET IDENTITY_INSERT [dbo].[mahasiswa] ON
 GO
 
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak_ortu]) VALUES (N'1', N'7', N'kayla', N'2341760103', N'2005-04-30', N'15', N'Aktif', N'08123112')
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'1', N'7', N'kayla', N'2341760103', N'2005-04-30', N'15', N'Aktif', N'08123112')
 GO
 
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak_ortu]) VALUES (N'2', N'8', N'fauziyyah', N'2341760145', N'2004-11-08', N'15', N'Aktif', N'08312323')
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'2', N'8', N'fauziyyah', N'2341760145', N'2004-11-08', N'15', N'Aktif', N'08312323')
 GO
 
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak_ortu]) VALUES (N'3', N'9', N'bima', N'2341760027', N'2005-05-15', N'15', N'Aktif', N'08192394')
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'3', N'9', N'bima', N'2341760027', N'2005-05-15', N'15', N'Aktif', N'08192394')
 GO
 
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak_ortu]) VALUES (N'4', N'10', N'farhan', N'2341760141', N'2005-06-30', N'15', N'Aktif', N'08123412')
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'4', N'10', N'farhan', N'2341760141', N'2005-06-30', N'15', N'Aktif', N'08123412')
+GO
+
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'11', N'36', N'qweqwewe', N'1231313', NULL, N'8', N'Cuti', NULL)
+GO
+
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'12', N'37', N'3324324', N'123231', NULL, N'7', N'Cuti', NULL)
+GO
+
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'13', N'38', N'lalala', N'lalala', NULL, N'6', N'Cuti', NULL)
+GO
+
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'14', N'39', N'budi', N'1231245', NULL, N'15', N'Aktif', NULL)
+GO
+
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'16', N'42', N'wiki', N'98347189', NULL, N'10', N'Aktif', NULL)
+GO
+
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'17', N'45', N'koko', N'1928341', NULL, N'7', N'Tidak Aktif', NULL)
+GO
+
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'18', N'46', N'kaka', N'312341234', NULL, N'17', N'Aktif', NULL)
+GO
+
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'19', N'49', N'kay', N'467646575', NULL, N'16', N'Cuti', NULL)
 GO
 
 SET IDENTITY_INSERT [dbo].[mahasiswa] OFF
-GO
-
-
--- ----------------------------
--- Table structure for notifikasi
--- ----------------------------
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'[dbo].[notifikasi]') AND type IN ('U'))
-	DROP TABLE [dbo].[notifikasi]
-GO
-
-CREATE TABLE [dbo].[notifikasi] (
-  [id_notifikasi] int  IDENTITY(1,1) NOT NULL,
-  [nama] varchar(32) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
-  [id_sender] int  NULL,
-  [id_recipient] int  NULL,
-  [content] text COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
-  [sent_at] datetime  NULL,
-  [read_at] datetime  NULL
-)
-GO
-
-ALTER TABLE [dbo].[notifikasi] SET (LOCK_ESCALATION = TABLE)
-GO
-
-
--- ----------------------------
--- Records of notifikasi
--- ----------------------------
-SET IDENTITY_INSERT [dbo].[notifikasi] ON
-GO
-
-SET IDENTITY_INSERT [dbo].[notifikasi] OFF
 GO
 
 
@@ -290,8 +310,7 @@ GO
 CREATE TABLE [dbo].[pelanggaran] (
   [id_pelanggaran] int  IDENTITY(1,1) NOT NULL,
   [nama_pelanggaran] varchar(450) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
-  [deskripsi] text COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
-  [tingkat] int  NULL
+  [id_tingkat] int  NULL
 )
 GO
 
@@ -305,113 +324,113 @@ GO
 SET IDENTITY_INSERT [dbo].[pelanggaran] ON
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'2', N'Berkomunikasi dengan tidak sopan, baik tertulis atau tidak tertulis kepada mahasiswa, dosen, karyawan, atau orang lain', NULL, N'5')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'2', N'Berkomunikasi dengan tidak sopan, baik tertulis atau tidak tertulis kepada mahasiswa, dosen, karyawan, atau orang lain.', N'5')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'3', N'Berbusana tidak sopan dan tidak rapi. Yaitu antara lain adalah:
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'3', N'Berbusana tidak sopan dan tidak rapi Yaitu antara lain adalah:
 berpakaian ketat, transparan, memakai t-shirt (baju kaos tidak
 berkerah), tank top, hipster, you can see, rok mini, backless, celana
 pendek, celana tiga per empat, legging, model celana atau baju
-koyak, sandal, sepatu sandal di lingkungan kampus', NULL, N'4')
+koyak, sandal, sepatu sandal di lingkungan kampus.', N'4')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'4', N'Mahasiswa laki-laki berambut tidak rapi', NULL, N'4')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'4', N'Mahasiswa laki-laki berambut tidak rapi.', N'4')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'5', N'Mahasiswa berambut dengan model punk, dicat selain hitam dan/atau skinned.', NULL, N'4')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'5', N'Mahasiswa berambut dengan model punk, dicat selain hitam dan/atau skinned.', N'4')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'6', N'Makan, atau minum di dalam ruang kuliah/ laboratorium/ bengkel.', NULL, N'4')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'6', N'Makan, atau minum di dalam ruang kuliah/ laboratorium/ bengkel.', N'4')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'7', N'Melanggar peraturan/ ketentuan yang berlaku di Polinema baik di Jurusan/ Program Studi', NULL, N'3')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'7', N'Melanggar peraturan/ ketentuan yang berlaku di Polinema baik di Jurusan/ Program Studi.', N'3')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'8', N'Tidak menjaga kebersihan di seluruh area Polinema', NULL, N'3')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'8', N'Tidak menjaga kebersihan di seluruh area Polinema.', N'3')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'9', N'Membuat kegaduhan yang mengganggu pelaksanaan perkuliahan atau praktikum yang sedang berlangsung.', NULL, N'3')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'9', N'Membuat kegaduhan yang mengganggu pelaksanaan perkuliahan atau praktikum yang sedang berlangsung.', N'3')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'10', N'Merokok di luar area kawasan merokok', NULL, N'3')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'10', N'Merokok di luar area kawasan merokok.', N'3')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'11', N'Bermain kartu, game online di area kampus', NULL, N'3')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'11', N'Bermain kartu, game online di area kampus.', N'3')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'12', N'Mengotori atau mencoret-coret meja, kursi, tembok, dan lain-lain di lingkungan Polinema', NULL, N'3')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'12', N'Mengotori atau mencoret-coret meja, kursi, tembok, dan lain-lain di lingkungan Polinema.', N'3')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'13', N'Bertingkah laku kasar atau tidak sopan kepada mahasiswa, dosen, dan/atau karyawan.', NULL, N'3')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'13', N'Bertingkah laku kasar atau tidak sopan kepada mahasiswa, dosen, dan/atau karyawan.', N'3')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'14', N'Merusak sarana dan prasarana yang ada di area Polinema', NULL, N'2')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'14', N'Merusak sarana dan prasarana yang ada di area Polinema.', N'2')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'15', N'Tidak menjaga ketertiban dan keamanan di seluruh area Polinema (misalnya: parkir tidak pada tempatnya, konvoi selebrasi wisuda dll)', NULL, N'2')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'15', N'Tidak menjaga ketertiban dan keamanan di seluruh area Polinema (misalnya: parkir tidak pada tempatnya, konvoi selebrasi wisuda dll).', N'2')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'16', N'Melakukan pengotoran/ pengrusakan barang milik orang lain termasuk milik Politeknik Negeri Malang', NULL, N'2')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'16', N'Melakukan pengotoran/ pengrusakan barang milik orang lain termasuk milik Politeknik Negeri Malang.', N'2')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'17', N'Mengakses materi pornografi di kelas atau area kampus', NULL, N'2')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'17', N'Mengakses materi pornografi di kelas atau area kampus.', N'2')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'18', N'Membawa dan/atau menggunakan senjata tajam dan/atau senjata api untuk hal kriminal', NULL, N'2')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'18', N'Membawa dan/atau menggunakan senjata tajam dan/atau senjata api untuk hal kriminal.', N'2')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'19', N'Melakukan perkelahian, serta membentuk geng/ kelompok yang bertujuan negatif.', NULL, N'2')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'19', N'Melakukan perkelahian, serta membentuk geng/ kelompok yang bertujuan negatif.', N'2')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'20', N'Melakukan kegiatan politik praktis di dalam kampus', NULL, N'2')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'20', N'Melakukan kegiatan politik praktis di dalam kampus.', N'2')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'21', N'Melakukan tindakan kekerasan atau perkelahian di dalam kampus.', NULL, N'2')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'21', N'Melakukan tindakan kekerasan atau perkelahian di dalam kampus.', N'2')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'22', N'Melakukan penyalahgunaan identitas untuk perbuatan negatif', NULL, N'2')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'22', N'Melakukan penyalahgunaan identitas untuk perbuatan negatif.', N'2')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'23', N'Mengancam, baik tertulis atau tidak tertulis kepada mahasiswa, dosen, dan/atau karyawan.', NULL, N'2')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'23', N'Mengancam, baik tertulis atau tidak tertulis kepada mahasiswa, dosen, dan/atau karyawan.', N'2')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'24', N'Mencuri dalam bentuk apapun', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'24', N'Mencuri dalam bentuk apapun.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'25', N'Melakukan kecurangan dalam bidang akademik, administratif, dan keuangan.', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'25', N'Melakukan kecurangan dalam bidang akademik, administratif, dan keuangan.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'26', N'Melakukan pemerasan dan/atau penipuan', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'26', N'Melakukan pemerasan dan/atau penipuan.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'27', N'Melakukan pelecehan dan/atau tindakan asusila dalam segala bentuk di dalam dan di luar kampus', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'27', N'Melakukan pelecehan dan/atau tindakan asusila dalam segala bentuk di dalam dan di luar kampus.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'28', N'Berjudi, mengkonsumsi minum-minuman keras, dan/ atau bermabuk-mabukan di lingkungan dan di luar lingkungan Kampus Polinema', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'28', N'Berjudi, mengkonsumsi minum-minuman keras, dan/ atau bermabuk-mabukan di lingkungan dan di luar lingkungan Kampus Polinema.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'29', N'Mengikuti organisasi dan atau menyebarkan faham-faham yang dilarang oleh Pemerintah.', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'29', N'Mengikuti organisasi dan atau menyebarkan faham-faham yang dilarang oleh Pemerintah.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'30', N'Melakukan pemalsuan data / dokumen / tanda tangan.', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'30', N'Melakukan pemalsuan data / dokumen / tanda tangan.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'31', N'Melakukan plagiasi (copy paste) dalam tugas-tugas atau karya ilmiah', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'31', N'Melakukan plagiasi (copy paste) dalam tugas-tugas atau karya ilmiah.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'32', N'Tidak menjaga nama baik Polinema di masyarakat dan/ atau mencemarkan nama baik Polinema melalui media apapun', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'32', N'Tidak menjaga nama baik Polinema di masyarakat dan/ atau mencemarkan nama baik Polinema melalui media apapun.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'33', N'Melakukan kegiatan atau sejenisnya yang dapat menurunkan kehormatan atau martabat Negara, Bangsa dan Polinema.', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'33', N'Melakukan kegiatan atau sejenisnya yang dapat menurunkan kehormatan atau martabat Negara, Bangsa dan Polinema.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'34', N'Menggunakan barang-barang psikotropika dan/ atau zat-zat Adiktif lainnya', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'34', N'Menggunakan barang-barang psikotropika dan/ atau zat-zat Adiktif lainnya.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'35', N'Mengedarkan serta menjual barang-barang psikotropika dan/ atau zat-zat Adiktif lainnya', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'35', N'Mengedarkan serta menjual barang-barang psikotropika dan/ atau zat-zat Adiktif lainnya.', N'1')
 GO
 
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [deskripsi], [tingkat]) VALUES (N'36', N'Terlibat dalam tindakan kriminal dan dinyatakan bersalah oleh Pengadilan', NULL, N'1')
+INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'36', N'Terlibat dalam tindakan kriminal dan dinyatakan bersalah oleh Pengadilan.', N'1')
 GO
 
 SET IDENTITY_INSERT [dbo].[pelanggaran] OFF
@@ -517,9 +536,6 @@ GO
 INSERT INTO [dbo].[role] ([id_role], [nama]) VALUES (N'4', N'mahasiswa')
 GO
 
-INSERT INTO [dbo].[role] ([id_role], [nama]) VALUES (N'5', N'dpa')
-GO
-
 SET IDENTITY_INSERT [dbo].[role] OFF
 GO
 
@@ -556,7 +572,10 @@ GO
 INSERT INTO [dbo].[staff] ([id_staff], [id_user], [nama], [nip], [tgl_lahir]) VALUES (N'2', N'5', N'nanda', N'23456', N'1980-09-11')
 GO
 
-INSERT INTO [dbo].[staff] ([id_staff], [id_user], [nama], [nip], [tgl_lahir]) VALUES (N'3', N'15', N'rara', N'23458', N'1981-09-05')
+INSERT INTO [dbo].[staff] ([id_staff], [id_user], [nama], [nip], [tgl_lahir]) VALUES (N'3', N'15', N'rara', N'23458', N'1981-09-10')
+GO
+
+INSERT INTO [dbo].[staff] ([id_staff], [id_user], [nama], [nip], [tgl_lahir]) VALUES (N'4', N'25', N'varo', N'23459', N'1999-01-07')
 GO
 
 SET IDENTITY_INSERT [dbo].[staff] OFF
@@ -625,13 +644,22 @@ GO
 
 CREATE TABLE [dbo].[upload] (
   [id_upload] int  IDENTITY(1,1) NOT NULL,
-  [nama_file] varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
   [lokasi_file] varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
-  [waktu] datetime  NULL
+  [submit_time] datetime  NULL,
+  [statusSanksi] int  NULL,
+  [id_mahasiswa] int  NULL
 )
 GO
 
 ALTER TABLE [dbo].[upload] SET (LOCK_ESCALATION = TABLE)
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'1=sudah oke, 
+2=blm oke',
+'SCHEMA', N'dbo',
+'TABLE', N'upload',
+'COLUMN', N'statusSanksi'
 GO
 
 
@@ -639,6 +667,12 @@ GO
 -- Records of upload
 -- ----------------------------
 SET IDENTITY_INSERT [dbo].[upload] ON
+GO
+
+INSERT INTO [dbo].[upload] ([id_upload], [lokasi_file], [submit_time], [statusSanksi], [id_mahasiswa]) VALUES (N'1', N'../uploads/f620dedc-56f4-4b92-92f4-a65d09f5f1bb.png', N'2024-12-08 20:46:40.000', N'1', N'1')
+GO
+
+INSERT INTO [dbo].[upload] ([id_upload], [lokasi_file], [submit_time], [statusSanksi], [id_mahasiswa]) VALUES (N'2', N'a65d09f5f1bb.png', N'2024-12-09 15:16:17.000', N'1', N'2')
 GO
 
 SET IDENTITY_INSERT [dbo].[upload] OFF
@@ -703,19 +737,64 @@ GO
 INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'11', N'caca', N'123', N'2')
 GO
 
-INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'12', N'anto', N'123', N'5')
-GO
-
-INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'13', N'jaya', N'123', N'5')
-GO
-
-INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'14', N'sasa', N'123', N'5')
-GO
-
 INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'15', N'rara', N'123', N'3')
 GO
 
 INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'16', N'lalala', N'123', N'4')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'18', N'popo', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'21', N'fafa', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'22', N'lala', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'23', N'admin', N'123', N'1')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'24', N'dosen', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'25', N'staff', N'123', N'3')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'36', N'qweqwewe', N'123', N'4')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'37', N'3324324', N'123', N'4')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'38', N'lalala', N'123', N'4')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'39', N'budi', N'123', N'4')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'42', N'wiki', N'123', N'4')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'43', N'lili', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'44', N'wewe', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'45', N'koko', N'123', N'4')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'46', N'kaka', N'123', N'4')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'47', N'rere', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'48', N'tata', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'49', N'kay', N'123', N'4')
 GO
 
 SET IDENTITY_INSERT [dbo].[user] OFF
@@ -725,7 +804,7 @@ GO
 -- ----------------------------
 -- Auto increment value for dosen
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[dosen]', RESEED, 2)
+DBCC CHECKIDENT ('[dbo].[dosen]', RESEED, 14)
 GO
 
 
@@ -742,22 +821,6 @@ GO
 -- Primary Key structure for table dosen
 -- ----------------------------
 ALTER TABLE [dbo].[dosen] ADD CONSTRAINT [PK__dosen__A9AFDFA21C0DA3EE] PRIMARY KEY CLUSTERED ([id_dosen])
-WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)  
-ON [PRIMARY]
-GO
-
-
--- ----------------------------
--- Auto increment value for DPA
--- ----------------------------
-DBCC CHECKIDENT ('[dbo].[DPA]', RESEED, 3)
-GO
-
-
--- ----------------------------
--- Primary Key structure for table DPA
--- ----------------------------
-ALTER TABLE [dbo].[DPA] ADD CONSTRAINT [PK__DPA__D5EABA0198644918] PRIMARY KEY CLUSTERED ([id_dpa])
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)  
 ON [PRIMARY]
 GO
@@ -782,14 +845,17 @@ GO
 -- ----------------------------
 -- Auto increment value for laporan
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[laporan]', RESEED, 1)
+DBCC CHECKIDENT ('[dbo].[laporan]', RESEED, 35)
 GO
 
 
 -- ----------------------------
 -- Checks structure for table laporan
 -- ----------------------------
-ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [CK__laporan__status__52593CB8] CHECK ([status]='Menunggu' OR [status]='Proses verifikasi' OR [status]='Selesai' OR [status]='Ditolak')
+ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [CK_laporan_statusTolak] CHECK ([statusTolak]=(1) OR [statusTolak]=(2))
+GO
+
+ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [CK__laporan__status__52593CB8] CHECK ([status]='Selesai' OR [status]='Belum Selesai')
 GO
 
 
@@ -805,7 +871,7 @@ GO
 -- ----------------------------
 -- Auto increment value for mahasiswa
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[mahasiswa]', RESEED, 4)
+DBCC CHECKIDENT ('[dbo].[mahasiswa]', RESEED, 19)
 GO
 
 
@@ -835,25 +901,9 @@ GO
 
 
 -- ----------------------------
--- Auto increment value for notifikasi
--- ----------------------------
-DBCC CHECKIDENT ('[dbo].[notifikasi]', RESEED, 1)
-GO
-
-
--- ----------------------------
--- Primary Key structure for table notifikasi
--- ----------------------------
-ALTER TABLE [dbo].[notifikasi] ADD CONSTRAINT [PK__notifika__8FD1662AC6572DEE] PRIMARY KEY CLUSTERED ([id_notifikasi])
-WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)  
-ON [PRIMARY]
-GO
-
-
--- ----------------------------
 -- Auto increment value for pelanggaran
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[pelanggaran]', RESEED, 36)
+DBCC CHECKIDENT ('[dbo].[pelanggaran]', RESEED, 49)
 GO
 
 
@@ -917,7 +967,7 @@ GO
 -- ----------------------------
 -- Auto increment value for staff
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[staff]', RESEED, 3)
+DBCC CHECKIDENT ('[dbo].[staff]', RESEED, 7)
 GO
 
 
@@ -965,23 +1015,21 @@ GO
 -- ----------------------------
 -- Auto increment value for upload
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[upload]', RESEED, 1)
+DBCC CHECKIDENT ('[dbo].[upload]', RESEED, 2)
 GO
 
 
 -- ----------------------------
--- Primary Key structure for table upload
+-- Checks structure for table upload
 -- ----------------------------
-ALTER TABLE [dbo].[upload] ADD CONSTRAINT [PK__upload__3F684A04D92278AD] PRIMARY KEY CLUSTERED ([id_upload])
-WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)  
-ON [PRIMARY]
+ALTER TABLE [dbo].[upload] ADD CONSTRAINT [CK_upload_statusSanksi] CHECK ([statusSanksi]=(1) OR [statusSanksi]=(2))
 GO
 
 
 -- ----------------------------
 -- Auto increment value for user
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[user]', RESEED, 16)
+DBCC CHECKIDENT ('[dbo].[user]', RESEED, 49)
 GO
 
 
@@ -1000,14 +1048,7 @@ GO
 ALTER TABLE [dbo].[dosen] ADD CONSTRAINT [FK__dosen__id_user__412EB0B6] FOREIGN KEY ([id_user]) REFERENCES [dbo].[user] ([id_user]) ON DELETE NO ACTION ON UPDATE NO ACTION
 GO
 
-
--- ----------------------------
--- Foreign Keys structure for table DPA
--- ----------------------------
-ALTER TABLE [dbo].[DPA] ADD CONSTRAINT [FK__DPA__id_kelas__5535A963] FOREIGN KEY ([id_kelas]) REFERENCES [dbo].[kelas] ([id_kelas]) ON DELETE NO ACTION ON UPDATE NO ACTION
-GO
-
-ALTER TABLE [dbo].[DPA] ADD CONSTRAINT [FK__DPA__id_user__5629CD9C] FOREIGN KEY ([id_user]) REFERENCES [dbo].[user] ([id_user]) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE [dbo].[dosen] ADD CONSTRAINT [FK_dosen_id_kelas] FOREIGN KEY ([id_kelas]) REFERENCES [dbo].[kelas] ([id_kelas]) ON DELETE NO ACTION ON UPDATE NO ACTION
 GO
 
 
@@ -1024,16 +1065,16 @@ GO
 ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [FK__laporan__id_ting__4D94879B] FOREIGN KEY ([id_tingkat]) REFERENCES [dbo].[tingkat] ([id_tingkat]) ON DELETE NO ACTION ON UPDATE NO ACTION
 GO
 
-ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [FK__laporan__id_pela__4E88ABD4] FOREIGN KEY ([id_pelapor]) REFERENCES [dbo].[mahasiswa] ([id_mahasiswa]) ON DELETE NO ACTION ON UPDATE NO ACTION
-GO
-
-ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [FK__laporan__id_pela__4F7CD00D] FOREIGN KEY ([id_pelaku]) REFERENCES [dbo].[mahasiswa] ([id_mahasiswa]) ON DELETE NO ACTION ON UPDATE NO ACTION
-GO
-
 ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [FK__laporan__id_pela__5070F446] FOREIGN KEY ([id_pelanggaran]) REFERENCES [dbo].[pelanggaran] ([id_pelanggaran]) ON DELETE NO ACTION ON UPDATE NO ACTION
 GO
 
-ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [FK__laporan__verify___5165187F] FOREIGN KEY ([verify_by]) REFERENCES [dbo].[dosen] ([id_dosen]) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [FK__laporan__id_pela__4E88ABD4] FOREIGN KEY ([id_pelapor]) REFERENCES [dbo].[user] ([id_user]) ON DELETE NO ACTION ON UPDATE NO ACTION
+GO
+
+ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [FK__laporan__id_pela__4F7CD00D] FOREIGN KEY ([id_pelaku]) REFERENCES [dbo].[user] ([id_user]) ON DELETE NO ACTION ON UPDATE NO ACTION
+GO
+
+ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [FK__laporan__verify___5165187F] FOREIGN KEY ([verify_by]) REFERENCES [dbo].[user] ([id_user]) ON DELETE NO ACTION ON UPDATE NO ACTION
 GO
 
 
@@ -1048,19 +1089,9 @@ GO
 
 
 -- ----------------------------
--- Foreign Keys structure for table notifikasi
--- ----------------------------
-ALTER TABLE [dbo].[notifikasi] ADD CONSTRAINT [FK__notifikas__id_se__619B8048] FOREIGN KEY ([id_sender]) REFERENCES [dbo].[user] ([id_user]) ON DELETE NO ACTION ON UPDATE NO ACTION
-GO
-
-ALTER TABLE [dbo].[notifikasi] ADD CONSTRAINT [FK__notifikas__id_re__628FA481] FOREIGN KEY ([id_recipient]) REFERENCES [dbo].[user] ([id_user]) ON DELETE NO ACTION ON UPDATE NO ACTION
-GO
-
-
--- ----------------------------
 -- Foreign Keys structure for table pelanggaran
 -- ----------------------------
-ALTER TABLE [dbo].[pelanggaran] ADD CONSTRAINT [FK_pelanggaran_tingkat] FOREIGN KEY ([tingkat]) REFERENCES [dbo].[tingkat] ([id_tingkat]) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE [dbo].[pelanggaran] ADD CONSTRAINT [FK_pelanggaran_tingkat] FOREIGN KEY ([id_tingkat]) REFERENCES [dbo].[tingkat] ([id_tingkat]) ON DELETE NO ACTION ON UPDATE NO ACTION
 GO
 
 
@@ -1075,5 +1106,19 @@ GO
 -- Foreign Keys structure for table staff
 -- ----------------------------
 ALTER TABLE [dbo].[staff] ADD CONSTRAINT [FK__staff__id_user__5CD6CB2B] FOREIGN KEY ([id_user]) REFERENCES [dbo].[user] ([id_user]) ON DELETE NO ACTION ON UPDATE NO ACTION
+GO
+
+
+-- ----------------------------
+-- Foreign Keys structure for table upload
+-- ----------------------------
+ALTER TABLE [dbo].[upload] ADD CONSTRAINT [FK_id_mhs] FOREIGN KEY ([id_mahasiswa]) REFERENCES [dbo].[mahasiswa] ([id_mahasiswa]) ON DELETE NO ACTION ON UPDATE NO ACTION
+GO
+
+
+-- ----------------------------
+-- Foreign Keys structure for table user
+-- ----------------------------
+ALTER TABLE [dbo].[user] ADD CONSTRAINT [FK_role_user] FOREIGN KEY ([role]) REFERENCES [dbo].[role] ([id_role]) ON DELETE NO ACTION ON UPDATE NO ACTION
 GO
 

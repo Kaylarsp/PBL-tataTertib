@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../connection.php';
+require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connect`
 
 // Pastikan sesi `id_user` aktif
 if (!isset($_SESSION['id_user'])) {
@@ -9,11 +9,6 @@ if (!isset($_SESSION['id_user'])) {
 }
 
 $id_user = $_SESSION['id_user']; // Ambil ID user dari sesi
-
-// Cek koneksi
-if ($conn === false) {
-    die(print_r(sqlsrv_errors(), true));
-}
 
 // Query untuk mengambil data laporan
 $sql = "
@@ -52,7 +47,7 @@ if ($stmt === false) {
     <link rel="stylesheet" href="notifikasi.css">
 </head>
 
-<body class="bg-light">
+<body class="bg-light overflow-hidden">
     <!-- Navbar di bagian atas -->
     <?php include "navbar.php"; ?>
 
@@ -70,25 +65,32 @@ if ($stmt === false) {
     </div>
 
     <div class="container my-4">
-        <h1 class="text-center mb-4">Notifikasi Pelanggaran</h1>
-
         <!-- Daftar Notifikasi -->
-        <?php if (sqlsrv_has_rows($stmt)): ?>
-            <?php while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)): ?>
-                <div class="card shadow-sm mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Pelanggaran: <?= htmlspecialchars($row['pelanggaran']) ?></h5>
-                        <p class="card-text">Deskripsi: <?= htmlspecialchars($row['deskripsi']) ?></p>
-                        <div class="d-flex justify-content-between">
-                            <button class="btn btn-success btn-sm" onclick="terimaPelanggaran()">Terima</button>
-                            <button class="btn btn-danger btn-sm" onclick="ajukanPenolakan(<?= $row['id_laporan'] ?>)">Ajukan Penolakan</button>
-                        </div>
-                    </div>
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="card shadow" style="margin-top: 50px; width: 90%; margin-left: 50px;">
+                <div class="text-center mb-4">
+                    <h1 class="display-5 fw-bold mt-4" style="color: #001f54;">Notifikasi Pelanggaran</h1>
                 </div>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <p class="text-center">Tidak ada notifikasi.</p>
-        <?php endif; ?>
+                <div class="card-body overflow-auto" style="max-height: 350px; text-align:justify;">
+                    <?php if (sqlsrv_has_rows($stmt)): ?>
+                        <?php while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)): ?>
+                            <div class="card shadow mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-text fs-6">Pelanggaran: <?= htmlspecialchars($row['pelanggaran']) ?></h5>
+                                    <h5 class="card-text fs-6">Deskripsi: <?= htmlspecialchars($row['deskripsi']) ?></h5>
+                                    <div>
+                                        <button class="btn btn-success btn-sm" onclick="terimaPelanggaran()">Terima</button>
+                                        <button class="btn btn-danger btn-sm" onclick="ajukanPenolakan(<?= $row['id_laporan'] ?>)">Ajukan Penolakan</button>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <p class="text-center">Tidak ada notifikasi.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal Ajukan Penolakan -->
@@ -120,6 +122,11 @@ if ($stmt === false) {
     <!-- Link Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
+        }
+
         function terimaPelanggaran() {
             alert("Pelanggaran telah diterima.");
         }
@@ -131,25 +138,27 @@ if ($stmt === false) {
         }
 
         // Form pengajuan penolakan
-        document.getElementById("penolakanForm").addEventListener("submit", function (e) {
+        document.getElementById("penolakanForm").addEventListener("submit", function(e) {
             e.preventDefault();
             const id = document.getElementById('notifikasiId').value;
             const alasan = document.getElementById('alasanPenolakan').value;
 
             fetch('handle_penolakan.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `id_notifikasi=${id}&alasan=${encodeURIComponent(alasan)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('Penolakan berhasil diajukan.');
-                    location.reload();
-                } else {
-                    alert('Terjadi kesalahan: ' + data.message);
-                }
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `id_notifikasi=${id}&alasan=${encodeURIComponent(alasan)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Penolakan berhasil diajukan.');
+                        location.reload();
+                    } else {
+                        alert('Terjadi kesalahan: ' + data.message);
+                    }
+                });
 
             const modal = bootstrap.Modal.getInstance(document.getElementById('penolakanModal'));
             modal.hide();

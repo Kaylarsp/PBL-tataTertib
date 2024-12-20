@@ -42,7 +42,7 @@ if ($stmt === false) {
     <?php include "sidebar.php"; ?>
 
     <!-- Konten -->
-    <div class="container" style="margin-top: 90px; margin-left: 170px;">
+    <div class="container" style="margin-top: 90px; margin-left: 170px; margin-bottom: 70px;">
         <div class="card shadow">
             <div class="card-header text-center bg-dongker text-white">
                 <h2 class="fw-bold">Tata Tertib Polinema</h2>
