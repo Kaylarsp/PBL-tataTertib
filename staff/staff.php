@@ -12,39 +12,6 @@
             background-color: #001f54 !important;
         }
 
-        /* Sidebar styling */
-        .sidebar {
-            width: 200px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -150px;
-            /* Hide sidebar initially */
-            background-color: #001f54;
-            color: white;
-            transition: all 0.3s ease;
-            overflow-y: auto;
-            z-index: 10;
-            padding-top: 90px;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px 20px;
-        }
-
-        .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-        }
-
-        /* Sidebar muncul saat hover */
-        .sidebar:hover {
-            left: 0;
-        }
-
         /* Ikon menu tetap terlihat */
         .menu-icon {
             position: fixed;
@@ -111,7 +78,6 @@
                         <div class="card-header text-center">
                             <h1 class="display-5 fw-bold mt-3">Selamat Datang, Staff!</h1>
                             <p class="lead">Di Portal Akademik Polinema</p>
-                            <a href="#" class="btn bg-dongker text-white">Explore Now</a>
                         </div>
                         <div class="card-body">
                             <section class="row justify-content-center mt-4">
