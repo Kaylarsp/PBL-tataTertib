@@ -18,12 +18,14 @@ $sql = "
         t.tingkat AS tingkat,
         p.nama_pelanggaran AS pelanggaran,
         l.deskripsi,
+        l.sanksi,
         l.bukti_filepath
     FROM laporan AS l
     INNER JOIN tingkat AS t ON l.id_tingkat = t.id_tingkat
     INNER JOIN [user] AS u ON l.id_pelaku = u.id_user
     INNER JOIN pelanggaran AS p ON l.id_pelanggaran = p.id_pelanggaran
     WHERE l.id_pelaku = ?
+    AND l.sanksi IS NOT NULL
 ";
 
 $params = [$id_user];
@@ -78,9 +80,13 @@ if ($stmt === false) {
                                 <div class="card-body">
                                     <h5 class="card-text fs-6">Pelanggaran: <?= htmlspecialchars($row['pelanggaran']) ?></h5>
                                     <h5 class="card-text fs-6">Deskripsi: <?= htmlspecialchars($row['deskripsi']) ?></h5>
-                                    <div>
-                                        <button class="btn btn-success btn-sm" onclick="terimaPelanggaran()">Terima</button>
-                                        <button class="btn btn-danger btn-sm" onclick="ajukanPenolakan(<?= $row['id_laporan'] ?>)">Ajukan Penolakan</button>
+                                    <h5 class="card-text fs-6">Sanksi: <?= htmlspecialchars($row['sanksi']) ?></h5>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <button class="btn btn-success btn-sm me-2" onclick="terimaPelanggaran()">Terima</button>
+                                            <button class="btn btn-danger btn-sm me-2" onclick="ajukanPenolakan(<?= $row['id_laporan'] ?>)">Ajukan Penolakan</button>
+                                        </div>
+                                        <button class="btn btn-upload btn-sm bg-dongker text-white">Upload Sanksi</button>
                                     </div>
                                 </div>
                             </div>
