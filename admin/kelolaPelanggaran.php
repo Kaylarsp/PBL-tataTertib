@@ -198,7 +198,7 @@ if ($tingkatStmt === false) {
                                         </form>
                                         <form action='' method='POST' style='display:inline;'>
                                             <input type='hidden' name='id_pelanggaran' value='{$row['id_pelanggaran']}'>
-                                            <button type='submit' name='action' value='delete' class='btn btn-danger btn-sm'>Hapus</button>
+                                            <button type='submit' name='action' value='delete' class='btn btn-danger btn-sm' onclick='confirmDelete(event)'>Hapus</button>
                                         </form>
                                         </td>";
                                         echo "</tr>";
@@ -306,6 +306,15 @@ if ($tingkatStmt === false) {
                 document.getElementById('editIdTingkat').value = tingkat;
             });
         });
+    </script>
+
+    <script>
+        function confirmDelete(event) {
+            // Menampilkan konfirmasi
+            if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+                event.preventDefault(); // Mencegah form dikirim jika memilih "Batal"
+            }
+        }
     </script>
 
     <!-- Link Bootstrap JS dan Icon -->
