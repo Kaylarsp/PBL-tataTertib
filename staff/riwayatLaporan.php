@@ -84,6 +84,30 @@ if ($stmt === false) {
             background-color: #003080;
         }
 
+        /* Gaya untuk tombol kembali ke halaman sebelumnya */
+        .btn-back-to-previous {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #001f54;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-back-to-previous:hover {
+            background-color: #003080;
+        }
+
         .custom-margin-top {
             margin-top: 70px;
         }
@@ -179,6 +203,11 @@ if ($stmt === false) {
         </div>
     </div>
 
+    <!-- Tombol Kembali ke Halaman Sebelumnya -->
+    <a href="staff.php" class="btn-back-to-previous">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+    
     <!-- Link Bootstrap JS dan Icon -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
