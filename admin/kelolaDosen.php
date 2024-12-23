@@ -162,6 +162,35 @@ if ($stmt === false) {
         .text-dongker {
             color: #001f54;
         }
+
+        .cardContent {
+            margin-left: 70px;
+            margin-top: 200px;
+        }
+
+        /* Gaya untuk tombol kembali ke halaman sebelumnya */
+        .btn-back-to-previous {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #001f54;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-back-to-previous:hover {
+            background-color: #003080;
+        }
     </style>
 </head>
 
@@ -191,49 +220,97 @@ if ($stmt === false) {
                     <button class="btn btn-success mt-2" onclick="simpanTambahDosen()">Simpan</button>
                     <button class="btn btn-danger mt-2" onclick="batalTambahDosen()">Batal</button>
                 </div>
-                <table class="table table-striped mt-4">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>NIDN</th>
-                            <th>Nama</th>
-                            <th>Tanggal Lahir</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $no = 1;
-                        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) { ?>
-                            <tr id="row-<?= $row['id_dosen'] ?>">
-                                <td><?= $no++ ?></td>
-                                <td><?= htmlspecialchars($row['nidn']) ?></td>
-                                <td><?= htmlspecialchars($row['nama']) ?></td>
-                                <td><?= htmlspecialchars($row['tgl_lahir']->format('Y-m-d')) ?></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm" onclick="editDosen(<?= $row['id_dosen'] ?>)">Edit</button>
-                                    <button class="btn btn-danger btn-sm" onclick="hapusDosen(<?= $row['id_dosen'] ?>)">Hapus</button>
-                                </td>
+                <div class="table-responsive">
+                    <table class="table table-striped mt-4">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>NIDN</th>
+                                <th>Nama</th>
+                                <th>Tanggal Lahir</th>
+                                <th>Aksi</th>
                             </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php $no = 1;
+                            while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) { ?>
+                                <tr id="row-<?= $row['id_dosen'] ?>">
+                                    <td><?= $no++ ?></td>
+                                    <td><?= htmlspecialchars($row['nidn']) ?></td>
+                                    <td><?= htmlspecialchars($row['nama']) ?></td>
+                                    <td><?= htmlspecialchars($row['tgl_lahir']->format('Y-m-d')) ?></td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" onclick="editDosen(<?= $row['id_dosen'] ?>)">Edit</button>
+                                        <button class="btn btn-danger btn-sm" onclick="hapusDosen(<?= $row['id_dosen'] ?>)">Hapus</button>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        function tambahDosen() {
-            document.getElementById('formTambahDosen').style.display = 'block';
-        }
+        <!-- Tombol Kembali ke Halaman Sebelumnya -->
+        <a href="kelolaPengguna.php" class="btn-back-to-previous">
+            <i class="bi bi-arrow-left"></i>
+        </a>
 
-        function simpanTambahDosen() {
-            const nama = document.getElementById('tambahNama').value;
-            const nidn = document.getElementById('tambahNidn').value;
-            const tglLahir = document.getElementById('tambahTglLahir').value;
+        <script>
+            function tambahDosen() {
+                document.getElementById('formTambahDosen').style.display = 'block';
+            }
 
-            if (nama && nidn && tglLahir) {
+            function simpanTambahDosen() {
+                const nama = document.getElementById('tambahNama').value;
+                const nidn = document.getElementById('tambahNidn').value;
+                const tglLahir = document.getElementById('tambahTglLahir').value;
+
+                if (nama && nidn && tglLahir) {
+                    const formData = new FormData();
+                    formData.append('action', 'add');
+                    formData.append('nama', nama);
+                    formData.append('nidn', nidn);
+                    formData.append('tgl_lahir', tglLahir);
+
+                    fetch('', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.text())
+                        .then(data => {
+                            alert(data);
+                            location.reload();
+                        });
+                } else {
+                    alert("Semua data harus diisi!");
+                }
+            }
+
+            function editDosen(id) {
+                const row = document.getElementById(`row-${id}`);
+                const nama = row.cells[2].innerText;
+                const nidn = row.cells[1].innerText;
+                const tglLahir = row.cells[3].innerText;
+
+                const form = `
+                <input type="text" id="editNama" class="form-control" value="${nama}">
+                <input type="text" id="editNidn" class="form-control mt-2" value="${nidn}">
+                <input type="date" id="editTglLahir" class="form-control mt-2" value="${tglLahir}">
+                <button class="btn btn-warning mt-2" onclick="simpanEditDosen(${id})">Simpan</button>
+                <button class="btn btn-danger mt-2" onclick="batalEditDosen(${id})">Batal</button>
+            `;
+                row.cells[2].innerHTML = form;
+            }
+
+            function simpanEditDosen(id) {
+                const nama = document.getElementById('editNama').value;
+                const nidn = document.getElementById('editNidn').value;
+                const tglLahir = document.getElementById('editTglLahir').value;
+
                 const formData = new FormData();
-                formData.append('action', 'add');
+                formData.append('action', 'edit');
+                formData.append('id', id);
                 formData.append('nama', nama);
                 formData.append('nidn', nidn);
                 formData.append('tgl_lahir', tglLahir);
@@ -247,86 +324,38 @@ if ($stmt === false) {
                         alert(data);
                         location.reload();
                     });
-            } else {
-                alert("Semua data harus diisi!");
             }
-        }
 
-        function editDosen(id) {
-            const row = document.getElementById(`row-${id}`);
-            const nama = row.cells[2].innerText;
-            const nidn = row.cells[1].innerText;
-            const tglLahir = row.cells[3].innerText;
+            function hapusDosen(id) {
+                if (confirm("Apakah Anda yakin ingin menghapus pengguna ini?")) {
+                    const formData = new FormData();
+                    formData.append('action', 'delete');
+                    formData.append('id', id);
 
-            const form = `
-                <input type="text" id="editNama" class="form-control" value="${nama}">
-                <input type="text" id="editNidn" class="form-control mt-2" value="${nidn}">
-                <input type="date" id="editTglLahir" class="form-control mt-2" value="${tglLahir}">
-                <button class="btn btn-warning mt-2" onclick="simpanEditDosen(${id})">Simpan</button>
-                <button class="btn btn-danger mt-2" onclick="batalEditDosen(${id})">Batal</button>
-            `;
-            row.cells[2].innerHTML = form;
-        }
+                    fetch('', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.text())
+                        .then(data => {
+                            alert(data);
+                            location.reload();
+                        });
+                }
+            }
 
-        function simpanEditDosen(id) {
-            const nama = document.getElementById('editNama').value;
-            const nidn = document.getElementById('editNidn').value;
-            const tglLahir = document.getElementById('editTglLahir').value;
+            function batalTambahDosen() {
+                location.reload();
+            }
 
-            const formData = new FormData();
-            formData.append('action', 'edit');
-            formData.append('id', id);
-            formData.append('nama', nama);
-            formData.append('nidn', nidn);
-            formData.append('tgl_lahir', tglLahir);
+            function batalEditDosen(id) {
+                location.reload();
+            }
+        </script>
 
-            fetch('', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.text())
-                .then(data => {
-                    alert(data);
-                    location.reload();
-                });
-        }
-
-        function hapusDosen(id) {
-            const formData = new FormData();
-            formData.append('action', 'delete');
-            formData.append('id', id);
-
-            fetch('', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.text())
-                .then(data => {
-                    alert(data);
-                    location.reload();
-                });
-        }
-
-        function batalTambahDosen() {
-            document.getElementById('formTambahDosen').style.display = 'none';
-        }
-
-        function batalEditDosen(id) {
-            const row = document.getElementById(`row-${id}`);
-            row.cells[2].innerHTML = row.cells[2].innerText;
-            row.cells[3].innerHTML = row.cells[3].innerText;
-        }
-    </script>
-
-    <!-- Link Bootstrap JS dan Icon -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
-        }
-    </script>
+        <!-- Link Bootstrap JS dan Icon -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </body>
 
 </html>
