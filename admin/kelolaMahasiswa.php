@@ -268,10 +268,6 @@ if ($stmt === false) {
             background-color: #003080;
         }
 
-        .full-height {
-            height: 100vh;
-        }
-
         .text-dongker {
             color: #001f54;
         }

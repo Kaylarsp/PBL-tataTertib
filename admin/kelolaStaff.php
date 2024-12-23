@@ -124,6 +124,43 @@ if ($stmt === false) {
 
         .cardContent {
             margin-left: 70px;
+            margin-top: 130px;
+            margin-bottom: 50px;
+        }
+
+        .full-height {
+            min-height: 100vh;
+            /* Membuat halaman penuh tinggi */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            /* Atur ke tengah atas */
+            align-items: center;
+        }
+
+        .table-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            /* Tabel menyesuaikan dengan container */
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
         }
 
         .menu-icon {
@@ -147,14 +184,6 @@ if ($stmt === false) {
             background-color: #003080;
         }
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 11;
-        }
-
         .full-height {
             height: 100vh;
         }
@@ -162,6 +191,7 @@ if ($stmt === false) {
         .text-dongker {
             color: #001f54;
         }
+
         /* Gaya untuk tombol kembali ke halaman sebelumnya */
         .btn-back-to-previous {
             position: fixed;
@@ -200,8 +230,8 @@ if ($stmt === false) {
     <?php include "sidebar.php"; ?>
 
     <!-- Konten Utama -->
-    <div class="d-flex align-items-center justify-content-center full-height">
-        <div class="card cardContent shadow p-4" style="width: 100%; max-width: 850px;">
+    <div class="d-flex align-items-center full-height">
+        <div class="card cardContent shadow p-4" style="width: 100%; max-width: 850px; height:470px; overflow-y:auto">
             <div class="text-center mb-4">
                 <h1 class="display-5 fw-bold text-dongker">Kelola Staff</h1>
                 <button class="btn btn-primary mt-2" onclick="tambahStaff()">Tambah Staff</button>

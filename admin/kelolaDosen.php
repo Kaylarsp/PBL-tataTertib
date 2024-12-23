@@ -118,12 +118,26 @@ if ($stmt === false) {
             border: none;
         }
 
-        .btn-primary:hover {
-            background-color: #003080;
+        table {
+            width: 100%;
+            /* Tabel menyesuaikan dengan container */
+            border-collapse: collapse;
         }
 
-        .cardContent {
-            margin-left: 70px;
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #003080;
         }
 
         .menu-icon {
@@ -147,16 +161,22 @@ if ($stmt === false) {
             background-color: #003080;
         }
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 11;
-        }
-
         .full-height {
             height: 100vh;
+            min-height: 100vh;
+            /* Membuat halaman penuh tinggi */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            /* Atur ke tengah atas */
+            align-items: center;
+        }
+
+        .table-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
         }
 
         .text-dongker {
@@ -165,7 +185,8 @@ if ($stmt === false) {
 
         .cardContent {
             margin-left: 70px;
-            margin-top: 200px;
+            margin-top: 130px;
+            margin-bottom: 50px;
         }
 
         /* Gaya untuk tombol kembali ke halaman sebelumnya */
@@ -206,8 +227,8 @@ if ($stmt === false) {
     <?php include "sidebar.php"; ?>
 
     <!-- Konten Utama -->
-    <div class="d-flex align-items-center justify-content-center full-height">
-        <div class="card cardContent shadow p-4" style="width: 100%; max-width: 850px;">
+    <div class="d-flex align-items-center full-height">
+        <div class="card cardContent shadow p-4" style="width: 90%; max-width: 850px; height:470px; overflow-y:auto">
             <div class="text-center mb-4">
                 <h1 class="display-5 fw-bold text-dongker">Kelola Dosen</h1>
                 <button class="btn btn-primary mt-2" onclick="tambahDosen()">Tambah Dosen</button>
