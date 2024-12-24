@@ -1,5 +1,7 @@
 <?php
 require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connect`
+
+
 ?>
 
 <!DOCTYPE html>
@@ -60,6 +62,30 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
         .custom-margin-top {
             margin-top: 100px;
         }
+
+        /* Gaya untuk tombol kembali ke halaman sebelumnya */
+        .btn-back-to-previous {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #001f54;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-back-to-previous:hover {
+            background-color: #003080;
+        }
     </style>
 </head>
 
@@ -78,7 +104,7 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
             <!-- Konten Utama -->
             <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
-                    <div class="card shadow">
+                    <div class="card shadow" style="margin-left: 10px; margin-right: 70px; ">
                         <div class="card-header text-center">
                             <h1 class="display-5 fw-bold mt-3">Cek Tugas Mahasiswa</h1>
                         </div>
@@ -87,15 +113,21 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
                                 <thead class="bg-dark text-white">
                                     <tr>
                                         <th>No.</th>
-                                        <!-- <th>Nama File</th> -->
-                                        <th>Lokasi File</th>
+                                        <th>Nama</th>
+                                        <th>Nim</th>
+                                        <th>Kelas</th>
+                                        <th>File Tugas</th>
                                         <th>Waktu Upload</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $sql = "SELECT id_upload, lokasi_file, submit_time FROM upload";
+                                    $sql = "
+                                    SELECT u.id_upload, m.nama, m.nim, k.nama_kelas, u.lokasi_file, submit_time FROM upload u
+                                    JOIN mahasiswa m ON u.id_mahasiswa = m.id_mahasiswa
+                                    JOIN kelas k ON m.kelas = k.id_kelas
+                                    ";
                                     $stmt = sqlsrv_query($conn, $sql);
 
                                     if ($stmt === false) {
@@ -105,7 +137,9 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
                                     while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                         echo "<tr>";
                                         echo "<td>" . $row['id_upload'] . "</td>";
-                                        // echo "<td>" . htmlspecialchars($row['nama_file']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row['nama']) . "</td>";
+                                        echo "<td>" . $row['nim'] . "</td>";
+                                        echo "<td>" . $row['nama_kelas'] . "</td>";
                                         echo "<td>" . htmlspecialchars($row['lokasi_file']) . "</td>";
                                         echo "<td>" . ($row['submit_time'] ? $row['submit_time']->format('Y-m-d H:i:s') : '-') . "</td>";
                                         echo '<td>
@@ -133,6 +167,10 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
         </div>
     </div>
 
+    <!-- Tombol Kembali ke Halaman Sebelumnya -->
+    <a href="admin.php" class="btn-back-to-previous">
+        <i class="bi bi-arrow-left"></i>
+    </a>
 
     <!-- Link Bootstrap JS dan Icon -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
