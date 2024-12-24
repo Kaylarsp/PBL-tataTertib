@@ -34,7 +34,6 @@
     <ul class="nav flex-column">
         <li><a href="listTatib.php"><i class="bi bi-list-check me-2"></i>List Tata Tertib</a></li>
         <li><a href="notifikasi.php"><i class="bi bi-bell me-2"></i>Notifikasi</a></li>
-        <li><a href="uploadSanksi.php"><i class="bi bi-cloud-upload me-2"></i>Upload Sanksi</a></li>
     </ul>
 </div>
 
