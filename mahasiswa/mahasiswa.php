@@ -50,15 +50,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="card shadow">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title fw-bold">Upload Sanksi</h5>
-                                            <p class="card-text">Upload bukti pelanggaran atau sanksi.</p>
-                                            <a href="uploadSanksi.php" class="btn bg-dongker text-white">Upload Sanksi</a>
-                                        </div>
-                                    </div>
-                                </div>
                             </section>
                         </div>
                     </div>
