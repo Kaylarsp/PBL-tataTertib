@@ -112,10 +112,10 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
                             <table class="table table-striped">
                                 <thead class="bg-dark text-white">
                                     <tr>
-                                        <th>No.</th>
                                         <th>Nama</th>
                                         <th>Nim</th>
                                         <th>Kelas</th>
+                                        <th>Pelanggaran</th>
                                         <th>File Tugas</th>
                                         <th>Waktu Upload</th>
                                         <th>Aksi</th>
@@ -127,6 +127,7 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
                                     SELECT u.id_upload, m.nama, m.nim, k.nama_kelas, u.lokasi_file, submit_time FROM upload u
                                     JOIN mahasiswa m ON u.id_mahasiswa = m.id_mahasiswa
                                     JOIN kelas k ON m.kelas = k.id_kelas
+                                    JOIN pelanggaran p ON
                                     ";
                                     $stmt = sqlsrv_query($conn, $sql);
 
@@ -136,23 +137,34 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
 
                                     while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                         echo "<tr>";
-                                        echo "<td>" . $row['id_upload'] . "</td>";
                                         echo "<td>" . htmlspecialchars($row['nama']) . "</td>";
-                                        echo "<td>" . $row['nim'] . "</td>";
-                                        echo "<td>" . $row['nama_kelas'] . "</td>";
-                                        echo "<td>" . htmlspecialchars($row['lokasi_file']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row['nim']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row['nama_kelas']) . "</td>";
+
+                                        // Kolom File Tugas
+                                        echo "<td>";
+                                        if (!empty($row['lokasi_file'])) {
+                                            echo "<button class='btn btn-primary btn-sm' onclick=\"window.open('" . htmlspecialchars($row['lokasi_file']) . "', '_blank')\">Tinjau</button>";
+                                        } else {
+                                            echo "<button class='btn btn-secondary btn-sm' disabled>Tidak Ada Bukti</button>";
+                                        }
+                                        echo "</td>";
+
+                                        // Kolom Waktu Submit
                                         echo "<td>" . ($row['submit_time'] ? $row['submit_time']->format('Y-m-d H:i:s') : '-') . "</td>";
-                                        echo '<td>
-                                        <a href="' . htmlspecialchars($row['lokasi_file']) . '" class="btn btn-sm btn-success" download>
-                                            <i class="bi bi-download"></i> Download
-                                        </a>
-                                        <button class="btn btn-sm btn-primary" onclick="verifikasiTugas(' . $row['id_upload'] . ')">
-                                            <i class="bi bi-check-circle"></i> Verifikasi
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="tolakTugas(' . $row['id_upload'] . ')">
-                                            <i class="bi bi-x-circle"></i> Tolak
-                                        </button>
-                                        </td>';
+
+                                        // Kolom Aksi
+                                        echo "<td>
+                                                <a href='" . htmlspecialchars($row['lokasi_file']) . "' class='btn btn-sm btn-success' download>
+                                                    <i class='bi bi-download'></i> Download
+                                                </a>
+                                                <button class='btn btn-sm btn-primary' onclick='verifikasiTugas(" . (int)$row['id_upload'] . ")'>
+                                                    <i class='bi bi-check-circle'></i> Verifikasi
+                                                </button>
+                                                <button class='btn btn-sm btn-danger' onclick='tolakTugas(" . (int)$row['id_upload'] . ")'>
+                                                    <i class='bi bi-x-circle'></i> Tolak
+                                                </button>
+                                            </td>";
                                         echo "</tr>";
                                     }
 

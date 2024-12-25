@@ -79,7 +79,10 @@ if ($stmt === false) {
     <title>Lihat Pelanggaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
     <style>
         .bg-dongker {
@@ -133,7 +136,7 @@ if ($stmt === false) {
         }
 
         .content-margin {
-            margin-top: 50px;
+            margin-top: 30px;
         }
 
         .text-dongker {
@@ -146,6 +149,30 @@ if ($stmt === false) {
 
         .custom-modal {
             margin-top: 150px;
+        }
+
+        /* Gaya untuk tombol kembali ke halaman sebelumnya */
+        .btn-back-to-previous {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #001f54;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-back-to-previous:hover {
+            background-color: #003080;
         }
     </style>
 </head>
@@ -174,7 +201,8 @@ if ($stmt === false) {
                         </div>
                     <?php endif; ?>
 
-                    <table class="table table-hover table-striped table-bordered text-center">
+                    <!-- Tabel dengan ID "laporanTable" -->
+                    <table id="laporanTable" class="table table-hover table-striped table-bordered text-center">
                         <thead class="table-dark">
                             <tr>
                                 <th>No</th>
@@ -241,8 +269,8 @@ if ($stmt === false) {
                                     echo "Ditolak";
                                 } else {
                                     echo "
-                                    <a href='?action=verify&id_laporan={$row['id_laporan']}' class='btn btn-success btn-sm'>Verifikasi</a>
-                                    <a href='?action=reject&id_laporan={$row['id_laporan']}' class='btn btn-danger btn-sm' onclick=\"return confirm('Apakah Anda yakin ingin menolak laporan ini?')\">Tolak</a>";
+                                    <a href='?action=verify&id_laporan={$row['id_laporan']}' class='btn btn-success btn-sm w-100'>Verifikasi</a>
+                                    <a href='?action=reject&id_laporan={$row['id_laporan']}' class='btn btn-danger btn-sm w-100' onclick=\"return confirm('Apakah Anda yakin ingin menolak laporan ini?')\">Tolak</a>";
                                 }
                                 echo "</td>
                                 </tr>";
@@ -256,8 +284,27 @@ if ($stmt === false) {
         </div>
     </div>
 
+    <!-- Tombol Kembali ke Halaman Sebelumnya -->
+    <a href="admin.php" class="btn-back-to-previous">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        $(document).ready(function() {
+            // Inisialisasi DataTables
+            $('#laporanTable').DataTable({
+                paging: true, // Aktifkan pagination
+                searching: true, // Aktifkan pencarian
+                ordering: true, // Aktifkan pengurutan
+                responsive: true, // Responsif untuk perangkat kecil
+                lengthMenu: [5, 10, 25, 50], // Pilihan jumlah data per halaman
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json" // Bahasa Indonesia
+                }
+            });
+        });
+
         $(() => {
             var no = "<?= $no ?>";
 
@@ -272,11 +319,6 @@ if ($stmt === false) {
                 }
             }
         })
-
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
-        }
 
         function loadSanctions(id_laporan, id_tingkat) {
             // Mendapatkan id_tingkat dari selectElement yang sedang dipilih
