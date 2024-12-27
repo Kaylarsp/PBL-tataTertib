@@ -3,26 +3,28 @@ require_once '../connection.php';
 
 // SQL query untuk mengambil data
 $sql = "
-    SELECT
-        l.id_laporan,
+        SELECT DISTINCT
+        up.id_laporan,
         u.username AS nama,
         m.nim,
         k.nama_kelas,
         d.nama AS dosen,
         p.nama_pelanggaran AS pelanggaran,
-        t.tingkat,
         l.sanksi,
+        t.tingkat,
         up.statusSanksi as status
-    FROM laporan l
+    FROM upload up
+    JOIN laporan l ON l.id_laporan = up.id_laporan
     JOIN [user] u ON l.id_pelaku = u.id_user
     JOIN mahasiswa m ON u.id_user = m.id_user
     JOIN kelas k ON m.kelas = k.id_kelas
+    JOIN pelanggaran p ON l.id_pelanggaran = p.id_pelanggaran
     JOIN dosen d ON k.id_kelas = d.id_kelas
     JOIN tingkat t ON l.id_tingkat = t.id_tingkat
-    JOIN pelanggaran p ON t.id_tingkat = p.id_tingkat
-    JOIN upload up ON m.id_mahasiswa = up.id_mahasiswa
-    WHERE up.statusSanksi = 1
+    WHERE up.statusSanksi = 1;
 ";
+
+// Eksekusi query
 $stmt = sqlsrv_query($conn, $sql);
 
 // Cek jika query berhasil dijalankan
@@ -30,6 +32,7 @@ if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,6 +43,10 @@ if ($stmt === false) {
     <title>Halaman Admin - Buat Laporan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .bg-dongker {
             background-color: #001f54 !important;
@@ -80,7 +87,7 @@ if ($stmt === false) {
         }
 
         .card {
-            margin-right: 40px;
+            margin-right: 150px;
         }
 
         .card-header {
@@ -94,7 +101,6 @@ if ($stmt === false) {
             margin-top: 90px;
         }
 
-        /* Gaya untuk tombol kembali ke halaman sebelumnya */
         .btn-back-to-previous {
             position: fixed;
             bottom: 20px;
@@ -117,29 +123,30 @@ if ($stmt === false) {
         .btn-back-to-previous:hover {
             background-color: #003080;
         }
+
+        .table-dongker th {
+            background-color: #001f54;
+            color: white;
+        }
     </style>
 </head>
 
 <body class="bg-light">
-    <!-- Navbar -->
     <?php include "navbar.php"; ?>
-
-    <!-- Ikon Menu -->
     <div class="menu-icon" onclick="toggleSidebar()">
         <i class="bi bi-list"></i>
     </div>
-
-    <div class="sidebar-trigger"></div>
     <?php include "sidebar.php"; ?>
 
-    <!-- Main Content Area -->
     <div class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
         <div class="card shadow-lg">
             <div class="card-body">
-                <h1 class="card-title text-center mb-4">Buat Laporan</h1>
-                <h2 class="h5 mb-3 text-center">Daftar Pelanggaran yang Sudah Selesai</h2>
+                <div class="bg-dongker text-white p-3">
+                    <h1 class="card-title text-center mb-3 fw-bold">Buat Laporan</h1>
+                    <h2 class="h5 mb-3 text-center">Daftar Pelanggaran yang Sudah Selesai</h2>
+                </div>
                 <div class="table-responsive mt-4">
-                    <table class="table table-bordered table-hover">
+                    <table id="dataTable" class="table table-bordered table-hover table-dongker">
                         <thead class="table-primary">
                             <tr>
                                 <th>No</th>
@@ -147,15 +154,14 @@ if ($stmt === false) {
                                 <th>NIM</th>
                                 <th>Kelas</th>
                                 <th>Dosen</th>
-                                <th>Deskripsi Pelanggaran</th>
-                                <th>Sanksi</th>
+                                <th>Pelanggaran</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                            $no = 1; // Counter untuk nomor urut
+                            $no = 1;
                             while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                 echo "<tr>
                                         <td>{$no}</td>
@@ -163,10 +169,11 @@ if ($stmt === false) {
                                         <td>{$row['nim']}</td>
                                         <td>{$row['nama_kelas']}</td>
                                         <td>{$row['dosen']}</td>
-                                        <td>{$row['pelanggaran']}</td>
-                                        <td>{$row['sanksi']}</td>
+                                        <td class='text-center'>
+                                            <button class='btn btn-sm bg-dongker text-white' data-bs-toggle='modal' data-bs-target='#detailModal' data-pelanggaran='{$row['pelanggaran']}' data-sanksi='{$row['sanksi']}' data-tingkat='{$row['tingkat']}'>Detail</button>
+                                        </td>
                                         <td>" . ($row['status'] == 1 ? 'Selesai' : 'Belum Selesai') . "</td>
-                                        <td>
+                                        <td class='text-center'>
                                             <a href='hasillaporan.php?report_id={$row['id_laporan']}' class='btn btn-primary btn-sm'>Unduh Laporan</a>
                                         </td>
                                     </tr>";
@@ -180,18 +187,57 @@ if ($stmt === false) {
         </div>
     </div>
 
-    <!-- Tombol Kembali ke Halaman Sebelumnya -->
     <a href="admin.php" class="btn-back-to-previous">
         <i class="bi bi-arrow-left"></i>
     </a>
 
-    <!-- Link Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Modal -->
+    <div class="modal fade mt-5" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalLabel">Detail Pelanggaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Pelanggaran:</strong> <span id="pelanggaranDetail"></span></p>
+                    <p><strong>Tingkat:</strong> <span id="tingkatDetail"></span></p>
+                    <p><strong>Sanksi:</strong> <span id="sanksiDetail"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/Indonesian.json"
+                }
+            });
+        });
+
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
             sidebar.style.left = sidebar.style.left === '0px' ? '-150px' : '0px';
         }
+
+        // Event listener untuk tombol detail
+        $('#detailModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // Button yang memicu modal
+            var pelanggaran = button.data('pelanggaran'); // Ambil data pelanggaran
+            var sanksi = button.data('sanksi'); // Ambil data sanksi
+            var tingkat = button.data('tingkat'); // Ambil data sanksi
+
+            var modal = $(this);
+            modal.find('#pelanggaranDetail').text(pelanggaran);
+            modal.find('#sanksiDetail').text(sanksi);
+            modal.find('#tingkatDetail').text(tingkat);
+        });
     </script>
 </body>
 

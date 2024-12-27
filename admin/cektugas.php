@@ -168,6 +168,7 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
                                                         <div class='modal-body'>
                                                             <p><strong>Nama Pelanggaran:</strong> " . htmlspecialchars($row['nama_pelanggaran']) . "</p>
                                                             <p><strong>Tingkat:</strong> " . htmlspecialchars($row['tingkat']) . "</p>
+                                                            <p><strong>Sanksi:</strong> " . htmlspecialchars($row['sanksi']) . "</p>
                                                         </div>
                                                     </div>
                                                 </div>
