@@ -29,7 +29,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit') {
     $id_pelanggaran = $_POST['id_pelanggaran'];
     $nama_pelanggaran = $_POST['nama_pelanggaran'];
 
-    // Pastikan 'id_tingkat' sudah diset dan tidak kosong
     if (isset($_POST['id_tingkat']) && !empty($_POST['id_tingkat'])) {
         $id_tingkat = $_POST['id_tingkat'];
     } else {
@@ -44,7 +43,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit') {
         die("Error updating pelanggaran: " . print_r(sqlsrv_errors(), true));
     }
 
-    // Setelah berhasil, arahkan kembali ke halaman yang sama
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -53,7 +51,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit') {
 if (isset($_POST['action']) && $_POST['action'] == 'delete') {
     $id_pelanggaran = $_POST['id_pelanggaran'];
 
-    // Query to delete violation
     $sql_delete = "DELETE FROM pelanggaran WHERE id_pelanggaran = ?";
     $stmt_delete = sqlsrv_query($conn, $sql_delete, array($id_pelanggaran));
 
@@ -61,7 +58,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete') {
         die("Error deleting pelanggaran: " . print_r(sqlsrv_errors(), true));
     }
 
-    header("Location: " . $_SERVER['PHP_SELF']); // Redirect after successful delete
+    header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
 
@@ -96,6 +93,12 @@ if ($tingkatStmt === false) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Pelanggaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
     <style>
         .bg-dongker {
             background-color: #001f54 !important;
@@ -120,10 +123,6 @@ if ($tingkatStmt === false) {
 
         .menu-icon:hover {
             background-color: #003080;
-        }
-
-        main.content {
-            margin-left: 50px;
         }
 
         .table th,
@@ -168,70 +167,84 @@ if ($tingkatStmt === false) {
         .btn-back-to-previous:hover {
             background-color: #003080;
         }
+
+        /* Geser search bar ke kanan */
+        .dataTables_filter {
+            float: right;
+        }
+
+        /* Menjadikan show entries dalam satu baris */
+        .dataTables_length {
+            display: flex !important;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* Pastikan label "Show entries" dan dropdown berada dalam satu baris */
+        .dataTables_length label {
+            margin-right: 10px;
+        }
+
+        /* Styling untuk select */
+        .dataTables_length select {
+            margin-left: 5px;
+        }
     </style>
 </head>
 
-<body class="bg-light">
+<body>
     <?php include "navbar.php"; ?>
+
     <div class="menu-icon" onclick="toggleSidebar()">
         <i class="bi bi-list"></i>
     </div>
 
     <div class="container-fluid">
         <div class="row">
-            <div class="sidebar-trigger"></div>
             <?php include "sidebar.php"; ?>
-
             <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
-                <div class="pt-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header text-center">
-                            <h1 class="display-5 fw-bold mt-3">Kelola Pelanggaran Mahasiswa</h1>
-                            <p class="lead">Data pelanggaran mahasiswa yang terdaftar di sistem.</p>
-                            <button class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#tambahModal">Tambah Pelanggaran</button>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-hover table-striped table-bordered text-center">
-                                <thead class="table-dark">
+                <div class="card shadow" style="margin-left:-90px; margin-right:70px">
+                    <div class="card-header text-center mt-3">
+                        <h1 class="fw-bold" style="color: #001f54;">Kelola Pelanggaran Mahasiswa</h1>
+                        <button class="btn btn-primary text-white mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#tambahModal">Tambah Pelanggaran</button>
+                    </div>
+                    <div class="card-body">
+                        <table id="dataTable" class="table table-hover table-striped table-bordered text-center">
+                            <thead class="bg-dongker text-white">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Jenis Pelanggaran</th>
+                                    <th>Tingkat</th>
+                                    <th>Sanksi</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $no = 1;
+                                while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)): ?>
                                     <tr>
-                                        <th>No</th>
-                                        <th>Jenis Pelanggaran</th>
-                                        <th>Tingkat</th>
-                                        <th>Sanksi</th>
-                                        <th>Aksi</th>
+                                        <td><?= $no++; ?></td>
+                                        <td><?= $row['nama_pelanggaran']; ?></td>
+                                        <td class="text-center"><?= $row['tingkat']; ?></td>
+                                        <td><?= $row['sanksi']; ?></td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm w-100"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editModal"
+                                                data-id="<?= $row['id_pelanggaran']; ?>"
+                                                data-nama="<?= $row['nama_pelanggaran']; ?>"
+                                                data-tingkat="<?= $row['tingkat']; ?>">Edit</button>
+                                            <form action="" method="POST" style="display:inline;">
+                                                <input type="hidden" name="id_pelanggaran" value="<?= $row['id_pelanggaran']; ?>">
+                                                <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm w-100 mt-1" onclick='confirmDelete(event)'>Hapus</button>
+                                            </form>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    $no = 1;
-                                    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-                                        echo "<tr>";
-                                        echo "<td>{$no}</td>";
-                                        echo "<td>{$row['nama_pelanggaran']}</td>";
-                                        echo "<td style='text-align: center;'>{$row['tingkat']}</td>";
-                                        echo "<td>{$row['sanksi']}</td>";
-                                        echo "<td>
-                                        <form action='' method='POST' style='display:inline;'>
-                                            <!-- Tidak perlu form untuk edit karena data akan diambil dengan JavaScript -->
-                                            <button class='btn btn-warning btn-sm'
-                                                    data-bs-toggle='modal'
-                                                    data-bs-target='#editModal'
-                                                    data-id='{$row['id_pelanggaran']}'
-                                                    data-nama='{$row['nama_pelanggaran']}'
-                                                    data-tingkat='{$row['tingkat']}'>Edit</button>
-                                        </form>
-                                        <form action='' method='POST' style='display:inline;'>
-                                            <input type='hidden' name='id_pelanggaran' value='{$row['id_pelanggaran']}'>
-                                            <button type='submit' name='action' value='delete' class='btn btn-danger btn-sm' onclick='confirmDelete(event)'>Hapus</button>
-                                        </form>
-                                        </td>";
-                                        echo "</tr>";
-                                        $no++;
-                                    }
-                                    ?>
-                                </tbody>
-                            </table>
-                        </div>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </main>
@@ -239,27 +252,25 @@ if ($tingkatStmt === false) {
     </div>
 
     <!-- Modal Tambah -->
-    <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
+    <div class="modal fade" id="tambahModal">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content bg-dongker text-white">
                 <form action="" method="POST">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="tambahModalLabel">Tambah Pelanggaran</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5>Tambah Pelanggaran</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="namaPelanggaran" class="form-label">Nama Pelanggaran</label>
-                            <input type="text" class="form-control" id="namaPelanggaran" name="nama_pelanggaran" required>
+                            <label for="namaPelanggaran">Nama Pelanggaran</label>
+                            <input type="text" id="namaPelanggaran" name="nama_pelanggaran" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="idTingkat" class="form-label">Tingkat</label>
-                            <select class="form-select" id="idTingkat" name="id_tingkat" required>
-                                <?php
-                                while ($tingkat = sqlsrv_fetch_array($tingkatStmt, SQLSRV_FETCH_ASSOC)) {
-                                    echo "<option value='{$tingkat['id_tingkat']}'>{$tingkat['tingkat']}</option>";
-                                }
-                                ?>
+                            <label for="idTingkat">Tingkat</label>
+                            <select id="idTingkat" name="id_tingkat" class="form-select" required>
+                                <?php while ($tingkat = sqlsrv_fetch_array($tingkatStmt, SQLSRV_FETCH_ASSOC)): ?>
+                                    <option value="<?= $tingkat['id_tingkat']; ?>"><?= $tingkat['tingkat']; ?></option>
+                                <?php endwhile; ?>
                             </select>
                         </div>
                     </div>
@@ -273,35 +284,28 @@ if ($tingkatStmt === false) {
     </div>
 
     <!-- Modal Edit -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editModal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel">Edit Pelanggaran</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5>Edit Pelanggaran</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" name="id_pelanggaran" id="editIdPelanggaran">
+                        <input type="hidden" id="editIdPelanggaran" name="id_pelanggaran">
                         <div class="mb-3">
-                            <label for="editNamaPelanggaran" class="form-label">Nama Pelanggaran</label>
-                            <input type="text" class="form-control" id="editNamaPelanggaran" name="nama_pelanggaran" required>
+                            <label for="editNamaPelanggaran">Nama Pelanggaran</label>
+                            <input type="text" id="editNamaPelanggaran" name="nama_pelanggaran" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="editIdTingkat" class="form-label">Tingkat</label>
-                            <select class="form-select" id="editIdTingkat" name="id_tingkat" required>
+                            <label for="editIdTingkat">Tingkat</label>
+                            <select id="editIdTingkat" name="id_tingkat" class="form-select" required>
                                 <?php
-                                // Query tingkat untuk mendapatkan data
                                 $tingkatStmt = sqlsrv_query($conn, "SELECT * FROM tingkat");
-                                if ($tingkatStmt === false) {
-                                    die("Query failed: " . print_r(sqlsrv_errors(), true));
-                                }
-
-                                // Populate dropdown with tingkat options
-                                while ($tingkat = sqlsrv_fetch_array($tingkatStmt, SQLSRV_FETCH_ASSOC)) {
-                                    echo "<option value='{$tingkat['id_tingkat']}'>{$tingkat['tingkat']}</option>";
-                                }
-                                ?>
+                                while ($tingkat = sqlsrv_fetch_array($tingkatStmt, SQLSRV_FETCH_ASSOC)): ?>
+                                    <option value="<?= $tingkat['id_tingkat']; ?>"><?= $tingkat['tingkat']; ?></option>
+                                <?php endwhile; ?>
                             </select>
                         </div>
                     </div>
@@ -319,32 +323,47 @@ if ($tingkatStmt === false) {
         <i class="bi bi-arrow-left"></i>
     </a>
 
-
-    <!-- JavaScript untuk mengisi data modal -->
     <script>
-        // Fungsi untuk mengisi modal edit dengan data pelanggaran yang dipilih
         document.querySelectorAll('.btn-warning').forEach(button => {
-            button.addEventListener('click', function() {
-                // Ambil data dari tombol yang diklik
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+
                 var idPelanggaran = this.getAttribute('data-id');
                 var namaPelanggaran = this.getAttribute('data-nama');
                 var tingkat = this.getAttribute('data-tingkat');
 
-                // Isi data pada modal
                 document.getElementById('editIdPelanggaran').value = idPelanggaran;
                 document.getElementById('editNamaPelanggaran').value = namaPelanggaran;
-                document.getElementById('editIdTingkat').value = tingkat;
+
+                let tingkatDropdown = document.getElementById('editIdTingkat');
+                Array.from(tingkatDropdown.options).forEach(option => {
+                    option.selected = option.text === tingkat;
+                });
+
+                new bootstrap.Modal(document.getElementById('editModal')).show();
             });
         });
-    </script>
 
-    <script>
         function confirmDelete(event) {
             // Menampilkan konfirmasi
             if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) {
                 event.preventDefault(); // Mencegah form dikirim jika memilih "Batal"
             }
         }
+
+        $(document).ready(function() {
+            // Inisialisasi DataTables
+            $('#dataTable').DataTable({
+                paging: true, // Aktifkan pagination
+                searching: true, // Aktifkan pencarian
+                ordering: true, // Aktifkan pengurutan
+                responsive: true, // Responsif untuk perangkat kecil
+                lengthMenu: [3, 5, 10, 25, 50],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
+                }
+            });
+        });
     </script>
 
     <!-- Link Bootstrap JS dan Icon -->

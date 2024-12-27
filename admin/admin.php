@@ -108,9 +108,9 @@
                                 <div class="col-md-4">
                                     <div class="card text-center shadow-sm content-box">
                                         <div class="card-body">
-                                            <h5 class="card-title fw-bold">Edit Pelanggaran</h5>
+                                            <h5 class="card-title fw-bold">Kelola Pelanggaran</h5>
                                             <p class="card-text">Ubah data pelanggaran atau sanksi yang diberikan.</p>
-                                            <a href="kelolaPelanggaran.php" class="btn btn-primary">Edit Pelanggaran</a>
+                                            <a href="kelolaPelanggaran.php" class="btn btn-primary">Kelola Pelanggaran</a>
                                         </div>
                                     </div>
                                 </div>
