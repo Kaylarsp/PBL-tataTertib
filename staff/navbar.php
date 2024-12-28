@@ -25,7 +25,7 @@ $username = $_SESSION['username'];
 <nav class="navbar navbar-expand-lg bg-dongker navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="admin.php">
-            <i class="bi bi-mortarboard-fill me-2"></i>Polinema
+            <i class="bi bi-mortarboard-fill me-2"></i>TatibFlow
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
