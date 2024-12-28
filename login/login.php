@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <nav class="navbar bg-dongker navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <i class="bi bi-mortarboard-fill me-2"></i>Polinema
+                <i class="bi bi-mortarboard-fill me-2"></i>TatibFlow
             </a>
         </div>
     </nav>
