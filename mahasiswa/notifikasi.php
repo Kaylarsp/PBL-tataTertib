@@ -1,16 +1,14 @@
 <?php
 session_start();
-require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connect`
+require_once '../connection.php';
 
-// Pastikan sesi `id_user` aktif
 if (!isset($_SESSION['id_user'])) {
     header('Location: login.php');
     exit();
 }
 
-$id_user = $_SESSION['id_user']; // Ambil ID user dari sesi
+$id_user = $_SESSION['id_user'];
 
-// Query untuk mengambil data laporan
 $sql = "
     SELECT
         l.id_laporan,
@@ -19,14 +17,18 @@ $sql = "
         p.nama_pelanggaran AS pelanggaran,
         l.deskripsi,
         l.sanksi,
-        l.bukti_filepath
+        COALESCE(up.statusSanksi, 0) AS status,
+        COALESCE(l.verifikasiMhs, 0) AS verifikasi,
+        l.statusTolak,
+        l.bukti_filepath,
+        up.lokasi_file
     FROM laporan AS l
-    INNER JOIN tingkat AS t ON l.id_tingkat = t.id_tingkat
-    INNER JOIN [user] AS u ON l.id_pelaku = u.id_user
-    INNER JOIN pelanggaran AS p ON l.id_pelanggaran = p.id_pelanggaran
+    LEFT JOIN [user] AS u ON l.id_pelaku = u.id_user
+    LEFT JOIN tingkat AS t ON l.id_tingkat = t.id_tingkat
+    LEFT JOIN pelanggaran AS p ON l.id_pelanggaran = p.id_pelanggaran
+    LEFT JOIN upload up ON l.id_laporan = up.id_laporan
     WHERE l.id_pelaku = ?
-    AND l.sanksi IS NOT NULL
-";
+        AND l.statusTolak = 1";
 
 $params = [$id_user];
 $stmt = sqlsrv_query($conn, $sql, $params);
@@ -35,28 +37,26 @@ if ($stmt === false) {
     die(json_encode(['status' => 'error', 'message' => sqlsrv_errors()]));
 }
 
-// Proses pengiriman data (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_laporan = $_POST['id_laporan'] ?? null;
     $verifikasi = $_POST['verifikasi'] ?? null;
-    $alasan = $_POST['alasan'] ?? null;
-    $file = $_FILES['buktiPendukung'] ?? null;
 
-    // Validasi input
     if ($id_laporan && in_array($verifikasi, [1, 2])) {
-        $sqlUpdate = "UPDATE laporan SET verifikasiMhs = ?, alasanMhsNolak = ? WHERE id_laporan = ?";
-        $paramsUpdate = [$verifikasi, $verifikasi == 2 ? $alasan : null, $id_laporan];
+        $sqlUpdate = "UPDATE laporan SET verifikasiMhs = ? WHERE id_laporan = ?";
+        $paramsUpdate = [$verifikasi, $id_laporan];
 
-        $stmtUpdate = sqlsrv_query($conn, $sqlUpdate, $paramsUpdate);
-        if ($stmtUpdate) {
+        $stmtUpdate = sqlsrv_prepare($conn, $sqlUpdate, $paramsUpdate);
+        if ($stmtUpdate === false) {
+            echo json_encode(['status' => 'error', 'message' => 'Kesalahan saat mempersiapkan query: ' . print_r(sqlsrv_errors(), true)]);
+            exit();
+        }
+
+        if (sqlsrv_execute($stmtUpdate)) {
             echo json_encode(['status' => 'success', 'message' => 'Data berhasil diperbarui']);
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui data']);
+            echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui data: ' . print_r(sqlsrv_errors(), true)]);
         }
-    } else {
-        echo json_encode(['status' => 'error', 'message' => 'Parameter tidak valid']);
     }
-    exit();
 }
 ?>
 
@@ -96,6 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .btn-back-to-previous:hover {
             background-color: #003080;
         }
+
+        /* Gaya untuk setiap kartu agar bisa di-scroll */
+        .custom {
+            max-height: 500px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 
@@ -113,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container my-4">
         <!-- Daftar Notifikasi -->
         <div class="d-flex align-items-center justify-content-center">
-            <div class="card shadow" style="margin-top: 50px; width: 90%; margin-left: 50px;">
+            <div class="card shadow custom" style="margin-top: 50px; width: 90%; margin-left: 50px;">
                 <div class="text-center mb-4">
                     <h1 class="display-5 fw-bold mt-4" style="color: #001f54;">Notifikasi Pelanggaran</h1>
                 </div>
@@ -122,16 +128,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)): ?>
                             <div class="card shadow mb-3">
                                 <div class="card-body">
-                                    <h5 class="card-text fs-6">Pelanggaran: <?= htmlspecialchars($row['pelanggaran']) ?></h5>
-                                    <h5 class="card-text fs-6">Deskripsi: <?= htmlspecialchars($row['deskripsi']) ?></h5>
-                                    <h5 class="card-text fs-6">Sanksi: <?= htmlspecialchars($row['sanksi']) ?></h5>
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <button class="btn btn-success btn-sm me-2" onclick="terimaPelanggaran(<?= $row['id_laporan'] ?>)">Terima</button>
-                                            <button class="btn btn-danger btn-sm me-2" onclick="ajukanPenolakan(<?= $row['id_laporan'] ?>)">Ajukan Penolakan</button>
-                                        </div>
-                                        <button class="btn btn-upload btn-sm bg-dongker text-white" onclick="uploadSanksi(<?= $row['id_laporan'] ?>)">Upload Sanksi</button>
-                                    </div>
+                                    <h5 class="card-text fs-6">Pelanggaran: <?= htmlspecialchars($row['pelanggaran'] ?? '') ?></h5>
+                                    <h5 class="card-text fs-6">Deskripsi: <?= htmlspecialchars($row['deskripsi'] ?? '') ?></h5>
+                                    <h5 class="card-text fs-6">Sanksi: <?= htmlspecialchars($row['sanksi'] ?? '') ?></h5>
+
+                                    <?php
+                                    $status = $row['status'] ?? 0; // Nilai default jika null
+                                    $verifikasi = $row['verifikasi'] ?? 0; // Nilai default jika null
+                                    $lokasi_file = $row['lokasi_file'] ?? 0; // Nilai default jika null
+                                    ?>
+
+                                    <?php if ($verifikasi === 0): ?>
+                                        <button class="btn btn-success btn-sm me-2" onclick="terimaPelanggaran(<?= htmlspecialchars($row['id_laporan']) ?>)">Terima</button>
+                                        <button class="btn btn-danger btn-sm" onclick="ajukanPenolakan(<?= htmlspecialchars($row['id_laporan']) ?>)">Ajukan Penolakan</button>
+                                    <?php elseif ($verifikasi === 2): ?>
+                                        <span class="badge bg-warning">Penolakan Diajukan, Mohon Ditunggu</span>
+                                    <?php elseif ($status === 0 && $lokasi_file != 0): ?>
+                                        <span class="badge bg-warning">Menunggu Konfirmasi</span>
+                                    <?php elseif ($verifikasi === 1 && $status === 0): ?>
+                                        <button class="btn btn-primary btn-sm me-2" onclick="uploadSanksi(<?= htmlspecialchars($row['id_laporan']) ?>)">Upload Sanksi</button>
+                                    <?php elseif ($status == 1): ?>
+                                        <span class="badge bg-success">Telah Dikonfirmasi oleh Admin</span>
+                                    <?php elseif ($status == 2): ?>
+                                        <span class="badge bg-danger">Sanksi Ditolak</span>
+                                        <button class="btn btn-primary btn-sm me-2" onclick="uploadSanksi(<?= htmlspecialchars($row['id_laporan']) ?>)">Upload Sanksi</button>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary">Status Tidak Dikenal</span>
+                                    <?php endif; ?>
+
                                 </div>
                             </div>
                         <?php endwhile; ?>
@@ -199,29 +223,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Link Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function terimaPelanggaran(id) {
-            fetch('', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: `id_laporan=${id}&verifikasi=1`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert('Pelanggaran diterima');
-                        location.reload();
-                    } else {
-                        alert('Terjadi kesalahan: ' + data.message);
-                    }
-                });
-        }
-
         function ajukanPenolakan(id) {
             document.getElementById('notifikasiId').value = id; // Set ID laporan
             const modal = new bootstrap.Modal(document.getElementById('penolakanModal'));
-            modal.show();
+            if (confirm("Apakah Anda yakin ingin mengajukan penolakan laporan ini?")) {
+                modal.show();
+            }
         }
 
         document.getElementById('penolakanForm').addEventListener('submit', function(e) {
@@ -277,6 +284,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const modal = bootstrap.Modal.getInstance(document.getElementById('uploadSanksiModal'));
             modal.hide();
         });
+
+        // Fungsi untuk menerima pelanggaran
+        function terimaPelanggaran(id) {
+            if (confirm("Apakah Anda yakin ingin menerima laporan ini?")) {
+                // Lakukan aksi submit (bisa pakai AJAX atau form)
+                fetch('', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `id_laporan=${id}&verifikasi=1`
+                    })
+                    .then(response => response.text()) // Ambil sebagai teks mentah dulu
+                    .then(rawData => {
+                        console.log('Raw Response:', rawData);
+                        const data = JSON.parse(rawData); // Parse setelah cek
+                        if (data.status === 'success') {
+                            alert('Pelanggaran diterima');
+                            location.reload();
+                        } else {
+                            alert('Terjadi kesalahan: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Parsing Error:', error);
+                        alert('Pelanggaran diterima');
+                        location.reload();
+                    });
+            }
+        }
     </script>
 </body>
 
