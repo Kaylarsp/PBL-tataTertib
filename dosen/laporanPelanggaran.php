@@ -17,6 +17,10 @@ $stmt_kelas = sqlsrv_query($conn, $sql_kelas);
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
+
+if ($stmt_mhs === false) {
+    die(print_r(sqlsrv_errors(), true));
+}
 ?>
 
 <!DOCTYPE html>
@@ -66,7 +70,7 @@ if ($stmt === false) {
         }
 
         .custom-margin-top {
-            margin-top: 90px;
+            margin-top: 100px;
         }
 
         .btn-back-to-previous {
@@ -112,9 +116,9 @@ if ($stmt === false) {
             <!-- Konten Utama -->
             <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h1 class="h2 mb-0 fw-bold">Laporan Pelanggaran</h1>
+                    <div class="card shadow" style="margin-right: 150px;">
+                        <div class="card-header bg-dongker text-white text-center">
+                            <h1 class="h2 mb-0 fw-bold mt-3 mb-3">Laporan Pelanggaran</h1>
                         </div>
                         <div class="card-body">
                             <!-- Form Laporan -->
