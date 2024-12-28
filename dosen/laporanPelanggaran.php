@@ -6,6 +6,10 @@ require_once '../connection.php';
 $sql = "SELECT * FROM pelanggaran";
 $stmt = sqlsrv_query($conn, $sql);
 
+// Query untuk mengambil nim
+$sql_mhs = "SELECT * FROM mahasiswa";
+$stmt_mhs = sqlsrv_query($conn, $sql_mhs);
+
 // Query untuk mengambil data kelas
 $sql_kelas = "SELECT * FROM kelas";
 $stmt_kelas = sqlsrv_query($conn, $sql_kelas);
@@ -117,7 +121,15 @@ if ($stmt === false) {
                             <form action="prosesLaporan.php" method="POST" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label for="nim_pelaku" class="form-label">NIM Pelaku</label>
-                                    <input type="text" class="form-control" id="nim_pelaku" name="nim_pelaku" required>
+                                    <select class="form-select select2" id="nim" name="nim" required>
+                                        <option value="">Pilih Nim</option>
+                                        <?php
+                                        while ($row = sqlsrv_fetch_array($stmt_mhs, SQLSRV_FETCH_ASSOC)) {
+                                            echo "<option value='" . $row['id_mahasiswa'] . "'>" . htmlspecialchars($row['nim']) . "</option>";
+                                        }
+                                        ?>
+                                    </select>
+
                                 </div>
                                 <div class="mb-3">
                                     <label for="pelanggaran" class="form-label">Jenis Pelanggaran</label>
@@ -207,6 +219,11 @@ if ($stmt === false) {
     <script>
     $(document).ready(function() {
         $('#pelanggaran').select2({
+            placeholder: "Pilih Jenis Pelanggaran",
+            allowClear: true,
+            width: '100%' // Agar tampilan sesuai dengan lebar dropdown asli
+        });
+        $('#nim').select2({
             placeholder: "Pilih Jenis Pelanggaran",
             allowClear: true,
             width: '100%' // Agar tampilan sesuai dengan lebar dropdown asli
