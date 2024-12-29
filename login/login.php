@@ -3,14 +3,17 @@ session_start();
 include '../connection.php'; // Include koneksi
 
 // Kelas User untuk menangani login
-class User {
+class User
+{
     private $conn; //enkapsuplasi
 
-    public function __construct($connection) {
+    public function __construct($connection)
+    {
         $this->conn = $connection;
     }
 
-    public function login($username, $password) {
+    public function login($username, $password)
+    {
         $query = "SELECT * FROM [user] WHERE username = ?";
         $params = array($username);
         $stmt = sqlsrv_query($this->conn, $query, $params);
@@ -61,8 +64,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
+        body {
+            background-image: url('backgroundLogin1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Overlay untuk background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(14, 11, 38, 0.8);
+            /* Overlay warna */
+            z-index: -1;
+            /* Overlay di belakang konten */
+        }
+
         .bg-dongker {
-            background-color: #001f54 !important;
+            /* background-color: #001f54 !important; */
+            background: rgb(14, 11, 38);
+            background: linear-gradient(90deg, rgba(14, 11, 38, 1) 0%, rgba(0, 31, 84, 1) 50%, rgba(165, 191, 204, 1) 100%);
+        }
+
+        .bg {
+            background: rgb(14, 11, 38);
+            background: linear-gradient(125deg, rgba(14, 11, 38, 1) 0%, rgba(0, 31, 84, 1) 50%, rgba(79, 103, 143, 1) 99%);
         }
 
         .card-login {
@@ -90,19 +121,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body class="bg-light">
-    <!-- Navbar -->
-    <nav class="navbar bg-dongker navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="bi bi-mortarboard-fill me-2"></i>TatibFlow
-            </a>
-        </div>
-    </nav>
-
     <!-- Kontainer Login -->
-    <div class="card card-login">
+    <div class="card card-login" style="margin-top: 200px;">
         <div class="card-body">
-            <h2 class="text-center mb-4 fw-bold">Login</h2>
+            <h1 class="bi bi-mortarboard-fill me-2 fw-bold text-center">TatibFlow</h1>
+            <p class="text-center mb-4">Selamat Datang, Silahkan Login</p>
             <form id="loginForm">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
@@ -113,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
                 <div id="errorMessage"></div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
+                <button type="submit" class="btn btn-primary w-100 bg">Login</button>
             </form>
         </div>
     </div>
@@ -122,8 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('#loginForm').submit(function (event) {
+        $(document).ready(function() {
+            $('#loginForm').submit(function(event) {
                 event.preventDefault();
 
                 var username = $('#username').val();
@@ -132,9 +155,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $.ajax({
                     url: '',
                     type: 'POST',
-                    data: { username: username, password: password },
+                    data: {
+                        username: username,
+                        password: password
+                    },
                     dataType: 'json',
-                    success: function (response) {
+                    success: function(response) {
                         if (response.status === 'success') {
                             if (response.role == 1) {
                                 window.location.href = '../admin/admin.php';
@@ -149,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $('#errorMessage').text(response.message);
                         }
                     },
-                    error: function () {
+                    error: function() {
                         $('#errorMessage').text('Terjadi kesalahan, coba lagi!');
                     }
                 });

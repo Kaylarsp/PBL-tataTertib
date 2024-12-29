@@ -10,10 +10,13 @@ $stmt = sqlsrv_query($conn, $sql);
 $sql_kelas = "SELECT * FROM kelas";
 $stmt_kelas = sqlsrv_query($conn, $sql_kelas);
 
-if ($stmt === false) {
+// Query untuk mengambil data NIM mahasiswa
+$sql_mahasiswa = "SELECT nim, nama FROM mahasiswa";
+$stmt_mahasiswa = sqlsrv_query($conn, $sql_mahasiswa);
+
+if ($stmt === false || $stmt_mahasiswa === false) {
     die(print_r(sqlsrv_errors(), true));
-}
-?>
+}?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +47,7 @@ if ($stmt === false) {
             position: fixed;
             top: 50px;
             left: 5px;
-            background-color: #001f54;
+            /* background-color: #001f54; */
             color: white;
             border-radius: 50%;
             width: 40px;
@@ -108,16 +111,23 @@ if ($stmt === false) {
             <!-- Konten Utama -->
             <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h1 class="h2 mb-0 fw-bold">Laporan Pelanggaran</h1>
+                    <div class="card shadow" style="margin-right: 150px;">
+                        <div class="card-header bg-dongker text-white text-center">
+                            <h1 class="h2 mb-0 fw-bold mt-3 mb-3">Laporan Pelanggaran</h1>
                         </div>
                         <div class="card-body">
                             <!-- Form Laporan -->
                             <form action="prosesLaporan.php" method="POST" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label for="nim_pelaku" class="form-label">NIM Pelaku</label>
-                                    <input type="text" class="form-control" id="nim_pelaku" name="nim_pelaku" required>
+                                    <select class="form-select select2" id="nim_pelaku" name="nim_pelaku" required>
+                                        <option value="">Pilih NIM</option>
+                                        <?php
+                                        while ($row = sqlsrv_fetch_array($stmt_mahasiswa, SQLSRV_FETCH_ASSOC)) {
+                                            echo "<option value='" . htmlspecialchars($row['nim']) . "'>" . htmlspecialchars($row['nim'] . " - " . $row['nama']) . "</option>";
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="pelanggaran" class="form-label">Jenis Pelanggaran</label>
@@ -146,7 +156,6 @@ if ($stmt === false) {
             </main>
         </div>
     </div>
-
 
     <!-- Tombol Kembali ke Halaman Sebelumnya -->
     <a href="staff.php" class="btn-back-to-previous">
@@ -206,14 +215,24 @@ if ($stmt === false) {
 
     <!-- Script Select2 -->
     <script>
+        $(document).ready(function() {
+            $('#pelanggaran').select2({
+                placeholder: "Pilih Jenis Pelanggaran",
+                allowClear: true,
+                width: '100%' // Agar tampilan sesuai dengan lebar dropdown asli
+            });
+        });
+    </script>
+    <script>
     $(document).ready(function() {
-        $('#pelanggaran').select2({
-            placeholder: "Pilih Jenis Pelanggaran",
+        $('#nim_pelaku').select2({
+            placeholder: "Pilih NIM",
             allowClear: true,
-            width: '100%' // Agar tampilan sesuai dengan lebar dropdown asli
+            width: '100%' // Agar dropdown sesuai dengan lebar elemen
         });
     });
-    </script>
+</script>
+
 </body>
 
 </html>

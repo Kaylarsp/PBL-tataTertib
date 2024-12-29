@@ -9,7 +9,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .bg-dongker {
-            background-color: #001f54 !important;
+            background: rgb(14, 11, 38);
+            background: linear-gradient(125deg, rgba(14, 11, 38, 1) 0%, rgba(0, 31, 84, 1) 50%, rgba(79, 103, 143, 1) 99%);
+            border: rgb(14, 11, 38);
         }
 
         /* Ikon menu tetap terlihat */
@@ -17,7 +19,7 @@
             position: fixed;
             top: 50px;
             left: 5px;
-            background-color: #001f54;
+            /* background-color: #001f54; */
             color: white;
             border-radius: 50%;
             width: 40px;
@@ -52,7 +54,7 @@
         }
 
         .custom-margin-top {
-            margin-top: 90px;
+            margin-top: 120px;
         }
     </style>
 </head>
@@ -74,7 +76,7 @@
 
             <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
-                    <div class="card shadow-sm">
+                    <div class="card shadow" style="margin-right: 120px; margin-left:-30px">
                         <div class="card-header text-center">
                             <h1 class="display-5 fw-bold mt-3">Selamat Datang, Staff!</h1>
                             <p class="lead">Di Portal Akademik Polinema</p>
