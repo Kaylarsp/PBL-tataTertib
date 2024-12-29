@@ -70,7 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Link ke Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="notifikasi.css">
 
     <style>
         /* Gaya untuk tombol kembali ke halaman sebelumnya */
@@ -99,8 +98,117 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /* Gaya untuk setiap kartu agar bisa di-scroll */
         .custom {
-            max-height: 500px;
+            /* max-height: 500px; */
             overflow-y: auto;
+        }
+
+        /* Warna utama untuk elemen */
+        .bg-dongker {
+            background-color: #001f54 !important;
+            /* color: white; */
+        }
+
+        .menu-icon {
+            position: fixed;
+            top: 50px;
+            left: 5px;
+            /* background-color: #001f54; */
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-icon:hover {
+            background-color: #003080;
+        }
+
+        .text-dongker {
+            color: #001f54;
+        }
+
+        main.content {
+            margin-left: 50px;
+        }
+
+        /* Kartu Notifikasi */
+        .card {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .card-body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .card-title {
+            color: #001f54;
+            /* font-weight: bold; */
+        }
+
+        .card-text {
+            margin-bottom: 15px;
+            color: #001f54;
+            text-align: justify;
+        }
+
+        /* Tombol */
+        .btn {
+            font-size: 14px;
+            border-radius: 5px;
+            padding: 8px 12px;
+        }
+
+        .btn-success {
+            background-color: #198754;
+            border-color: #198754;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-success:hover,
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        /* Modal */
+        .modal-header {
+            background-color: #001f54;
+            color: white;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .btn-primary {
+            background-color: #001f54;
+            border-color: #001f54;
+        }
+
+        .btn-primary:hover {
+            background-color: #003080;
+            border-color: #003080;
         }
     </style>
 </head>
@@ -119,11 +227,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container my-4">
         <!-- Daftar Notifikasi -->
         <div class="d-flex align-items-center justify-content-center">
-            <div class="card shadow custom" style="margin-top: 50px; width: 90%; margin-left: 50px;">
-                <div class="text-center mb-4">
-                    <h1 class="display-5 fw-bold mt-4" style="color: #001f54;">Notifikasi Pelanggaran</h1>
+            <div class="card shadow custom" style="margin-top: 50px; width: 90%; margin-left: 50px; height: 550px">
+                <div class="text-center mb-3 bg-dongker">
+                    <h1 class="display-5 fw-bold mt-4 text-white mb-4">Notifikasi Pelanggaran</h1>
                 </div>
-                <div class="card-body overflow-auto" style="max-height: 350px; text-align:justify;">
+                <div class="card-body overflow-auto" style="max-height: 500px; text-align:justify;">
                     <?php if (sqlsrv_has_rows($stmt)): ?>
                         <?php while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)): ?>
                             <div class="card shadow mb-3">

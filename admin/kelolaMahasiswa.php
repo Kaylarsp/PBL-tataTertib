@@ -251,7 +251,7 @@ if ($stmt === false) {
             position: fixed;
             top: 50px;
             left: 5px;
-            background-color: #001f54;
+            /* background-color: #001f54; */
             color: white;
             border-radius: 50%;
             width: 40px;
@@ -295,6 +295,10 @@ if ($stmt === false) {
         .btn-back-to-previous:hover {
             background-color: #003080;
         }
+
+        .table {
+            background-color: #A5BFCC;
+        }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script>
@@ -314,8 +318,8 @@ if ($stmt === false) {
 
     <!-- Konten Utama -->
     <div class="d-flex align-items-center full-height">
-        <div class="card cardContent shadow p-4" style="width: 90%; max-width: 850px; height:470px; overflow-y:auto">
-            <div class="text-center mb-4">
+        <div class="card cardContent shadow p-4" style="width: 90%; max-width: 850px; height:550px; overflow-y:auto">
+            <div class="text-center mb-2 mt-3">
                 <h1 class="display-5 fw-bold text-dongker">Kelola Mahasiswa</h1>
                 <button class="btn btn-primary mt-2" onclick="tambahPenggunaInline()">Tambah Pengguna</button>
             </div>
@@ -341,7 +345,7 @@ if ($stmt === false) {
                 <div class="table-container d-flex justify-content-center">
                     <div class="table-responsive" style="width: 90%;">
                         <table class="table table-striped mt-4 text-center">
-                            <thead>
+                            <thead class="bg-dongker text-white">
                                 <tr>
                                     <th>No</th>
                                     <th>NIM</th>

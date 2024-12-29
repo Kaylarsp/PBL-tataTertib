@@ -27,10 +27,64 @@ if ($stmt === false) {
     <!-- Link ke Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Link ke CSS eksternal -->
-    <link rel="stylesheet" href="listTatib.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     <style>
+        .bg-dongker {
+            background-color: #001f54 !important;
+        }
+
+        .menu-icon {
+            position: fixed;
+            top: 50px;
+            left: 5px;
+            /* background-color: #001f54; */
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-icon:hover {
+            background-color: #003080;
+        }
+
+        main.content {
+            margin-left: 50px;
+        }
+
+        .card {
+            margin-right: 40px;
+            margin-top: 30px;
+        }
+
+        .card-header {
+            background-color: transparent !important;
+            color: #001f54 !important;
+            text-align: center;
+            border: none;
+        }
+
+        .bg-dongker {
+            background-color: #001f54 !important;
+        }
+
+        .card-header {
+            background-color: #001f54 !important;
+            color: white !important;
+        }
+
+        .list-group-item {
+            font-size: 16px;
+            padding: 15px 20px;
+        }
+
         /* Gaya untuk tombol kembali ke halaman sebelumnya */
         .btn-back-to-previous {
             position: fixed;

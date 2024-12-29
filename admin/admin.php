@@ -10,14 +10,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
         .bg-dongker {
-            background-color: #001f54 !important;
+            background: rgb(14, 11, 38);
+            background: linear-gradient(125deg, rgba(14, 11, 38, 1) 0%, rgba(0, 31, 84, 1) 50%, rgba(79, 103, 143, 1) 99%);
+            border: rgb(14, 11, 38);
         }
 
         .menu-icon {
             position: fixed;
             top: 50px;
             left: 5px;
-            background-color: #001f54;
+            /* background-color: #001f54; */
             color: white;
             border-radius: 50%;
             width: 40px;
@@ -59,7 +61,7 @@
         }
 
         .custom-margin-top {
-            margin-top: 90px;
+            margin-top: 100px;
         }
     </style>
 </head>
@@ -80,19 +82,19 @@
 
             <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
-                    <div class="card shadow-sm">
+                    <div class="card shadow" style="margin-right: 100px; margin-left:-50px">
                         <div class="card-header text-center">
                             <h1 class="display-5 fw-bold mt-3">Selamat Datang, Admin!</h1>
                             <p class="lead">Di Portal Akademik Polinema</p>
                         </div>
-                        <div class="card-body mt-5">
+                        <div class="card-body mt-5" style="padding-left: 50px;">
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <div class="card text-center shadow-sm content-box">
                                         <div class="card-body">
                                             <h5 class="card-title fw-bold">Kelola Pengguna</h5>
                                             <p class="card-text">Lihat dan kelola data pengguna yang terlibat dalam pelanggaran.</p>
-                                            <a href="kelolaPengguna.php" class="btn btn-primary">Kelola Pengguna</a>
+                                            <a href="kelolaPengguna.php" class="btn btn-primary bg-dongker">Kelola Pengguna</a>
                                         </div>
                                     </div>
                                 </div>
@@ -101,7 +103,7 @@
                                         <div class="card-body">
                                             <h5 class="card-title fw-bold">Lihat Pelanggaran</h5>
                                             <p class="card-text">Lihat daftar seluruh pelanggaran yang terjadi.</p>
-                                            <a href="lihatPelanggaran.php" class="btn btn-primary">Lihat Pelanggaran</a>
+                                            <a href="lihatPelanggaran.php" class="btn btn-primary bg-dongker">Lihat Pelanggaran</a>
                                         </div>
                                     </div>
                                 </div>
@@ -110,7 +112,7 @@
                                         <div class="card-body">
                                             <h5 class="card-title fw-bold">Kelola Pelanggaran</h5>
                                             <p class="card-text">Ubah data pelanggaran atau sanksi yang diberikan.</p>
-                                            <a href="kelolaPelanggaran.php" class="btn btn-primary">Kelola Pelanggaran</a>
+                                            <a href="kelolaPelanggaran.php" class="btn btn-primary bg-dongker">Kelola Pelanggaran</a>
                                         </div>
                                     </div>
                                 </div>
@@ -120,7 +122,7 @@
                                             <div class="card-body">
                                                 <h5 class="card-title fw-bold">Cek Tugas</h5>
                                                 <p class="card-text">Periksa tugas yang dikumpulkan oleh mahasiswa yang melanggar.</p>
-                                                <a href="cektugas.php" class="btn btn-primary">Cek Tugas</a>
+                                                <a href="cektugas.php" class="btn btn-primary bg-dongker">Cek Tugas</a>
                                             </div>
                                         </div>
                                     </div>
@@ -129,7 +131,7 @@
                                             <div class="card-body">
                                                 <h5 class="card-title fw-bold">Buat Laporan</h5>
                                                 <p class="card-text">Buat laporan dari pelanggaran yang sudah terjadi.</p>
-                                                <a href="laporan.php" class="btn btn-primary">Buat Laporan</a>
+                                                <a href="laporan.php" class="btn btn-primary bg-dongker">Buat Laporan</a>
                                             </div>
                                         </div>
                                     </div>

@@ -144,7 +144,7 @@ if ($stmt === false) {
             position: fixed;
             top: 50px;
             left: 5px;
-            background-color: #001f54;
+            /* background-color: #001f54; */
             color: white;
             border-radius: 50%;
             width: 40px;
@@ -212,6 +212,10 @@ if ($stmt === false) {
         .btn-back-to-previous:hover {
             background-color: #003080;
         }
+
+        .table {
+            background-color: #A5BFCC;
+        }
     </style>
 </head>
 
@@ -228,8 +232,8 @@ if ($stmt === false) {
 
     <!-- Konten Utama -->
     <div class="d-flex align-items-center full-height">
-        <div class="card cardContent shadow p-4" style="width: 90%; max-width: 850px; height:470px; overflow-y:auto">
-            <div class="text-center mb-4">
+        <div class="card cardContent shadow p-4" style="width: 90%; max-width: 850px; height:550px; overflow-y:auto">
+            <div class="text-center mb-3 mt-4">
                 <h1 class="display-5 fw-bold text-dongker">Kelola Dosen</h1>
                 <button class="btn btn-primary mt-2" onclick="tambahDosen()">Tambah Dosen</button>
             </div>
@@ -243,7 +247,7 @@ if ($stmt === false) {
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped mt-4">
-                        <thead>
+                        <thead class="bg-dongker text-white">
                             <tr>
                                 <th>No</th>
                                 <th>NIDN</th>

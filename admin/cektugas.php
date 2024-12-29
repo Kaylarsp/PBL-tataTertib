@@ -23,7 +23,7 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
             position: fixed;
             top: 50px;
             left: 5px;
-            background-color: #001f54;
+            /* background-color: #001f54; */
             color: white;
             border-radius: 50%;
             width: 40px;
@@ -56,7 +56,7 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
         }
 
         .custom-margin-top {
-            margin-top: 100px;
+            margin-top: 130px;
         }
 
         /* Gaya untuk tombol kembali ke halaman sebelumnya */
@@ -98,15 +98,15 @@ require_once '../connection.php'; // Pastikan koneksi menggunakan `sqlsrv_connec
             <?php include "sidebar.php"; ?>
 
             <!-- Konten Utama -->
-            <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top custom-margin-top d-flex justify-content-center align-items-center">
+            <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top d-flex justify-content-center align-items-center">
                 <div class="pt-4">
                     <div class="card shadow" style="margin-right: 150px;">
-                        <div class="card-header text-center">
-                            <h1 class="display-5 fw-bold mt-3">Cek Tugas Mahasiswa</h1>
+                        <div class="card-header text-center bg-dongker text-white">
+                            <h1 class="display-5 fw-bold mt-3 mb-3">Cek Tugas Mahasiswa</h1>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body mt-3">
                             <table class="table table-striped table-bordered">
-                                <thead class="bg-dark text-white">
+                                <thead class="bg-dongker text-white">
                                     <tr>
                                         <th>Nama</th>
                                         <th>Nim</th>

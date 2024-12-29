@@ -108,7 +108,7 @@ if ($tingkatStmt === false) {
             position: fixed;
             top: 50px;
             left: 5px;
-            background-color: #001f54;
+            /* background-color: #001f54; */
             color: white;
             border-radius: 50%;
             width: 40px;
@@ -191,6 +191,10 @@ if ($tingkatStmt === false) {
         .dataTables_length select {
             margin-left: 5px;
         }
+
+        .table {
+            background-color: #A5BFCC;
+        }
     </style>
 </head>
 
@@ -206,9 +210,9 @@ if ($tingkatStmt === false) {
             <?php include "sidebar.php"; ?>
             <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="card shadow" style="margin-left:-90px; margin-right:70px">
-                    <div class="card-header text-center mt-3">
-                        <h1 class="fw-bold" style="color: #001f54;">Kelola Pelanggaran Mahasiswa</h1>
-                        <button class="btn btn-primary text-white mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#tambahModal">Tambah Pelanggaran</button>
+                    <div class="card-header text-center bg-dongker">
+                        <h1 class="fw-bold text-white mt-3">Kelola Pelanggaran Mahasiswa</h1>
+                        <button class="btn btn-primary mt-2 mb-2" style="background-color: white; color: #001f54" data-bs-toggle="modal" data-bs-target="#tambahModal">Tambah Pelanggaran</button>
                     </div>
                     <div class="card-body">
                         <table id="dataTable" class="table table-hover table-striped table-bordered text-center">
@@ -253,12 +257,12 @@ if ($tingkatStmt === false) {
 
     <!-- Modal Tambah -->
     <div class="modal fade" id="tambahModal">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dongker text-white">
+        <div class="modal-dialog" style="margin-top: 120px;">
+            <div class="modal-content">
                 <form action="" method="POST">
-                    <div class="modal-header">
+                    <div class="modal-header bg-dongker text-white">
                         <h5>Tambah Pelanggaran</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: invert(1);"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">

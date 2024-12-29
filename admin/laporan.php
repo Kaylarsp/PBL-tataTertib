@@ -56,7 +56,7 @@ if ($stmt === false) {
             position: fixed;
             top: 50px;
             left: 5px;
-            background-color: #001f54;
+            /* background-color: #001f54; */
             color: white;
             border-radius: 50%;
             width: 40px;
@@ -90,13 +90,6 @@ if ($stmt === false) {
             margin-right: 150px;
         }
 
-        .card-header {
-            background-color: transparent !important;
-            color: #001f54 !important;
-            text-align: center;
-            border: none;
-        }
-
         .custom-margin-top {
             margin-top: 90px;
         }
@@ -124,9 +117,17 @@ if ($stmt === false) {
             background-color: #003080;
         }
 
-        .table-dongker th {
-            background-color: #001f54;
-            color: white;
+        .table {
+            background-color: #A5BFCC;
+            border: 5px solid #fff;
+            border-collapse: collapse; /* Gabungkan garis untuk tampilan rapi */
+        }
+
+        .table th,
+        .table td {
+            text-align: justify;
+            vertical-align: middle;
+            border: 1px solid #fff; /* Warna garis */
         }
     </style>
 </head>
@@ -138,16 +139,16 @@ if ($stmt === false) {
     </div>
     <?php include "sidebar.php"; ?>
 
-    <div class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
-        <div class="card shadow-lg">
-            <div class="card-body">
-                <div class="bg-dongker text-white p-3">
-                    <h1 class="card-title text-center mb-3 fw-bold">Buat Laporan</h1>
+    <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top d-flex justify-content-center align-items-center">
+        <div class="pt-4">
+            <div class="card shadow" style="margin-right: 150px;">
+                <div class="card-header bg-dongker text-white p-4">
+                    <h1 class="text-center mb-3 fw-bold">Buat Laporan</h1>
                     <h2 class="h5 mb-3 text-center">Daftar Pelanggaran yang Sudah Selesai</h2>
                 </div>
-                <div class="table-responsive mt-4">
-                    <table id="dataTable" class="table table-bordered table-hover table-dongker">
-                        <thead class="table-primary">
+                <div class="card-body">
+                    <table id="dataTable" class="table table-bordered table-hover table-striped">
+                        <thead class="bg-dongker text-white">
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
@@ -185,7 +186,7 @@ if ($stmt === false) {
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <a href="admin.php" class="btn-back-to-previous">
         <i class="bi bi-arrow-left"></i>
@@ -211,12 +212,13 @@ if ($stmt === false) {
     <script>
         $(document).ready(function() {
             $('#dataTable').DataTable({
-                "paging": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/Indonesian.json"
+                paging: true, // Aktifkan pagination
+                searching: true, // Aktifkan pencarian
+                ordering: true, // Aktifkan pengurutan
+                responsive: true, // Responsif untuk perangkat kecil
+                lengthMenu: [3, 5, 10, 25, 50],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
                 }
             });
         });

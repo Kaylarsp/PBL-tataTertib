@@ -174,6 +174,10 @@ if ($stmt === false) {
         .btn-back-to-previous:hover {
             background-color: #003080;
         }
+        
+        .table {
+            background-color: #A5BFCC;
+        }
     </style>
 </head>
 
@@ -203,7 +207,7 @@ if ($stmt === false) {
 
                     <!-- Tabel dengan ID "laporanTable" -->
                     <table id="laporanTable" class="table table-hover table-striped table-bordered text-center">
-                        <thead class="table-dark">
+                        <thead class="bg-dongker text-white">
                             <tr>
                                 <th>No</th>
                                 <th>Pelapor</th>
