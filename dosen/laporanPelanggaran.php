@@ -47,7 +47,7 @@ if ($stmt === false || $stmt_mahasiswa === false) {
             position: fixed;
             top: 50px;
             left: 5px;
-            background-color: #001f54;
+            /* background-color: #001f54; */
             color: white;
             border-radius: 50%;
             width: 40px;

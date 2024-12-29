@@ -5,8 +5,9 @@
         position: fixed;
         top: 0;
         left: -150px;
-        background-color: #001f54;
-        color: white;
+        /* background-color: #001f54; */
+        background: rgb(14, 11, 38);
+        background: linear-gradient(180deg, rgba(14, 11, 38, 1) 0%, rgba(0, 31, 84, 1) 50%, rgba(165, 191, 204, 1) 100%);
         transition: all 0.3s ease;
         overflow-y: auto;
         z-index: 10;

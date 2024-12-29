@@ -18,6 +18,9 @@ $username = $_SESSION['username'];
         left: 0;
         width: 100%;
         z-index: 11;
+        background: rgb(14, 11, 38);
+        /* background: linear-gradient(90deg, rgba(14, 11, 38, 1) 6%, rgba(0, 31, 84, 1) 45%, rgba(165, 189, 236, 1) 96%); */
+        background: linear-gradient(90deg, rgba(14, 11, 38, 1) 0%, rgba(0, 31, 84, 1) 50%, rgba(165, 191, 204, 1) 100%);
     }
 </style>
 
@@ -34,11 +37,11 @@ $username = $_SESSION['username'];
             <ul class="navbar-nav ms-auto">
                 <!-- Dropdown untuk Profil dan Logout -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle me-2"></i><?= htmlspecialchars($username); ?>
+                    <a class="nav-link dropdown-toggle" style="color: #001f54;" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle me-2" style="color: #001f54;"></i><?= htmlspecialchars($username); ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person me-2"></i>Profil</a></li>
+                        <!-- <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person me-2"></i>Profil</a></li> -->
                         <li><a class="dropdown-item" href="../login/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                     </ul>
                 </li>

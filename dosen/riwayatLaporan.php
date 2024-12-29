@@ -50,7 +50,7 @@ if ($stmt === false) {
             position: fixed;
             top: 50px;
             left: 5px;
-            background-color: #001f54;
+            /* background-color: #001f54; */
             color: white;
             border-radius: 50%;
             width: 40px;
@@ -129,20 +129,20 @@ if ($stmt === false) {
 
             <main class="col-md-10 ms-sm-auto px-md-4 custom-margin-top">
                 <div class="pt-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header text-center">
+                    <div class="card shadow-sm" style="margin-right: 170px">
+                        <div class="card-header text-center bg-dongker text-white">
                             <h1 class="display-5 fw-bold mt-3">Riwayat Laporan</h1>
                             <p class="lead">Lihat detail laporan yang telah diinputkan ke sistem.</p>
                         </div>
                         <div class="card-body">
-                            <table class="table table-hover table-striped">
-                                <thead class="table-dark">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>Tingkat</th>
-                                        <th>Nama Terlapor</th>
+                                        <th>Nama</th>
                                         <th>Deskripsi</th>
-                                        <th>Jenis Pelanggaran</th>
+                                        <th>Pelanggaran</th>
                                         <th>Bukti</th>
                                     </tr>
                                 </thead>
@@ -152,17 +152,17 @@ if ($stmt === false) {
                                     while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) : ?>
                                         <tr>
                                             <td><?= $no ?></td>
-                                            <td><?= htmlspecialchars($row['tingkat']) ?></td>
+                                            <td class="text-center"><?= htmlspecialchars($row['tingkat']) ?></td>
                                             <td><?= htmlspecialchars($row['pelaku']) ?></td>
                                             <td><?= htmlspecialchars($row['deskripsi']) ?></td>
-                                            <td>
+                                            <td class="text-center">
                                                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalDetail<?= $no ?>">Detail</button>
                                             </td>
                                             <td>
                                                 <button
                                                     class="btn btn-primary btn-sm"
                                                     <?= empty($row['bukti_filepath']) ? 'disabled' : "onclick=\"window.open('" . htmlspecialchars($row['bukti_filepath']) . "', '_blank')\"" ?>>
-                                                    Lihat Bukti
+                                                    Tinjau
                                                 </button>
                                             </td>
                                         </tr>
