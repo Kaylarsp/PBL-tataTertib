@@ -1,18 +1,18 @@
 /*
-  Navicat Premium Dump SQL
+ Navicat Premium Dump SQL
 
-  Source Server         : sqlsrv-local
-  Source Server Type    : SQL Server
-  Source Server Version : 16001135 (16.00.1135)
-  Source Host           : LAPTOP-CCV6QK6I:1433
-  Source Catalog        : tatib
-  Source Schema         : dbo
+ Source Server         : sqlsrv-local
+ Source Server Type    : SQL Server
+ Source Server Version : 16001135 (16.00.1135)
+ Source Host           : LAPTOP-CCV6QK6I:1433
+ Source Catalog        : tatib
+ Source Schema         : dbo
 
-  Target Server Type    : SQL Server
-  Target Server Version : 16001135 (16.00.1135)
-  File Encoding         : 65001
+ Target Server Type    : SQL Server
+ Target Server Version : 16001135 (16.00.1135)
+ File Encoding         : 65001
 
-  Date: 20/12/2024 14:38:35
+ Date: 29/12/2024 22:13:39
 */
 
 
@@ -49,9 +49,6 @@ GO
 INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'6', N'18', N'popo', N'23460', N'1988-12-03', N'5')
 GO
 
-INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'8', N'22', N'lala', N'123423', N'1980-12-02', N'8')
-GO
-
 INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'9', N'11', N'caca', N'23412', N'1991-03-10', N'16')
 GO
 
@@ -59,12 +56,6 @@ INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [
 GO
 
 INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'11', N'3', N'ani', N'21231', N'1975-01-06', N'12')
-GO
-
-INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'12', N'24', N'bayu', N'98230', N'1985-04-10', N'2')
-GO
-
-INSERT INTO [dbo].[dosen] ([id_dosen], [id_user], [nama], [nidn], [tgl_lahir], [id_kelas]) VALUES (N'14', NULL, N'tata', N'9834', N'2000-02-05', NULL)
 GO
 
 SET IDENTITY_INSERT [dbo].[dosen] OFF
@@ -165,12 +156,13 @@ CREATE TABLE [dbo].[laporan] (
   [id_pelanggaran] int  NULL,
   [verify_by] int  NULL,
   [verify_at] datetime  NULL,
-  [status] varchar(20) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
   [deskripsi] text COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
   [bukti_filepath] nvarchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
   [penolakan_filepath] nvarchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
   [statusTolak] int  NULL,
-  [sanksi] varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL
+  [sanksi] varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
+  [verifikasiMhs] int  NULL,
+  [alasanMhsNolak] varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL
 )
 GO
 
@@ -184,6 +176,13 @@ EXEC sp_addextendedproperty
 'COLUMN', N'statusTolak'
 GO
 
+EXEC sp_addextendedproperty
+'MS_Description', N'1=bener, 2=salah',
+'SCHEMA', N'dbo',
+'TABLE', N'laporan',
+'COLUMN', N'verifikasiMhs'
+GO
+
 
 -- ----------------------------
 -- Records of laporan
@@ -191,40 +190,37 @@ GO
 SET IDENTITY_INSERT [dbo].[laporan] ON
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'22', N'1', N'11', N'10', N'33', N'23', N'2024-12-07 16:48:14.000', N'Selesai', N'gilss', N'../uploads/art therapy 1.jpg', NULL, N'1', N'Diberhentikan sebagai mahasiswa')
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'37', N'4', N'15', N'7', N'6', N'23', N'2024-12-27 12:25:50.000', N'makan di laboratorium', N'../uploads/Screenshot 2023-12-13 194012.png', NULL, N'1', N'Teguran tertulis disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai', N'1', NULL)
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'24', N'2', N'18', N'8', N'16', N'23', N'2024-12-07 16:48:13.000', N'Selesai', N'bla bla', N'../uploads/english-indonesian-dictionary.png', NULL, N'1', N'Dikenakan penggantian kerugian atau penggantian benda/barang semacamnya')
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'38', N'4', N'24', N'10', N'3', N'23', N'2024-12-27 12:25:53.000', N'memakai kaus tidak berkerah di dalam kampus', N'../uploads/Screenshot 2024-04-19 123517.png', NULL, N'1', N'Teguran tertulis disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai', N'1', NULL)
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'25', N'1', N'4', N'10', N'33', N'23', N'2024-12-07 16:48:08.000', N'Belum Selesai', N'astaga', N'../uploads/8aafdcf61dcda90cbcb36352a5eebbe9.jpg', NULL, N'1', N'Dinonaktifkan (Cuti Akademik/ Terminal) selama dua semester')
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'39', N'4', N'24', N'37', N'4', NULL, NULL, N'berambut gondrong, sangat tidak pantas dan tidak rapi', N'../uploads/Screenshot 2024-04-23 103521.png', NULL, NULL, NULL, NULL, NULL)
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'26', N'1', N'6', N'8', N'34', N'23', N'2024-12-07 16:48:11.000', N'Belum Selesai', N'quack', N'../uploads/27d707a2e9cb22b4c53ceca0df231607.jpg', NULL, N'1', N'Dinonaktifkan (Cuti Akademik/ Terminal) selama dua semester')
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'40', N'2', N'6', N'42', N'15', NULL, NULL, N'memarkir kendaraan di area parkiran dosen', N'../uploads/Screenshot 2023-05-16 154745.png', NULL, NULL, NULL, NULL, NULL)
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'28', N'2', N'3', N'10', N'20', N'23', N'2024-12-07 16:34:47.000', N'Belum Selesai', N'mbuh', N'../uploads/cdb68e97-1712-448c-a871-82d9751ed502.jpg', NULL, N'1', N'Melakukan tugas layanan sosial dalam jangka waktu tertentu')
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'42', N'3', N'25', N'7', N'11', N'23', N'2024-12-28 09:42:44.000', N'bermain game online di dalam kelas, tepatnya saat mata kuliah sedang berlangsung', N'../uploads/Screenshot 2023-05-16 154745.png', NULL, N'1', N'Membuat surat pernyataan tidak mengulangi perbuatan tersebut, dibubuhi materai', N'1', NULL)
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'29', N'4', N'11', N'9', N'4', NULL, NULL, NULL, N'y, ok', N'../uploads/WhatsApp Image 2023-08-03 at 07.25.11.jpeg', NULL, N'2', N'Teguran tertulis disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai')
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'43', N'2', N'25', N'7', N'18', N'23', N'2024-12-28 09:42:47.000', N'membawa pistol dan benda-benda tajam seperti pisau', N'../uploads/Screenshot 2023-12-13 194012.png', NULL, N'1', N'Melakukan tugas layanan sosial dalam jangka waktu tertentu', N'1', NULL)
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'30', N'4', N'11', N'7', N'3', N'23', N'2024-12-07 16:33:41.000', NULL, N'oh lord', N'../uploads/Animal Reiki Azores - Teara.jpg', NULL, N'1', N'Teguran tertulis disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai')
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'44', N'1', N'24', N'59', N'29', NULL, NULL, N'menjadi ketua organisasi xyz dan menghasut anggota tentang Ajaran Komunisme/Marxisme-Leninisme.', N'../uploads/Screenshot 2023-05-16 154745.png', NULL, NULL, NULL, NULL, NULL)
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'31', N'4', N'25', N'10', N'6', N'23', N'2024-12-08 09:06:58.000', NULL, N'mkn', N'../uploads/f620dedc-56f4-4b92-92f4-a65d09f5f1bb.png', NULL, N'1', N'Teguran tertulis disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai')
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'45', N'4', N'24', N'8', N'6', N'23', N'2024-12-29 14:00:57.000', N'makan di dalam laboratorium', N'../uploads/Screenshot 2024-09-25 083408.png', NULL, N'1', N'Teguran tertulis disertai surat pernyataan tidak mengulangi perbuatan, dibubuhi materai', N'1', NULL)
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'32', N'1', N'24', N'39', N'36', NULL, NULL, NULL, N'ini ngeri bgt', N'../uploads/1.jpg', NULL, N'2', NULL)
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'46', N'1', N'4', N'36', N'31', NULL, NULL, N'plagiat laporan praktikum milik temannya', N'../uploads/Screenshot 2023-05-16 154745.png', NULL, NULL, NULL, NULL, NULL)
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'33', N'4', N'4', N'8', N'4', NULL, NULL, NULL, N'jgfjhfjhgfjhg', N'../uploads/1.jpg', NULL, N'2', NULL)
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'47', N'4', N'4', N'37', N'4', NULL, NULL, N'berambut gondrong', N'../uploads/Screenshot 2023-05-16 154745.png', NULL, NULL, NULL, NULL, NULL)
 GO
 
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'34', N'1', N'25', N'7', N'36', NULL, NULL, NULL, N'qeywetwert', N'../uploads/9d845d52-48ed-4f8e-b35e-1e019b4fe2b8.jpg', NULL, NULL, NULL)
-GO
-
-INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [status], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi]) VALUES (N'35', N'3', N'24', N'7', N'9', N'23', N'2024-12-11 02:43:59.000', NULL, N'gaduh', N'../uploads/1.jpg', NULL, N'1', N'Membuat surat pernyataan tidak mengulangi perbuatan tersebut, dibubuhi materai')
+INSERT INTO [dbo].[laporan] ([id_laporan], [id_tingkat], [id_pelapor], [id_pelaku], [id_pelanggaran], [verify_by], [verify_at], [deskripsi], [bukti_filepath], [penolakan_filepath], [statusTolak], [sanksi], [verifikasiMhs], [alasanMhsNolak]) VALUES (N'48', N'3', N'4', N'9', N'8', NULL, NULL, N'membuang sampah sembarangan', N'../uploads/Screenshot 2023-05-16 155048.png', NULL, N'2', NULL, NULL, NULL)
 GO
 
 SET IDENTITY_INSERT [dbo].[laporan] OFF
@@ -272,28 +268,19 @@ GO
 INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'4', N'10', N'farhan', N'2341760141', N'2005-06-30', N'15', N'Aktif', N'08123412')
 GO
 
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'11', N'36', N'qweqwewe', N'1231313', NULL, N'8', N'Cuti', NULL)
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'11', N'36', N'qweqwewe', N'1231313', NULL, N'17', N'Cuti', NULL)
 GO
 
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'12', N'37', N'3324324', N'123231', NULL, N'7', N'Cuti', NULL)
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'12', N'37', N'tomas', N'123231', NULL, N'7', N'Cuti', NULL)
 GO
 
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'13', N'38', N'lalala', N'lalala', NULL, N'6', N'Cuti', NULL)
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'16', N'42', N'wiki', N'98347189', NULL, N'13', N'Aktif', NULL)
 GO
 
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'14', N'39', N'budi', N'1231245', NULL, N'15', N'Aktif', NULL)
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'24', N'58', N'erika', N'23412984', NULL, N'4', N'Aktif', NULL)
 GO
 
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'16', N'42', N'wiki', N'98347189', NULL, N'10', N'Aktif', NULL)
-GO
-
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'17', N'45', N'koko', N'1928341', NULL, N'7', N'Tidak Aktif', NULL)
-GO
-
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'18', N'46', N'kaka', N'312341234', NULL, N'17', N'Aktif', NULL)
-GO
-
-INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'19', N'49', N'kay', N'467646575', NULL, N'16', N'Cuti', NULL)
+INSERT INTO [dbo].[mahasiswa] ([id_mahasiswa], [id_user], [nama], [nim], [tgl_lahir], [kelas], [status_akademik], [kontak]) VALUES (N'25', N'59', N'ying', N'932485', NULL, N'2', N'Cuti', NULL)
 GO
 
 SET IDENTITY_INSERT [dbo].[mahasiswa] OFF
@@ -322,9 +309,6 @@ GO
 -- Records of pelanggaran
 -- ----------------------------
 SET IDENTITY_INSERT [dbo].[pelanggaran] ON
-GO
-
-INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'2', N'Berkomunikasi dengan tidak sopan, baik tertulis atau tidak tertulis kepada mahasiswa, dosen, karyawan, atau orang lain.', N'5')
 GO
 
 INSERT INTO [dbo].[pelanggaran] ([id_pelanggaran], [nama_pelanggaran], [id_tingkat]) VALUES (N'3', N'Berbusana tidak sopan dan tidak rapi Yaitu antara lain adalah:
@@ -578,6 +562,9 @@ GO
 INSERT INTO [dbo].[staff] ([id_staff], [id_user], [nama], [nip], [tgl_lahir]) VALUES (N'4', N'25', N'varo', N'23459', N'1999-01-07')
 GO
 
+INSERT INTO [dbo].[staff] ([id_staff], [id_user], [nama], [nip], [tgl_lahir]) VALUES (N'8', NULL, N'embuh', N'85854', N'2000-09-18')
+GO
+
 SET IDENTITY_INSERT [dbo].[staff] OFF
 GO
 
@@ -647,7 +634,9 @@ CREATE TABLE [dbo].[upload] (
   [lokasi_file] varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL,
   [submit_time] datetime  NULL,
   [statusSanksi] int  NULL,
-  [id_mahasiswa] int  NULL
+  [id_mahasiswa] int  NULL,
+  [id_laporan] int  NULL,
+  [alasanTolak] varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL
 )
 GO
 
@@ -669,10 +658,19 @@ GO
 SET IDENTITY_INSERT [dbo].[upload] ON
 GO
 
-INSERT INTO [dbo].[upload] ([id_upload], [lokasi_file], [submit_time], [statusSanksi], [id_mahasiswa]) VALUES (N'1', N'../uploads/f620dedc-56f4-4b92-92f4-a65d09f5f1bb.png', N'2024-12-08 20:46:40.000', N'1', N'1')
+INSERT INTO [dbo].[upload] ([id_upload], [lokasi_file], [submit_time], [statusSanksi], [id_mahasiswa], [id_laporan], [alasanTolak]) VALUES (N'14', N'../uploads/67715a4e8f9d4-Screenshot 2023-05-16 154745.png', N'2024-12-29 21:18:54.590', NULL, N'2', N'45', NULL)
 GO
 
-INSERT INTO [dbo].[upload] ([id_upload], [lokasi_file], [submit_time], [statusSanksi], [id_mahasiswa]) VALUES (N'2', N'a65d09f5f1bb.png', N'2024-12-09 15:16:17.000', N'1', N'2')
+INSERT INTO [dbo].[upload] ([id_upload], [lokasi_file], [submit_time], [statusSanksi], [id_mahasiswa], [id_laporan], [alasanTolak]) VALUES (N'10', N'../uploads/676e9d3b28e7d-Screenshot 2024-04-24 082000.png', N'2024-12-27 19:27:39.173', N'1', N'1', N'37', NULL)
+GO
+
+INSERT INTO [dbo].[upload] ([id_upload], [lokasi_file], [submit_time], [statusSanksi], [id_mahasiswa], [id_laporan], [alasanTolak]) VALUES (N'12', N'../uploads/676fd883b30c4-Screenshot 2024-04-23 100848.png', N'2024-12-28 17:52:51.730', N'1', N'1', N'43', NULL)
+GO
+
+INSERT INTO [dbo].[upload] ([id_upload], [lokasi_file], [submit_time], [statusSanksi], [id_mahasiswa], [id_laporan], [alasanTolak]) VALUES (N'11', N'../uploads/676fd570ecf22-Screenshot 2023-05-16 154341.png', N'2024-12-28 17:39:44.963', NULL, N'1', N'42', NULL)
+GO
+
+INSERT INTO [dbo].[upload] ([id_upload], [lokasi_file], [submit_time], [statusSanksi], [id_mahasiswa], [id_laporan], [alasanTolak]) VALUES (N'13', N'../uploads/676fdb4cf1ffd-Screenshot 2023-05-16 154745.png', N'2024-12-28 18:04:44.983', N'1', N'4', N'38', NULL)
 GO
 
 SET IDENTITY_INSERT [dbo].[upload] OFF
@@ -749,9 +747,6 @@ GO
 INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'21', N'fafa', N'123', N'2')
 GO
 
-INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'22', N'lala', N'123', N'2')
-GO
-
 INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'23', N'admin', N'123', N'1')
 GO
 
@@ -767,9 +762,6 @@ GO
 INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'37', N'3324324', N'123', N'4')
 GO
 
-INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'38', N'lalala', N'123', N'4')
-GO
-
 INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'39', N'budi', N'123', N'4')
 GO
 
@@ -782,12 +774,6 @@ GO
 INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'44', N'wewe', N'123', N'2')
 GO
 
-INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'45', N'koko', N'123', N'4')
-GO
-
-INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'46', N'kaka', N'123', N'4')
-GO
-
 INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'47', N'rere', N'123', N'2')
 GO
 
@@ -797,6 +783,24 @@ GO
 INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'49', N'kay', N'123', N'4')
 GO
 
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'50', N'kela', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'51', N'embuh', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'52', N'keke', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'53', N'wewe', N'123', N'2')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'58', N'erika', N'123', N'4')
+GO
+
+INSERT INTO [dbo].[user] ([id_user], [username], [password], [role]) VALUES (N'59', N'ying', N'123', N'4')
+GO
+
 SET IDENTITY_INSERT [dbo].[user] OFF
 GO
 
@@ -804,7 +808,7 @@ GO
 -- ----------------------------
 -- Auto increment value for dosen
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[dosen]', RESEED, 14)
+DBCC CHECKIDENT ('[dbo].[dosen]', RESEED, 17)
 GO
 
 
@@ -845,17 +849,17 @@ GO
 -- ----------------------------
 -- Auto increment value for laporan
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[laporan]', RESEED, 35)
+DBCC CHECKIDENT ('[dbo].[laporan]', RESEED, 48)
 GO
 
 
 -- ----------------------------
 -- Checks structure for table laporan
 -- ----------------------------
-ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [CK_laporan_statusTolak] CHECK ([statusTolak]=(1) OR [statusTolak]=(2))
+ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [CK_laporan_verifikasiMhs] CHECK ([verifikasiMhs]=(1) OR [verifikasiMhs]=(2))
 GO
 
-ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [CK__laporan__status__52593CB8] CHECK ([status]='Selesai' OR [status]='Belum Selesai')
+ALTER TABLE [dbo].[laporan] ADD CONSTRAINT [CK_laporan_statusTolak] CHECK ([statusTolak]=(1) OR [statusTolak]=(2))
 GO
 
 
@@ -871,7 +875,7 @@ GO
 -- ----------------------------
 -- Auto increment value for mahasiswa
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[mahasiswa]', RESEED, 19)
+DBCC CHECKIDENT ('[dbo].[mahasiswa]', RESEED, 25)
 GO
 
 
@@ -903,7 +907,7 @@ GO
 -- ----------------------------
 -- Auto increment value for pelanggaran
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[pelanggaran]', RESEED, 49)
+DBCC CHECKIDENT ('[dbo].[pelanggaran]', RESEED, 53)
 GO
 
 
@@ -967,7 +971,7 @@ GO
 -- ----------------------------
 -- Auto increment value for staff
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[staff]', RESEED, 7)
+DBCC CHECKIDENT ('[dbo].[staff]', RESEED, 8)
 GO
 
 
@@ -1015,7 +1019,7 @@ GO
 -- ----------------------------
 -- Auto increment value for upload
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[upload]', RESEED, 2)
+DBCC CHECKIDENT ('[dbo].[upload]', RESEED, 14)
 GO
 
 
@@ -1029,7 +1033,7 @@ GO
 -- ----------------------------
 -- Auto increment value for user
 -- ----------------------------
-DBCC CHECKIDENT ('[dbo].[user]', RESEED, 49)
+DBCC CHECKIDENT ('[dbo].[user]', RESEED, 59)
 GO
 
 
@@ -1112,6 +1116,9 @@ GO
 -- ----------------------------
 -- Foreign Keys structure for table upload
 -- ----------------------------
+ALTER TABLE [dbo].[upload] ADD CONSTRAINT [FK_id_laporan] FOREIGN KEY ([id_laporan]) REFERENCES [dbo].[laporan] ([id_laporan]) ON DELETE NO ACTION ON UPDATE NO ACTION
+GO
+
 ALTER TABLE [dbo].[upload] ADD CONSTRAINT [FK_id_mhs] FOREIGN KEY ([id_mahasiswa]) REFERENCES [dbo].[mahasiswa] ([id_mahasiswa]) ON DELETE NO ACTION ON UPDATE NO ACTION
 GO
 
