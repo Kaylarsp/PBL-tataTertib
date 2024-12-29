@@ -6,22 +6,17 @@ require_once '../connection.php';
 $sql = "SELECT * FROM pelanggaran";
 $stmt = sqlsrv_query($conn, $sql);
 
-// Query untuk mengambil nim
-$sql_mhs = "SELECT * FROM mahasiswa";
-$stmt_mhs = sqlsrv_query($conn, $sql_mhs);
-
 // Query untuk mengambil data kelas
 $sql_kelas = "SELECT * FROM kelas";
 $stmt_kelas = sqlsrv_query($conn, $sql_kelas);
 
-if ($stmt === false) {
-    die(print_r(sqlsrv_errors(), true));
-}
+// Query untuk mengambil data NIM mahasiswa
+$sql_mahasiswa = "SELECT nim, nama FROM mahasiswa";
+$stmt_mahasiswa = sqlsrv_query($conn, $sql_mahasiswa);
 
-if ($stmt_mhs === false) {
+if ($stmt === false || $stmt_mahasiswa === false) {
     die(print_r(sqlsrv_errors(), true));
-}
-?>
+}?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -70,7 +65,7 @@ if ($stmt_mhs === false) {
         }
 
         .custom-margin-top {
-            margin-top: 100px;
+            margin-top: 90px;
         }
 
         .btn-back-to-previous {
@@ -125,15 +120,14 @@ if ($stmt_mhs === false) {
                             <form action="prosesLaporan.php" method="POST" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label for="nim_pelaku" class="form-label">NIM Pelaku</label>
-                                    <select class="form-select select2" id="nim" name="nim" required>
-                                        <option value="">Pilih Nim</option>
+                                    <select class="form-select select2" id="nim_pelaku" name="nim_pelaku" required>
+                                        <option value="">Pilih NIM</option>
                                         <?php
-                                        while ($row = sqlsrv_fetch_array($stmt_mhs, SQLSRV_FETCH_ASSOC)) {
-                                            echo "<option value='" . $row['id_mahasiswa'] . "'>" . htmlspecialchars($row['nim']) . "</option>";
+                                        while ($row = sqlsrv_fetch_array($stmt_mahasiswa, SQLSRV_FETCH_ASSOC)) {
+                                            echo "<option value='" . htmlspecialchars($row['nim']) . "'>" . htmlspecialchars($row['nim'] . " - " . $row['nama']) . "</option>";
                                         }
                                         ?>
                                     </select>
-
                                 </div>
                                 <div class="mb-3">
                                     <label for="pelanggaran" class="form-label">Jenis Pelanggaran</label>
@@ -221,19 +215,24 @@ if ($stmt_mhs === false) {
 
     <!-- Script Select2 -->
     <script>
-    $(document).ready(function() {
-        $('#pelanggaran').select2({
-            placeholder: "Pilih Jenis Pelanggaran",
-            allowClear: true,
-            width: '100%' // Agar tampilan sesuai dengan lebar dropdown asli
+        $(document).ready(function() {
+            $('#pelanggaran').select2({
+                placeholder: "Pilih Jenis Pelanggaran",
+                allowClear: true,
+                width: '100%' // Agar tampilan sesuai dengan lebar dropdown asli
+            });
         });
-        $('#nim').select2({
-            placeholder: "Pilih Jenis Pelanggaran",
+    </script>
+    <script>
+    $(document).ready(function() {
+        $('#nim_pelaku').select2({
+            placeholder: "Pilih NIM",
             allowClear: true,
-            width: '100%' // Agar tampilan sesuai dengan lebar dropdown asli
+            width: '100%' // Agar dropdown sesuai dengan lebar elemen
         });
     });
-    </script>
+</script>
+
 </body>
 
 </html>
