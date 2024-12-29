@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body class="bg-light">
     <!-- Kontainer Login -->
-    <div class="card card-login" style="margin-top: 200px;">
+    <div class="card card-login" style="margin-top: 150px;">
         <div class="card-body">
             <h1 class="bi bi-mortarboard-fill me-2 fw-bold text-center">TatibFlow</h1>
             <p class="text-center mb-4">Selamat Datang, Silahkan Login</p>
